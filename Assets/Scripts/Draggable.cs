@@ -12,9 +12,25 @@ public class Draggable : MonoBehaviour
 
     #endregion
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+    #region Components
+
+    //Componente RigidBody
+    private Rigidbody2D mRb;
+
+    #endregion
+
+    //-----------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------
 
     #region Methods
+
+    void Awake()
+    {
+        //Obtencion de Componentes
+        mRb = GetComponent<Rigidbody2D>();
+    }
 
     //-----------------------------------------------------------------------------------
     // Funcion GETTER - Posicion (en el mundo) del Mouse
@@ -26,7 +42,7 @@ public class Draggable : MonoBehaviour
     }
 
     //-----------------------------------------------------------------------------------
-    // Funci{on - Al hacer Click sobre el Objeto (con collider)
+    // Funcion - Al hacer Click sobre el Objeto (con collider)
 
     private void OnMouseDown()
     {
@@ -35,7 +51,7 @@ public class Draggable : MonoBehaviour
     }
 
     //-----------------------------------------------------------------------------------
-    // Funcion - Mientras se mantenga el Mouse oprimido...
+    // Funcion - Mientras se mantenga el Mouse oprimido y se detecta el arrastre...
 
     private void OnMouseDrag()
     {
@@ -43,9 +59,17 @@ public class Draggable : MonoBehaviour
         transform.position = GetMouseInWorldPosition() + mousePositionOffset;
     }
 
+    //-----------------------------------------------------------------------------------
+    // Funcion - Cuando soltamos ewl Click
+
+    private void OnMouseUp()
+    {
+        //Ponemos la velocidad en 0
+        mRb.velocity = Vector2.zero;
+    }
+
     #endregion
 
-    //----------------------------------------------------------
 
 
 }

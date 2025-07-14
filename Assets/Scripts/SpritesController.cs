@@ -114,8 +114,13 @@ public class SpritesController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        //Asignamos el color de agarre;
-        mSrenderer.color = fightingColor;
+        
+        if (collision.gameObject.CompareTag("Chicken"))
+        {
+            //Asignamos el color de agarre;
+            mSrenderer.color = fightingColor;
+        }
+        
     }
 
     //-----------------------------------------------------------------------------------

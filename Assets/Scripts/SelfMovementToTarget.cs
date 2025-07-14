@@ -90,6 +90,21 @@ public class SelfMovementToTarget : MonoBehaviour
             //Nos desplazamos hacia el Waypoint.
         }
 
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            target = GameObject.Find("Food").transform;
+        }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            target = GameObject.Find("Water").transform;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            target = null;
+        }
+
     }
 
     //-----------------------------------------------------------------------------------

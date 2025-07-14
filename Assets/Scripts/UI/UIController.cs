@@ -16,26 +16,46 @@ public class UIController : MonoBehaviour
 
     #region methods
 
-    // Start is called before the first frame update
     void Start()
     {
-        
+        //La luz inicia encendida
+        TurnOnLight();
+
+        btnLightSwitch.onClick.AddListener(ToggleLight);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    //----------------------------------------------------------------------------------
+
+
+
+    //----------------------------------------------------------------------------------
 
     public void TurnOffLight()
     {
-
+        LightPanel.SetActive(true);
     }
 
     public void TurnOnLight()
     {
+        LightPanel.SetActive(false);
+    }
 
+    //----------------------------------------------------------------------------------
+
+    public void ToggleLight()
+    {
+        //Si el Panel esta activo (Luz apagada)
+        if (LightPanel.activeSelf)
+        {
+            //Activamos la Luz (desactivamos el panel)
+            TurnOnLight();
+        }
+        //Caso ontrario
+        else
+        {
+            //Apagamos la luz (Activamos el Panel)
+            TurnOffLight();
+        }
     }
 
     #endregion

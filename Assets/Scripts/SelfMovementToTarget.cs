@@ -31,6 +31,7 @@ public class SelfMovementToTarget : MonoBehaviour
 
     //Componente RigidBody
     private Rigidbody2D mRb;
+    private SpritesController mSpritesController;
 
     #endregion
 
@@ -43,6 +44,7 @@ public class SelfMovementToTarget : MonoBehaviour
     {
         //Obtencion de componentges
         mRb = GetComponent<Rigidbody2D>();
+        mSpritesController = GetComponent<SpritesController>();
     }
 
     //-----------------------------------------------------------------------------------
@@ -86,11 +88,8 @@ public class SelfMovementToTarget : MonoBehaviour
             moveDirection = (randomWaypoint - transform.position).normalized;
 
             //Nos desplazamos hacia el Waypoint.
-
-            
-
-
         }
+
     }
 
     //-----------------------------------------------------------------------------------

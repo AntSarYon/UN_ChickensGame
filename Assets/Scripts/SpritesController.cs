@@ -9,6 +9,7 @@ public class SpritesController : MonoBehaviour
     //Colores para cuando se interactua con el pollo
     private Color defaultColor;
     private Color draggedColor = Color.gray;
+    private Color fightingColor = Color.red;
 
     //Vector con la escala original del pollito
     private Vector3 originalScale;
@@ -21,6 +22,7 @@ public class SpritesController : MonoBehaviour
     #region Components
 
     private SpriteRenderer mSrenderer;
+    private Rigidbody2D mRigidbody;
 
     #endregion
 
@@ -33,6 +35,7 @@ public class SpritesController : MonoBehaviour
     {
         //Obtenemos componentes
         mSrenderer = GetComponent<SpriteRenderer>();
+        mRigidbody = GetComponent<Rigidbody2D>();
     }
 
     void Start()
@@ -45,6 +48,34 @@ public class SpritesController : MonoBehaviour
 
         //Almacenamos la escala original del pollito
         originalScale = transform.localScale;
+    }
+
+    void Update()
+    {
+        //Si el movimiento se esta dando hacia la derecha...
+        if (mRigidbody.velocity.x > 0)
+        {
+            LookAtRight();
+        }
+        //Si el movimiento se esta dando hacia la izquierda...
+        else
+        {
+            LookAtLeft();
+        }
+    }
+
+    //-----------------------------------------------------------------------------------
+
+    public void LookAtLeft()
+    {
+        //El sprite se muestra en su sentido orignal
+        mSrenderer.flipX = false;
+    }
+
+    public void LookAtRight()
+    {
+        // Voltemos el Sprite (derecha)
+        mSrenderer.flipX = true;
     }
 
     //-----------------------------------------------------------------------------------
@@ -72,11 +103,27 @@ public class SpritesController : MonoBehaviour
 
     private void OnMouseUp()
     {
-        //Asignamos el color de agarre;
+        //Asignamos el color de por defecto;
         mSrenderer.color = defaultColor;
 
         //Le devolvemos la escala orignal
         transform.localScale = originalScale;
+    }
+
+    //-----------------------------------------------------------------------------------
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //Asignamos el color de agarre;
+        mSrenderer.color = fightingColor;
+    }
+
+    //-----------------------------------------------------------------------------------
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        //Asignamos el color de agarre;
+        mSrenderer.color = defaultColor;
     }
 
     #endregion

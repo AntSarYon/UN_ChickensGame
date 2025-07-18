@@ -30,6 +30,8 @@ public class Draggable : MonoBehaviour
     {
         //Obtencion de Componentes
         mRb = GetComponent<Rigidbody2D>();
+
+        
     }
 
     //-----------------------------------------------------------------------------------

@@ -15,6 +15,12 @@ public class SpritesController : MonoBehaviour
     private Vector3 originalScale;
     private Vector3 draggedScale = new Vector3(0.80f, 0.80f, 0.80f);
 
+    //Flag para reconocer si esta siendo arrastrado
+    [SerializeField] private bool isBeingDragged;
+
+    //UI del pollito
+    [SerializeField] private ChickenUI chickenUI;
+
     #endregion
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -48,6 +54,9 @@ public class SpritesController : MonoBehaviour
 
         //Almacenamos la escala original del pollito
         originalScale = transform.localScale;
+
+        //Inicia con el flag de "Siendo arrastrado" en false
+        isBeingDragged = false;
     }
 
     void Update()
@@ -65,6 +74,7 @@ public class SpritesController : MonoBehaviour
     }
 
     //-----------------------------------------------------------------------------------
+    // Funciones: Rotar Sprite
 
     public void LookAtLeft()
     {
@@ -79,6 +89,30 @@ public class SpritesController : MonoBehaviour
     }
 
     //-----------------------------------------------------------------------------------
+    // Funcion - Cuando El Mouse pasa por encima o sale
+
+    private void OnMouseOver()
+    {
+        mSrenderer.color = draggedColor;
+
+        //Si NO esta siendo arrastrado
+        if (!isBeingDragged)
+        {
+            //Mostramos la UI de informacion del Pollo
+            chickenUI.ShowChickenInfo();
+        }
+    }
+
+    private void OnMouseExit()
+    {
+        //Asignamos el color de por defecto;
+        mSrenderer.color = defaultColor;
+
+        //Desactivamos la UI de informacion del Pollo
+        chickenUI.HideChickenInfo();
+    }
+
+    //-----------------------------------------------------------------------------------
     // Funcion - Cuando oprimimos el Click
 
     private void OnMouseDown()
@@ -88,6 +122,10 @@ public class SpritesController : MonoBehaviour
 
         //Le asignamos la escala de Agarre
         transform.localScale = draggedScale;
+
+        //Activamos Flag de "esta siendo arrastrado"
+        isBeingDragged = true;
+
     }
 
     //-----------------------------------------------------------------------------------
@@ -95,7 +133,8 @@ public class SpritesController : MonoBehaviour
 
     private void OnMouseDrag()
     {
-
+        //Desactivamos la UI de informacion del Pollo
+        chickenUI.HideChickenInfo();
     }
 
     //-----------------------------------------------------------------------------------
@@ -108,6 +147,9 @@ public class SpritesController : MonoBehaviour
 
         //Le devolvemos la escala orignal
         transform.localScale = originalScale;
+
+        //Desactivamos Flag de "esta siendo arrastrado"
+        isBeingDragged = false;
     }
 
     //-----------------------------------------------------------------------------------
@@ -119,6 +161,9 @@ public class SpritesController : MonoBehaviour
         {
             //Asignamos el color de agarre;
             mSrenderer.color = fightingColor;
+
+            //Mostramos la UI de la pelea
+            chickenUI.ShowFightInfo();
         }
         
     }
@@ -127,8 +172,16 @@ public class SpritesController : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        //Asignamos el color de agarre;
-        mSrenderer.color = defaultColor;
+        //Si ha dejado de chocar con otro pollito
+        if (collision.gameObject.CompareTag("Chicken"))
+        {
+            //Asignamos el color de agarre;
+            mSrenderer.color = defaultColor;
+
+            //Ocultamos la UI de la pelea
+            chickenUI.HideFightInfo();
+        }
+            
     }
 
     #endregion

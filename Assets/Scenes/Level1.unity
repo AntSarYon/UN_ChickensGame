@@ -1157,9 +1157,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2023639298499927168, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_Name
       value: Chicken (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3117838559706078153, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1201,11 +1217,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -1307,7 +1339,7 @@ GameObject:
   - component: {fileID: 625891533}
   m_Layer: 0
   m_Name: Food
-  m_TagString: Untagged
+  m_TagString: Food
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2328,9 +2360,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2023639298499927168, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_Name
       value: Chicken (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3117838559706078153, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2372,11 +2420,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -2434,9 +2498,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2023639298499927168, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_Name
       value: Chicken (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3117838559706078153, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2478,11 +2558,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -3112,9 +3208,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2023639298499927168, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_Name
       value: Chicken (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3117838559706078153, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3156,11 +3268,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -3181,9 +3309,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2023639298499927168, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_Name
       value: Chicken (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3117838559706078153, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3225,11 +3369,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -3286,9 +3446,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2023639298499927168, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_Name
       value: Chicken (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3117838559706078153, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3330,11 +3506,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -3489,9 +3681,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2023639298499927168, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_Name
       value: Chicken (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3117838559706078153, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3533,11 +3741,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -3647,9 +3871,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2023639298499927168, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_Name
       value: Chicken (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3117838559706078153, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3691,11 +3931,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -4393,9 +4649,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1227945611178478759, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2023639298499927168, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_Name
       value: Chicken
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2454485032077618388, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3117838559706078153, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4437,11 +4709,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3774161626322293166, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5462302939803453159, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101470836496130222, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}

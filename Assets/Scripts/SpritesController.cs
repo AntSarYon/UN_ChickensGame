@@ -95,7 +95,7 @@ public class SpritesController : MonoBehaviour
             LookAtRight();
         }
         //Si el movimiento se esta dando hacia la izquierda...
-        else
+        else if (mRigidbody.velocity.x < 0)
         {
             LookAtLeft();
         }
@@ -184,7 +184,7 @@ public class SpritesController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        
+        //Si chocamos con otra Gallina...
         if (collision.gameObject.CompareTag("Chicken"))
         {
             //Asignamos el color de agarre;
@@ -192,6 +192,20 @@ public class SpritesController : MonoBehaviour
 
             //Mostramos la UI de la pelea
             chickenUI.ShowFightInfo();
+        }
+
+        //Si chocamos con un contenedor de Comida o Agua
+        else if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
+        {
+            //Si el objeto colisionado esta hacia la derecha
+            if (collision.transform.position.x > transform.position.x)
+            {
+                LookAtRight();
+            }
+            else
+            {
+                LookAtLeft();
+            }
         }
         
     }

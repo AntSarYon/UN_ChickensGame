@@ -34,8 +34,6 @@ public class DayStatusManager : MonoBehaviour
         //Invertimos el valor de la Orden
         orderedToSleep = !orderedToSleep;
 
-        Debug.Log($"Se cambio la orden de Dormir a: {orderedToSleep}");
-
         //Invocamos a los delegados,  indicando el estado de la orden
         OnSleepOrderClicked?.Invoke(orderedToSleep);
     }

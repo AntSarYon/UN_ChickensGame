@@ -32,6 +32,7 @@ public class SelfMovementToTarget : MonoBehaviour
     //Componente RigidBody
     private Rigidbody2D mRb;
     private SpritesController mSpritesController;
+    private ChickenStats mChickenStats;
 
     #endregion
 
@@ -42,9 +43,10 @@ public class SelfMovementToTarget : MonoBehaviour
 
     void Awake()
     {
-        //Obtencion de componentges
+        //Obtencion de componentes
         mRb = GetComponent<Rigidbody2D>();
         mSpritesController = GetComponent<SpritesController>();
+        mChickenStats = GetComponent<ChickenStats>();
     }
 
     //-----------------------------------------------------------------------------------
@@ -64,31 +66,43 @@ public class SelfMovementToTarget : MonoBehaviour
 
     void Update()
     {
-        //Si hay un Target definido
-        if (target)
+        //Si el Pollito está comiendo, Bebiendo, Durmiendo, o Peleando
+        if (mChickenStats.eatingFlag || mChickenStats.drinkingFlag || mChickenStats.sleepingFlag || mChickenStats.fightingFlag)
         {
-            //Obtenemos direccion de movimiento (normalizada) hacia el target
-            moveDirection = (target.position - transform.position).normalized;
-
-            /*
-            // Rotacion del Sprite hacia la direccion (NO SE USARÁ, PERO QUIZAS EN UN FUTURO...)
-
-            //Obtencion de Angulo de rotacion en base a la Contangente de la Direccion; y pasando el calculo de radiales a Grados.
-            float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-
-            //Asignamos la Rotacion al RigidBody
-            mRb.rotation = angle;
-            */
+            //No hace nada
+            return;
         }
-
-        //Si no hay un Target definido...
+        //En caso no est{e haciendo ninguna de esas acciones...
         else
         {
-            //Obtenemos direccion de movimiento (normalizada) hacia el random waypoint
-            moveDirection = (randomWaypoint - transform.position).normalized;
+            //Si tiene un Target
+            if (target)
+            {
+                //Obtenemos direccion de movimiento (normalizada) hacia el target
+                moveDirection = (target.position - transform.position).normalized;
 
-            //Nos desplazamos hacia el Waypoint.
+                /*
+                // Rotacion del Sprite hacia la direccion (NO SE USARÁ, PERO QUIZAS EN UN FUTURO...)
+
+                //Obtencion de Angulo de rotacion en base a la Contangente de la Direccion; y pasando el calculo de radiales a Grados.
+                float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+
+                //Asignamos la Rotacion al RigidBody
+                mRb.rotation = angle;
+                */
+            }
+
+            //Si no hay un Target definido...
+            else
+            {
+                //Obtenemos direccion de movimiento (normalizada) hacia el random waypoint
+                moveDirection = (randomWaypoint - transform.position).normalized;
+
+                //Nos desplazamos hacia el Waypoint.
+            }
         }
+
+
 
         if (Input.GetKeyDown(KeyCode.F))
         {
@@ -111,20 +125,33 @@ public class SelfMovementToTarget : MonoBehaviour
 
     void FixedUpdate()
     {
-        //Asignamos Velocidad y direccion en base a los calculos anteriores sobre el destino (Target o Waypoint)
-        mRb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed;
-
-        //Si no hay un Target (movimiento aleatorio)
-        if (!target)
+        //Si el Pollito está comiendo, Bebiendo, Durmiendo, o Peleando
+        if (mChickenStats.eatingFlag || mChickenStats.drinkingFlag || mChickenStats.sleepingFlag || mChickenStats.fightingFlag)
         {
-            //Si la distancia entre el Pollito y el Waypoint esta dentro del rango minimo definido;
-            if (Vector2.Distance(transform.position, randomWaypoint) < minRange)
-            {
-                //cambiamos de Waypoint para que el pollito siga moviendose
-                SetNewRandomWaypoint();
-            }
+            //Anulamos la velocidad del pollo
+            mRb.velocity = Vector2.zero;
 
+            //No hace nada
+            return;
         }
+        //En caso no est{e haciendo ninguna de esas acciones...
+        else
+        {
+            //Asignamos Velocidad y direccion en base a los calculos anteriores sobre el destino (Target o Waypoint)
+            mRb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed;
+
+            //Si no hay un Target (movimiento aleatorio)
+            if (!target)
+            {
+                //Si la distancia entre el Pollito y el Waypoint esta dentro del rango minimo definido;
+                if (Vector2.Distance(transform.position, randomWaypoint) < minRange)
+                {
+                    //cambiamos de Waypoint para que el pollito siga moviendose
+                    SetNewRandomWaypoint();
+                }
+            }
+        }
+
     }
 
     //-----------------------------------------------------------------------------------

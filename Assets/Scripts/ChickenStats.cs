@@ -5,11 +5,11 @@ using UnityEngine;
 public class ChickenStats : MonoBehaviour
 {
     //Flags de Estado del Pollito
-    private bool eatingFlag = false;
-    private bool drinkingFlag = false;
-    private bool stressfulFlag = false;
-    private bool fightingFlag = false;
-    private bool sleepingFlag = false;
+    [HideInInspector] public bool eatingFlag = false;
+    [HideInInspector] public bool drinkingFlag = false;
+    [HideInInspector] public bool stressfulFlag = false;
+    [HideInInspector] public bool fightingFlag = false;
+    [HideInInspector] public bool sleepingFlag = false;
 
     //Salud del Pollito
     [HideInInspector] public float hp = 100;
@@ -45,6 +45,17 @@ public class ChickenStats : MonoBehaviour
         hambre = Random.Range(35.00f, 80.00f);
         estres = Random.Range(35.00f, 80.00f);
         peso = Random.Range(2.00f, 7.00f);
+
+        //Funcion Delegafa del Evento "Orden de Dormir"
+        DayStatusManager.instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
+    }
+
+    //-----------------------------------------------------------------------
+
+    private void OnSleepOrderClickedDelegate(bool sleepOrder)
+    {
+        //Actualizamos el SleepingFlag en base a si la orden esta activa o no
+        sleepingFlag = sleepOrder;
     }
 
     //-----------------------------------------------------------------------

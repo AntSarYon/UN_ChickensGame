@@ -8,6 +8,7 @@ public class UIController : MonoBehaviour
     #region Props
 
     [SerializeField] private Button btnLightSwitch;
+    [SerializeField] private Button btnSleepOrder;
     [SerializeField] private GameObject LightPanel;
 
     #endregion
@@ -22,11 +23,8 @@ public class UIController : MonoBehaviour
         TurnOnLight();
 
         btnLightSwitch.onClick.AddListener(ToggleLight);
+        btnSleepOrder.onClick.AddListener(ToggleSleepOrder);
     }
-
-    //----------------------------------------------------------------------------------
-
-
 
     //----------------------------------------------------------------------------------
 
@@ -56,6 +54,13 @@ public class UIController : MonoBehaviour
             //Apagamos la luz (Activamos el Panel)
             TurnOffLight();
         }
+    }
+
+    //----------------------------------------------------------------------------------
+
+    public void ToggleSleepOrder()
+    {
+        DayStatusManager.instance.SleepOrderClicked();
     }
 
     #endregion

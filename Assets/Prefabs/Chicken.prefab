@@ -414,7 +414,7 @@ GameObject:
   - component: {fileID: 5220890039049365877}
   - component: {fileID: 6710871231347995504}
   - component: {fileID: 3414470599289930867}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TxtPeso
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -546,7 +546,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2783306430653388451}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Estres
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -585,7 +585,7 @@ GameObject:
   - component: {fileID: 6824433019967053704}
   - component: {fileID: 7190491691087508836}
   - component: {fileID: 7775393410264499383}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TxtHambre
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -760,6 +760,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aa12b89cc6f1d34cb1dbe194d3434b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eatingFlag: 0
+  drinkingFlag: 0
+  stressfulFlag: 0
+  fightingFlag: 0
+  sleepingFlag: 0
   hp: 100
   velocidadIncrementoHP: 0
   velocidadReduccionHP: 10
@@ -1308,7 +1313,7 @@ GameObject:
   - component: {fileID: 1746112316180039825}
   - component: {fileID: 3191271801797773533}
   - component: {fileID: 7847388864716474261}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TxtAlert(shadow)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1440,7 +1445,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3447132571789031698}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Peso
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1479,7 +1484,7 @@ GameObject:
   - component: {fileID: 4208825445164813575}
   - component: {fileID: 3104901999158874716}
   - component: {fileID: 1068741988248493893}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TxtHP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1763,7 +1768,7 @@ GameObject:
   - component: {fileID: 4974385569181455050}
   - component: {fileID: 5969304196013390984}
   - component: {fileID: 2207859155842236584}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TxtAlert
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2006,7 +2011,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5013274006774524824}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: HP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2259,7 +2264,7 @@ GameObject:
   - component: {fileID: 6984964337108881991}
   - component: {fileID: 3312890723104945646}
   - component: {fileID: 8541309031049973875}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: StatsPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2336,7 +2341,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6416197551246588040}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Alert
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2373,7 +2378,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7536310683320138405}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Hambre
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2487,7 +2492,7 @@ GameObject:
   - component: {fileID: 7079968336822777459}
   - component: {fileID: 7618194492297605645}
   - component: {fileID: 8492210836871881253}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TxtEstres
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2698,7 +2703,7 @@ GameObject:
   - component: {fileID: 2500928454679505266}
   - component: {fileID: 8301996698630375103}
   - component: {fileID: 9097897305859654374}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ChickenUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2748,7 +2753,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!114 &2500928454679505266
 MonoBehaviour:

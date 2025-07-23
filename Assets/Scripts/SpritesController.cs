@@ -29,6 +29,8 @@ public class SpritesController : MonoBehaviour
 
     private SpriteRenderer mSrenderer;
     private Rigidbody2D mRigidbody;
+    private Animator mAnimator;
+    private ChickenStats mChickenStats;
 
     #endregion
 
@@ -42,7 +44,10 @@ public class SpritesController : MonoBehaviour
         //Obtenemos componentes
         mSrenderer = GetComponent<SpriteRenderer>();
         mRigidbody = GetComponent<Rigidbody2D>();
+        mAnimator = GetComponent<Animator>();
     }
+
+    //-----------------------------------------------------------------------------------
 
     void Start()
     {
@@ -57,7 +62,30 @@ public class SpritesController : MonoBehaviour
 
         //Inicia con el flag de "Siendo arrastrado" en false
         isBeingDragged = false;
+
+        //Funcion Delegafa del Evento "Orden de Dormir"
+        DayStatusManager.instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
     }
+
+    //-----------------------------------------------------------------------
+
+    private void OnSleepOrderClickedDelegate(bool sleepOrder)
+    {
+        if (sleepOrder)
+        {
+            mAnimator.Play("Sit");
+        }
+
+        //Si se ha recibido al orden de dormir...
+        else if (!sleepOrder)
+        {
+            //Actualizamos el SleepingFlag en base a si la orden esta activa o no
+            mAnimator.SetTrigger("WakeUp");
+        }
+        
+    }
+
+    //-----------------------------------------------------------------------------------
 
     void Update()
     {

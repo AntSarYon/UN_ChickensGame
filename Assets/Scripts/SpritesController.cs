@@ -45,6 +45,7 @@ public class SpritesController : MonoBehaviour
         mSrenderer = GetComponent<SpriteRenderer>();
         mRigidbody = GetComponent<Rigidbody2D>();
         mAnimator = GetComponent<Animator>();
+        mChickenStats = GetComponent<ChickenStats>();
     }
 
     //-----------------------------------------------------------------------------------
@@ -187,11 +188,34 @@ public class SpritesController : MonoBehaviour
         //Si chocamos con otra Gallina...
         if (collision.gameObject.CompareTag("Chicken"))
         {
-            //Asignamos el color de agarre;
-            mSrenderer.color = fightingColor;
+            //Si los Stats del Pollo indican que esta estresado...
+            if (mChickenStats.estres > mChickenStats.estresParaPelear)
+            {
+                //Asignamos el color de agarre;
+                mSrenderer.color = fightingColor;
 
-            //Mostramos la UI de la pelea
-            chickenUI.ShowFightInfo();
+                //Mostramos la UI de la pelea
+                chickenUI.ShowFightInfo();
+            }
+
+            //En caso el nivel de estres no esté en el Nivel...
+            else
+            {
+                //Obtenemos los Stats del pollo con el que yhemos chocado
+                ChickenStats otherChickenStats = collision.gameObject.GetComponent<ChickenStats>();
+
+                //Revisamos si el Estres del otro Pollo essta en el limite...
+                if (otherChickenStats.estres >= otherChickenStats.estresParaPelear)
+                {
+                    //De ser el caso...
+                    //Asignamos el color de agarre;
+                    mSrenderer.color = fightingColor;
+
+                    //Mostramos la UI de la pelea
+                    chickenUI.ShowFightInfo();
+                }
+            }
+
         }
 
         //Si chocamos con un contenedor de Comida o Agua
@@ -224,6 +248,22 @@ public class SpritesController : MonoBehaviour
             chickenUI.HideFightInfo();
         }
             
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
+        {
+            //Si el objeto colisionado esta hacia la derecha
+            if (collision.transform.position.x > transform.position.x)
+            {
+                LookAtRight();
+            }
+            else
+            {
+                LookAtLeft();
+            }
+        }
     }
 
     #endregion

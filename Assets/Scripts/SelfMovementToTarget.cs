@@ -69,6 +69,14 @@ public class SelfMovementToTarget : MonoBehaviour
         //Si el Pollito está comiendo, Bebiendo, Durmiendo, o Peleando
         if (mChickenStats.eatingFlag || mChickenStats.drinkingFlag || mChickenStats.sleepingFlag || mChickenStats.fightingFlag)
         {
+            //Si el Stat de hambre esta por debajo de 40
+            if (mChickenStats.hambre < 40)
+            {
+                //Desactivamos los Flags de Comiendo y Bebiendo
+                mChickenStats.eatingFlag = false;
+                mChickenStats.drinkingFlag = false;
+            }
+
             //No hace nada
             return;
         }
@@ -117,6 +125,8 @@ public class SelfMovementToTarget : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             target = null;
+            //Asignamos un nuevo target aleatorio
+            SetNewRandomWaypoint();
         }
 
     }

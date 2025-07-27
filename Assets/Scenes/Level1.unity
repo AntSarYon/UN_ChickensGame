@@ -5028,7 +5028,7 @@ MonoBehaviour:
   FoodSlider: {fileID: 898082993}
   GasSlider: {fileID: 1580161850}
   arrFoods: []
-  txtMoreFood: {fileID: 0}
+  txtMoreFood: {fileID: 1062720373}
 --- !u!1 &1299588992
 GameObject:
   m_ObjectHideFlags: 0
@@ -9173,6 +9173,18 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1991530173}
+    - target: {fileID: 9065878297576613962, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: estresParaPelear
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 9065878297576613962, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: velocidadReduccionHP
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9065878297576613962, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
+      propertyPath: velocidadIncrementoHambre
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameClockController : MonoBehaviour
@@ -24,12 +25,16 @@ public class GameClockController : MonoBehaviour
 
     //Tiempo transcurrido
     private float elapsedTime = 0;
+    private float dayFinishTime = 0;
 
     [Header("Tiempo en 1 dia")]
     [SerializeField] private float timeInADay = 86400f; // segundos a considerar
 
     [Header("Hora de inicio del dia")]
     [Range(0, 24)][SerializeField] private int startingTime = 9;
+
+    [Header("Hora de fin del dia")]
+    [Range(0, 24)][SerializeField] private int finishTime = 18;
 
     [Header("Cuan rápido pasa el tiempo")]
     [Range(1,100)] [SerializeField] private float timeScale = 2.00f;
@@ -38,8 +43,16 @@ public class GameClockController : MonoBehaviour
 
     void Start()
     {
+
+        //Traemos los parametros del RulesManager
+        startingTime = GameRulesManager.instance.startingTime;
+        finishTime = GameRulesManager.instance.finishTime;
+        timeScale = GameRulesManager.instance.timeScale;
+
         //Definir Tiempo (Hora) inicial
         elapsedTime = startingTime * 3600f; // (Hora deseada x 3600 segundos)
+
+        dayFinishTime = finishTime * 3600f;
 
         //Almacenamos el color original del Panel de Luz
         lightPanelColor = LightPanelUI.color;
@@ -87,7 +100,7 @@ public class GameClockController : MonoBehaviour
     public void UpdateDarknessLevel()
     {
         //Calculamos la interpolacion constantemente, segun que tan cerca estemos del fin del dia...
-        interpolation = elapsedTime / timeInADay;
+        interpolation = elapsedTime / dayFinishTime;
 
         //Calculamos el nivel de oscuridad actual empleando interpolacion segun el tiempo transcurrido
         currentDarknessLevel = Mathf.Lerp(initialDarknessLevel, finalDarknessLevel, interpolation);
@@ -99,13 +112,16 @@ public class GameClockController : MonoBehaviour
         LightPanelUI.color = newDarknessColor;
     }
 
+    //-------------------------------------------------------------------------------------------------
+
     public void CheckTime()
     {
-        /*
-        if (elapsedTime >= )
+        //Si el tiempo transcurrido supera el de finalizacion del dia
+        if (elapsedTime >= dayFinishTime)
         {
-
+            //Vamos al Menu
+            SceneManager.LoadScene("Menu");
         }
-        */
+        
     }
 }

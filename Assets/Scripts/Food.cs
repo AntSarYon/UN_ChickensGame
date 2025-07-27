@@ -23,6 +23,12 @@ public class Food : MonoBehaviour
         mCollider = GetComponent<Collider2D>();
     }
 
+    void Start()
+    {
+        //Traemos los parametros del RulesManager
+        foodDecreaseSpeed = GameRulesManager.instance.foodDecreaseSpeed;
+    }
+
     //--------------------------------------------------------------------------------------
 
     void Update()

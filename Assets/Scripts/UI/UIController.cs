@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -80,6 +81,11 @@ public class UIController : MonoBehaviour
 
         //Asignamos el valor de Comida en el Slider
         FoodSlider.value = currentFoodLevel;
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            SceneManager.LoadScene("Menu");
+        }
     }
 
     //----------------------------------------------------------------------------------

@@ -28,7 +28,7 @@ public class ChickenStats : MonoBehaviour
     [Header("Velocidad Cambio de Stats: Estres")]
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadIncrementoEstres = 1;
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadReduccionEstres = 3;
-    [Range(0.00f, 100.00f)][SerializeField] private float estresParaPelear = 60;
+    [Range(0.00f, 100.00f)] public float estresParaPelear = 60;
 
     //Peso del Pollito
     [HideInInspector] public float peso = 100;
@@ -40,6 +40,19 @@ public class ChickenStats : MonoBehaviour
 
     void Start()
     {
+        //Traemos los parametros segun se haya ingresado en el Menu Inicial
+        velocidadReduccionHP = GameRulesManager.instance.velocidadReduccionHP;
+
+        velocidadIncrementoHambre = GameRulesManager.instance.velocidadIncrementoHambre;
+        velocidadReduccionHambre = GameRulesManager.instance.velocidadReduccionHambre;
+
+        velocidadIncrementoEstres = GameRulesManager.instance.velocidadIncrementoEstres;
+        velocidadReduccionEstres = GameRulesManager.instance.velocidadReduccionEstres;
+        estresParaPelear = GameRulesManager.instance.estresParaPelear;
+
+        velocidadIncrementoPeso = GameRulesManager.instance.velocidadIncrementoPeso;
+        velocidadReduccionPeso = GameRulesManager.instance.velocidadReduccionPeso;
+
         //Seteamos los stats iniciales del pollo
         hp = 100;
         hambre = Random.Range(35.00f, 80.00f);
@@ -135,6 +148,11 @@ public class ChickenStats : MonoBehaviour
                     //Activamos Flag de "Esta peleando"
                     fightingFlag = true;
                 }
+                else
+                {
+                    //Hacemos que se asigne un nuevo TargetRandom
+                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
+                }
             }
 
         }
@@ -142,15 +160,40 @@ public class ChickenStats : MonoBehaviour
         //Si el objeto con el que colisionamos es otro Pollito
         else if (collision.gameObject.CompareTag("Food"))
         {
-            //Activamos Flag de "Esta peleando"
-            eatingFlag = true;
+            //Si tiene hambre...
+            if (hambre > 40)
+            {
+                //Activamos Flag de "Esta comiendeo"
+                eatingFlag = true;
+            }
+            else
+            {
+                //Seteamos un nuevo target de movimiento random
+                GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
+
+                //Desactivamos Flag de "Esta comiendeo"
+                eatingFlag = false;
+            }
+            
         }
 
         //Si el objeto con el que colisionamos es otro Pollito
         else if (collision.gameObject.CompareTag("Water"))
         {
-            //Activamos Flag de "Esta peleando"
-            drinkingFlag = true;
+            //Si tiene hambre...
+            if (hambre > 40)
+            {
+                //Activamos Flag de "Esta peleando"
+                drinkingFlag = true;
+            }
+            else
+            {
+                //Seteamos un nuevo target de movimiento random
+                GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
+
+                //Desactivamos Flag de "Esta comiendeo"
+                drinkingFlag = false;
+            }
         }
     }
 

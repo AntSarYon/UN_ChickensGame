@@ -4,22 +4,14 @@ using UnityEngine;
 
 public class Draggable : MonoBehaviour
 {
-
-    #region Props
+    //Flag, esta siendo sujetado
+    [HideInInspector] public bool bIsBeingDragged;
 
     //Posicion Offset del mouse respecto al centro del objeto.
     private Vector3 mousePositionOffset;
 
-    #endregion
-
-    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-    #region Components
-
     //Componente RigidBody
     private Rigidbody2D mRb;
-
-    #endregion
 
     //-----------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------
@@ -30,8 +22,6 @@ public class Draggable : MonoBehaviour
     {
         //Obtencion de Componentes
         mRb = GetComponent<Rigidbody2D>();
-
-        
     }
 
     //-----------------------------------------------------------------------------------
@@ -44,30 +34,41 @@ public class Draggable : MonoBehaviour
     }
 
     //-----------------------------------------------------------------------------------
-    // Funcion - Al hacer Click sobre el Objeto (con collider)
+    // Funcion - Agarrar a la Gallina
 
-    private void OnMouseDown()
+    public void Catch()
     {
         //Capturamos la posicion Offset del Mouse restandole a la posicon del objeto la posicion del mouse, obteniendo la diferencia
         mousePositionOffset = gameObject.transform.position - GetMouseInWorldPosition();
+
+        //Activamos el flag "Siendo sujetado"
+        bIsBeingDragged = true;
     }
 
     //-----------------------------------------------------------------------------------
-    // Funcion - Mientras se mantenga el Mouse oprimido y se detecta el arrastre...
+    // Funcion - Mover a la Gallina
 
-    private void OnMouseDrag()
+    public void MovePosition()
     {
         //La posicion será la del mouse; añadiendole el Offset capturado
         transform.position = GetMouseInWorldPosition() + mousePositionOffset;
     }
 
     //-----------------------------------------------------------------------------------
-    // Funcion - Cuando soltamos ewl Click
+    // Funcion - Soltar (Liberar) a la Gallina
 
-    private void OnMouseUp()
+    public void Drop()
     {
-        //Ponemos la velocidad en 0
-        mRb.velocity = Vector2.zero;
+        //Si estaba siendo sujetado
+        if (bIsBeingDragged)
+        {
+            //Ponemos la velocidad en 0
+            mRb.velocity = Vector2.zero;
+
+            //Activamos el flag "Siendo sujetado"
+            bIsBeingDragged = false;
+        }
+        
     }
 
     #endregion

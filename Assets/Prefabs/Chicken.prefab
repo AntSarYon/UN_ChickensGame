@@ -717,6 +717,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3117838559706078153}
+  - component: {fileID: 1535757132371446586}
   - component: {fileID: 9065878297576613962}
   - component: {fileID: 2098742371224488937}
   - component: {fileID: 3089890778890140748}
@@ -748,6 +749,18 @@ Transform:
   - {fileID: 8886073892724085941}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1535757132371446586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023639298499927168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9838ba0aa0a812f4d886689d82beb310, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &9065878297576613962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -767,14 +780,14 @@ MonoBehaviour:
   sleepingFlag: 0
   hp: 100
   velocidadIncrementoHP: 0
-  velocidadReduccionHP: 10
+  velocidadReduccionHP: 5
   hambre: 100
-  velocidadIncrementoHambre: 2.75
+  velocidadIncrementoHambre: 2
   velocidadReduccionHambre: 4
   estres: 100
   velocidadIncrementoEstres: 1
   velocidadReduccionEstres: 3
-  estresParaPelear: 60
+  estresParaPelear: 65
   peso: 100
   velocidadIncrementoPeso: 0.15
   velocidadReduccionPeso: 0.1
@@ -904,6 +917,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e715da8820020c40969e333a6a73524, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bIsBeingDragged: 0
 --- !u!114 &6212253900560065681
 MonoBehaviour:
   m_ObjectHideFlags: 0

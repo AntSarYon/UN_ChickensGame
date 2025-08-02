@@ -4,62 +4,106 @@ using UnityEngine;
 
 public class BillingZoneController : MonoBehaviour
 {
-    //Flag 
-    private bool flagChickenInSale;
+    public static BillingZoneController instance;
 
+    //Flag - Pollito sujetado emn zona de venta
+    private bool bChickenDraggedInSaleZone;
+
+    //Referencia a la Gallina que se va a vender
+    private ChickenStats chickenForSale;
 
     // COMPONENTES
     private Animator mAnimator;
+    private AudioSource mAudioSource;
 
     //----------------------------------------------------------
-
     void Awake()
     {
+        //Asignamos la instancia de la BillingZone
+        instance = this;
+
         //Iniciamos flag de Pollitoen Venta en Falso
-        flagChickenInSale = false;
+        bChickenDraggedInSaleZone = false;
 
-       mAnimator = GetComponent<Animator>();
+        // Iniciamos sin ninguna referencia de gallina en venta
+        chickenForSale = null;
+
+        //Obtenemos referencia a componentes
+        mAnimator = GetComponent<Animator>();
+        mAudioSource = GetComponent<AudioSource>();
     }
 
-    //----------------------------------------------------------
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    //-------------------------------------------------------------
+    //---------------------------------------------------------------------------
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //Si el objeto que entra en la Zona es una Gallina
         if (collision.gameObject.CompareTag("Chicken"))
         {
-            // Activamos Flag de - ChickenForSale
-            Debug.Log("Gallina en zona de Cash");
+            //Si la gallina esta siendo sujetada...
+            if (collision.gameObject.GetComponent<Draggable>().bIsBeingDragged)
+            {
+                //Activamos flag de "Gallina en zona de venta"
+                bChickenDraggedInSaleZone = true;
 
-            mAnimator.SetBool("Hover",true);
+                //Almacenamos referencia a los stats de la Gallina
+                chickenForSale = collision.gameObject.GetComponent<ChickenStats>();
+
+                //Reproducimos Animacion de Hover
+                mAnimator.SetBool("Hover", true);
+
+                Debug.Log("Gallina en zona de Cash");
+            }
         }
     }
+
+    //-----------------------------------------------------------------------------------
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        //Si el objeto que sale en la Zona es una Gallina
         if (collision.gameObject.CompareTag("Chicken"))
         {
-            Debug.Log("Gallina salió de zona de Cash");
+            //Si la gallina estaba siendo sujetada...
+            if (collision.gameObject.GetComponent<Draggable>().bIsBeingDragged)
+            {
+                //Desactivamos flag de "Gallina en zona de venta"
+                bChickenDraggedInSaleZone = false;
 
-            mAnimator.SetBool("Hover", false);
+                //Eliminamos referencia a Gallina
+                chickenForSale = null;
+
+                //Desactivamos el parametro de animacion de Hover
+                mAnimator.SetBool("Hover", false);
+
+                Debug.Log("Gallina salió de zona de Cash");
+            }
         }
     }
 
-    private void OnMouseUp()
+    //-----------------------------------------------------------------------------------
+
+    public void TryToSellChicken()
     {
-        
+        Debug.Log("Jugador solto el click");
+
+        //Si el flag de "Gallina en zona de venta" est activo, y se tiene referencia a ella
+        if (bChickenDraggedInSaleZone || chickenForSale != null)
+        {
+            //Decimos al GameManager que dispare el evento de Pollo vendido
+            GameManager.Instance.TriggerEvent_ChickenSold(20);
+
+            //Reproducimos el sonido de Venta
+            mAudioSource.Play();
+
+            //Desactivamos el parametro de animacion de Hover
+            mAnimator.SetBool("Hover", false);
+
+            //Desactivamos a la Gallina
+            chickenForSale.gameObject.SetActive(false);
+
+            //Dejamos en vacio la referencia de Gallina en Venta
+            chickenForSale = null;
+        }
     }
 }

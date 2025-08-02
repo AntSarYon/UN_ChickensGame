@@ -51,19 +51,6 @@ public class SelfMovementToTarget : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
 
-    void Start()
-    {
-        //Definimos un punto de destino aleatorio
-        SetNewRandomWaypoint();
-
-        /*
-        //Obtenemos el Transform del Chicken principal
-        target = GameObject.Find("Chicken").transform;
-        */
-    }
-
-    //-----------------------------------------------------------------------------------
-
     void Update()
     {
         //Si el Pollito está comiendo, Bebiendo, Durmiendo, o Peleando
@@ -83,31 +70,8 @@ public class SelfMovementToTarget : MonoBehaviour
         //En caso no est{e haciendo ninguna de esas acciones...
         else
         {
-            //Si tiene un Target
-            if (target)
-            {
-                //Obtenemos direccion de movimiento (normalizada) hacia el target
-                moveDirection = (target.position - transform.position).normalized;
-
-                /*
-                // Rotacion del Sprite hacia la direccion (NO SE USARÁ, PERO QUIZAS EN UN FUTURO...)
-
-                //Obtencion de Angulo de rotacion en base a la Contangente de la Direccion; y pasando el calculo de radiales a Grados.
-                float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-
-                //Asignamos la Rotacion al RigidBody
-                mRb.rotation = angle;
-                */
-            }
-
-            //Si no hay un Target definido...
-            else
-            {
-                //Obtenemos direccion de movimiento (normalizada) hacia el random waypoint
-                moveDirection = (randomWaypoint - transform.position).normalized;
-
-                //Nos desplazamos hacia el Waypoint.
-            }
+            //Seteamos una direccion para su movimiento
+            SetMovementDirection();
         }
 
 
@@ -129,6 +93,25 @@ public class SelfMovementToTarget : MonoBehaviour
             SetNewRandomWaypoint();
         }
 
+    }
+
+    //-----------------------------------------------------------------------------------
+
+    public void SetMovementDirection()
+    {
+        //Si tiene un Target
+        if (target)
+        {
+            //Obtenemos direccion de movimiento (normalizada) hacia el target
+            moveDirection = (target.position - transform.position).normalized;
+        }
+
+        //Si no hay un Target definido...
+        else
+        {
+            //Obtenemos direccion de movimiento (normalizada) hacia el random waypoint
+            moveDirection = (randomWaypoint - transform.position).normalized;
+        }
     }
 
     //-----------------------------------------------------------------------------------

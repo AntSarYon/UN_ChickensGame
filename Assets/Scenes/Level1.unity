@@ -8771,7 +8771,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1535757132371446586, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: dragEscapeProb
-      value: 0.203
+      value: 0.35
       objectReference: {fileID: 0}
     - target: {fileID: 2023639298499927168, guid: 057b6da083e70e64e823cd8df99a3535, type: 3}
       propertyPath: m_Name

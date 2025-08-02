@@ -767,9 +767,11 @@ MonoBehaviour:
   stressfulFlag: 0
   fightingFlag: 0
   sleepingFlag: 0
+  isAlive: 1
   dragEscapeProb: 0.5
-  clipDragged: {fileID: 8300000, guid: 97ab85b67e7b0af4cbde506d28b36cc9, type: 3}
+  clipDragged: {fileID: 8300000, guid: e4cbc3d12676ce345a7581c043431c1b, type: 3}
   clipEscaped: {fileID: 8300000, guid: a6ca57d5c41a17f40af3cf6c5d728ab5, type: 3}
+  clipWings: {fileID: 8300000, guid: 2786bd1d71a11a1459338181fbdae2ae, type: 3}
 --- !u!114 &9065878297576613962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -941,7 +943,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 1
   minRange: 1.25
-  maxXDistance: 8
+  maxXDistance: 17
   maxYDistance: 5
 --- !u!114 &2744615644433045560
 MonoBehaviour:

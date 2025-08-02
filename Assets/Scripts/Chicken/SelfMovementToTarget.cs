@@ -34,6 +34,7 @@ public class SelfMovementToTarget : MonoBehaviour
     private Rigidbody2D mRb;
     private SpritesController mSpritesController;
     private ChickenStats mChickenStats;
+    private ChickenController mChickenController;
 
     #endregion
 
@@ -48,6 +49,7 @@ public class SelfMovementToTarget : MonoBehaviour
         mRb = GetComponent<Rigidbody2D>();
         mSpritesController = GetComponent<SpritesController>();
         mChickenStats = GetComponent<ChickenStats>();
+        mChickenController = GetComponent<ChickenController>();
 
         //Inicializamos el multiplicador de velocidad en 1
         speedMultiplier = 1;
@@ -122,32 +124,43 @@ public class SelfMovementToTarget : MonoBehaviour
 
     void FixedUpdate()
     {
-        //Si el Pollito está comiendo, Bebiendo, Durmiendo, o Peleando
-        if (mChickenStats.eatingFlag || mChickenStats.drinkingFlag || mChickenStats.sleepingFlag || mChickenStats.fightingFlag)
+        //Si el Pollito esta muerto...
+        if (!mChickenController.isAlive)
         {
-            //Anulamos la velocidad del pollo
-            mRb.velocity = Vector2.zero;
-
-            //No hace nada
             return;
         }
-        //En caso no est{e haciendo ninguna de esas acciones...
+        //En caso este vivo
         else
         {
-            //Asignamos Velocidad y direccion en base a los calculos anteriores sobre el destino (Target o Waypoint)
-            mRb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed * speedMultiplier;
-
-            //Si no hay un Target (movimiento aleatorio)
-            if (!target)
+            //Si el Pollito está comiendo, Bebiendo, Durmiendo, o Peleando
+            if (mChickenStats.eatingFlag || mChickenStats.drinkingFlag || mChickenStats.sleepingFlag || mChickenStats.fightingFlag)
             {
-                //Si la distancia entre el Pollito y el Waypoint esta dentro del rango minimo definido;
-                if (Vector2.Distance(transform.position, randomWaypoint) < minRange)
+                //Anulamos la velocidad del pollo
+                mRb.velocity = Vector2.zero;
+
+                //No hace nada
+                return;
+            }
+            //En caso no est{e haciendo ninguna de esas acciones...
+            else
+            {
+                //Asignamos Velocidad y direccion en base a los calculos anteriores sobre el destino (Target o Waypoint)
+                mRb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed * speedMultiplier;
+
+                //Si no hay un Target (movimiento aleatorio)
+                if (!target)
                 {
-                    //cambiamos de Waypoint para que el pollito siga moviendose
-                    SetNewRandomWaypoint();
+                    //Si la distancia entre el Pollito y el Waypoint esta dentro del rango minimo definido;
+                    if (Vector2.Distance(transform.position, randomWaypoint) < minRange)
+                    {
+                        //cambiamos de Waypoint para que el pollito siga moviendose
+                        SetNewRandomWaypoint();
+                    }
                 }
             }
         }
+
+        
 
     }
 

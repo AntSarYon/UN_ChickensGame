@@ -14,6 +14,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private Button btnMoreFoodOrder;
     [SerializeField] private GameObject LightPanel;
 
+
     [Header("Medidores")]
     [SerializeField] private Slider FoodSlider;
     [SerializeField] private Slider GasSlider;
@@ -123,9 +124,6 @@ public class UIController : MonoBehaviour
 
     public void AskForFood()
     {
-        //Hacemos que el boton no sea interactuable...
-        btnMoreFoodOrder.interactable = false;
-
         //Disparamos el Evento de "Pedir mas comida"
         GameManager.Instance.TriggerEvent_FoodRefill();
     }

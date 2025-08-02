@@ -14,6 +14,7 @@ public class BillingZoneController : MonoBehaviour
 
     // COMPONENTES
     private Animator mAnimator;
+    private Animator mEffectAnimator;
 
     //----------------------------------------------------------
     void Awake()
@@ -29,6 +30,14 @@ public class BillingZoneController : MonoBehaviour
 
         //Obtenemos referencia a componentes
         mAnimator = GetComponent<Animator>();
+    }
+
+    //----------------------------------------------------------
+
+    void Start()
+    {
+        //Obtenemos el Animator del Efecto hijo
+        mEffectAnimator = GetComponentInChildren<Animator>();
     }
 
     //---------------------------------------------------------------------------
@@ -90,6 +99,9 @@ public class BillingZoneController : MonoBehaviour
         {
             //Decimos al GameManager que dispare el evento de Pollo vendido
             GameManager.Instance.TriggerEvent_ChickenSold(20);
+
+            //Disparamos el efecto de Billete (venta)
+            mEffectAnimator.Play("Sold");
 
             //Hacemos que el Manager de Sonidos reprodzca el sonido de Venta
             GameSoundsController.Instance.PlayChickenSoldSound();

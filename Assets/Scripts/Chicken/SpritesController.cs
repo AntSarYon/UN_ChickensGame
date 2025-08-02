@@ -118,18 +118,31 @@ public class SpritesController : MonoBehaviour
     }
 
     //-----------------------------------------------------------------------------------
+    // Funcion - Reproducir Muerte
+
+    public void PlayDeath()
+    {
+        //Activamos trigger de Muerte
+        mAnimator.SetTrigger("Die");
+    }
+
+    //-----------------------------------------------------------------------------------
     // Funcion - Cuando El Mouse pasa por encima o sale
 
     private void OnMouseOver()
     {
         mSrenderer.color = draggedColor;
 
-        //Si NO esta siendo arrastrado
-        if (!isBeingDragged)
+        if (GetComponent<ChickenController>().isAlive)
         {
-            //Mostramos la UI de informacion del Pollo
-            chickenUI.ShowChickenInfo();
+            //Si NO esta siendo arrastrado
+            if (!isBeingDragged)
+            {
+                //Mostramos la UI de informacion del Pollo
+                chickenUI.ShowChickenInfo();
+            }
         }
+        
     }
 
     private void OnMouseExit()

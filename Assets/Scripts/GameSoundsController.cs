@@ -12,6 +12,7 @@ public class GameSoundsController : MonoBehaviour
     [SerializeField] private AudioClip oldMachineCashOutSound;
     [SerializeField] private AudioClip chickenSoldCashOutSound;
     [SerializeField] private AudioClip[] arrChickenSoldScreamsSound = new AudioClip[2];
+    [SerializeField] private AudioClip chickenDeathSound;
 
     //-----------------------------------------------------------------
 
@@ -55,5 +56,11 @@ public class GameSoundsController : MonoBehaviour
     {
         //Reproducimos sonido de Venta de Pollo
         mAudioSource.PlayOneShot(oldMachineCashOutSound, 0.35f);
+    }
+
+    public void PlayChickenDeathSound()
+    {
+        //Reproducimos sonido de Venta de Pollo
+        mAudioSource.PlayOneShot(chickenDeathSound, 0.50f);
     }
 }

@@ -11,6 +11,8 @@ public class ChickenController : MonoBehaviour
     [HideInInspector] public bool fightingFlag = false;
     [HideInInspector] public bool sleepingFlag = false;
 
+    [HideInInspector] public bool isAlive = true;
+
     //Flag - esta en zona de venta
     private bool bInBillingZone;
 
@@ -53,12 +55,32 @@ public class ChickenController : MonoBehaviour
     {
         //Definimos un nuevo destino aleatorio para la gallina
         mSelfMovementToTarget.SetNewRandomWaypoint();
+
+        //Agregamos Funcion Delegado al Evento de Pollo vendido
+        GameManager.Instance.OnChickenSold += OnChickenSoldDelegate;
+    }
+
+    //-----------------------------------------------------------------------------
+
+    private void OnChickenSoldDelegate(int chickenPrice)
+    {
+        //Hacemos que las gallinas se muevan mas rapido por 2 segundos
+        //como consecuencia de ver morir a su amigo
+        mSelfMovementToTarget.MultiplySpeedTemporary(2);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        //Si el HP del pollito llega  0
+        if (mChickenStats.hp == 0)
+        {
+            // Desactivamos Flag de "esta vivo"
+            isAlive = false;
+
+            //Reproducimos las Acciones de Muerte.
+            Die();
+        }
     }
 
     private void FixedUpdate()
@@ -91,8 +113,11 @@ public class ChickenController : MonoBehaviour
         {
             //Escapa
 
+            //Reproducimos sonido de Alas
+            mAudioSource.PlayOneShot(clipWings, 0.50f);
+
             //Reproducimos sonido de Escape
-            mAudioSource.PlayOneShot(clipEscaped, 0.70f);
+            mAudioSource.PlayOneShot(clipEscaped, 0.60f);
 
             //Multiplicamos la velocidad por 1.5 segundos...
             mSelfMovementToTarget.MultiplySpeedTemporary(0.75f);
@@ -101,8 +126,8 @@ public class ChickenController : MonoBehaviour
         //Caso contrario
         else
         {
-            //Reproducimos sonido de Escape
-            mAudioSource.PlayOneShot(clipDragged, 0.70f);
+            //Reproducimos sonido de Agarre
+            mAudioSource.PlayOneShot(clipDragged, 0.25f);
 
             //Agarramos a la gallina
             mDraggable.Catch();
@@ -176,5 +201,17 @@ public class ChickenController : MonoBehaviour
             //Desactivamos flag de "en zona de venta"
             bInBillingZone = false;
         }
+    }
+
+    public void Die()
+    {
+        //Llamamos al Evento de Pollito muerto
+        GameManager.Instance.TriggerEvent_OnChickenDeath();
+
+        //Hacemos que se reproduzca el Sonido de Pollito muerto
+        GameSoundsController.Instance.PlayChickenDeathSound();
+
+        //Reproducimos la Animacion de Muerte
+        mSpritesController.PlayDeath();
     }
 }

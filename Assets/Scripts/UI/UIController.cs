@@ -12,12 +12,14 @@ public class UIController : MonoBehaviour
     [SerializeField] private Button btnLightSwitch;
     [SerializeField] private Button btnSleepOrder;
     [SerializeField] private Button btnMoreFoodOrder;
+    [SerializeField] private Button btnMoreGasOrder;
     [SerializeField] private GameObject LightPanel;
 
 
     [Header("Medidores")]
     [SerializeField] private Slider FoodSlider;
     [SerializeField] private Slider GasSlider;
+    [SerializeField] private Slider TemperatureSlider;
 
     [SerializeField] private Food[] arrFoods;
 
@@ -38,6 +40,7 @@ public class UIController : MonoBehaviour
         btnLightSwitch.onClick.AddListener(ToggleLight);
         btnSleepOrder.onClick.AddListener(ToggleSleepOrder);
         btnMoreFoodOrder.onClick.AddListener(AskForFood);
+        btnMoreGasOrder.onClick.AddListener(AskForGas);
 
         //Obtenemos Array con todos los Food
         arrFoods = FindObjectsByType<Food>(FindObjectsSortMode.None);
@@ -83,6 +86,12 @@ public class UIController : MonoBehaviour
         {
             SceneManager.LoadScene("Menu");
         }
+
+        //El Gas (y la temperatura) se recue constantemente...
+        GasSlider.value -= 3.5f * Time.deltaTime;
+        
+        // Igualamos el valor de la temperatura al del Gas (por ahora)
+        TemperatureSlider.value= GasSlider.value;
     }
 
     //----------------------------------------------------------------------------------
@@ -126,6 +135,15 @@ public class UIController : MonoBehaviour
     {
         //Disparamos el Evento de "Pedir mas comida"
         GameManager.Instance.TriggerEvent_FoodRefill();
+    }
+
+    public void AskForGas()
+    {
+        //Disparamos el Evento de "Pedir mas comida"
+        GameManager.Instance.TriggerEvent_GasRefill();
+
+        //Llevamos el valor del Slider al maximo
+        GasSlider.value = GasSlider.maxValue;
     }
 
 

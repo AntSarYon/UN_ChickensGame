@@ -10,6 +10,7 @@ public class SpritesController : MonoBehaviour
     private Color defaultColor;
     private Color draggedColor = Color.gray;
     private Color fightingColor = Color.red;
+    private Color deathColor = Color.blue;
 
     //Vector con la escala original del pollito
     private Vector3 originalScale;
@@ -124,6 +125,9 @@ public class SpritesController : MonoBehaviour
     {
         //Activamos trigger de Muerte
         mAnimator.SetTrigger("Die");
+
+        //Lo pintamos de Azul
+        mSrenderer.color = deathColor;
     }
 
     //-----------------------------------------------------------------------------------
@@ -147,11 +151,15 @@ public class SpritesController : MonoBehaviour
 
     private void OnMouseExit()
     {
-        //Asignamos el color de por defecto;
-        mSrenderer.color = defaultColor;
+        if (GetComponent<ChickenController>().isAlive)
+        {
+            //Asignamos el color de por defecto;
+            mSrenderer.color = defaultColor;
 
-        //Desactivamos la UI de informacion del Pollo
-        chickenUI.HideChickenInfo();
+            //Desactivamos la UI de informacion del Pollo
+            chickenUI.HideChickenInfo();
+        }
+        
     }
 
     //-----------------------------------------------------------------------------------
@@ -159,9 +167,12 @@ public class SpritesController : MonoBehaviour
 
     private void OnMouseDown()
     {
-        //Asignamos el color de agarre;
-        mSrenderer.color = draggedColor;
-
+        if (GetComponent<ChickenController>().isAlive)
+        {
+            //Asignamos el color de agarre;
+            mSrenderer.color = draggedColor;
+        }
+            
         //Le asignamos la escala de Agarre
         transform.localScale = draggedScale;
 
@@ -184,8 +195,12 @@ public class SpritesController : MonoBehaviour
 
     private void OnMouseUp()
     {
-        //Asignamos el color de por defecto;
-        mSrenderer.color = defaultColor;
+        if (GetComponent<ChickenController>().isAlive)
+        {
+            //Asignamos el color de por defecto;
+            mSrenderer.color = defaultColor;
+        }
+            
 
         //Le devolvemos la escala orignal
         transform.localScale = originalScale;
@@ -198,38 +213,42 @@ public class SpritesController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        //Si chocamos con otra Gallina...
-        if (collision.gameObject.CompareTag("Chicken"))
+        if (GetComponent<ChickenController>().isAlive)
         {
-            //Si los Stats del Pollo indican que esta estresado...
-            if (mChickenStats.estres > mChickenStats.estresParaPelear)
+            //Si chocamos con otra Gallina...
+            if (collision.gameObject.CompareTag("Chicken"))
             {
-                //Asignamos el color de agarre;
-                mSrenderer.color = fightingColor;
-
-                //Mostramos la UI de la pelea
-                chickenUI.ShowFightInfo();
-            }
-
-            //En caso el nivel de estres no esté en el Nivel...
-            else
-            {
-                //Obtenemos los Stats del pollo con el que yhemos chocado
-                ChickenStats otherChickenStats = collision.gameObject.GetComponent<ChickenStats>();
-
-                //Revisamos si el Estres del otro Pollo essta en el limite...
-                if (otherChickenStats.estres >= otherChickenStats.estresParaPelear)
+                //Si los Stats del Pollo indican que esta estresado...
+                if (mChickenStats.estres > mChickenStats.estresParaPelear)
                 {
-                    //De ser el caso...
                     //Asignamos el color de agarre;
                     mSrenderer.color = fightingColor;
 
                     //Mostramos la UI de la pelea
                     chickenUI.ShowFightInfo();
                 }
-            }
 
+                //En caso el nivel de estres no esté en el Nivel...
+                else
+                {
+                    //Obtenemos los Stats del pollo con el que yhemos chocado
+                    ChickenStats otherChickenStats = collision.gameObject.GetComponent<ChickenStats>();
+
+                    //Revisamos si el Estres del otro Pollo essta en el limite...
+                    if (otherChickenStats.estres >= otherChickenStats.estresParaPelear)
+                    {
+                        //De ser el caso...
+                        //Asignamos el color de agarre;
+                        mSrenderer.color = fightingColor;
+
+                        //Mostramos la UI de la pelea
+                        chickenUI.ShowFightInfo();
+                    }
+                }
+
+            }
         }
+
 
         //Si chocamos con un contenedor de Comida o Agua
         else if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
@@ -251,15 +270,19 @@ public class SpritesController : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        //Si ha dejado de chocar con otro pollito
-        if (collision.gameObject.CompareTag("Chicken"))
+        if (GetComponent<ChickenController>().isAlive)
         {
-            //Asignamos el color de agarre;
-            mSrenderer.color = defaultColor;
+            //Si ha dejado de chocar con otro pollito
+            if (collision.gameObject.CompareTag("Chicken"))
+            {
+                //Asignamos el color de agarre;
+                mSrenderer.color = defaultColor;
 
-            //Ocultamos la UI de la pelea
-            chickenUI.HideFightInfo();
+                //Ocultamos la UI de la pelea
+                chickenUI.HideFightInfo();
+            }
         }
+        
             
     }
 

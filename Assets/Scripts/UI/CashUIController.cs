@@ -26,6 +26,7 @@ public class CashUIController : MonoBehaviour
     {
         GameManager.Instance.OnChickenSold += OnChickenSoldDelegate;
         GameManager.Instance.OnFoodRefill += OnFoodRefillDelegate;
+        GameManager.Instance.OnGasRefill += OnGasRefillDelegate;
 
         //Traemos la cantidad de Dinero disponible
         UpdateCashAmount();
@@ -33,7 +34,14 @@ public class CashUIController : MonoBehaviour
 
     //------------------------------------------------------------------------
 
-    private void OnChickenSoldDelegate(int chickenPrice)
+    private void OnGasRefillDelegate()
+    {
+        mAnimator.Play("reduce");
+    }
+
+    //------------------------------------------------------------------------
+
+    private void OnChickenSoldDelegate(float chickenPrice)
     {
         mAnimator.Play("increase");
     }

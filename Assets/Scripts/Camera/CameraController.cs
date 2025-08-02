@@ -35,7 +35,7 @@ public class CameraController : MonoBehaviour
 
     // ------------------------------------------------------------------------
 
-    private void OnChickenSoldDelegate(int chickenValue)
+    private void OnChickenSoldDelegate(float chickenValue)
     {
         //Reproducimos Animacion de CashoutShake
         mAnimator.Play("CashoutShake");

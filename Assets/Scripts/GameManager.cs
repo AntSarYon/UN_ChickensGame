@@ -15,10 +15,13 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public int currentDeathChicken;
 
     //Evento - Pollo vendido
-    public UnityAction<int> OnChickenSold;
+    public UnityAction<float> OnChickenSold;
 
     //Evento - Pollo vendido
     public UnityAction OnFoodRefill;
+
+    //Evento - Pollo vendido
+    public UnityAction OnGasRefill;
 
     //Evento - Pollo vendido
     public UnityAction OnChickenDeath;
@@ -58,7 +61,7 @@ public class GameManager : MonoBehaviour
 
     public void TriggerEvent_ChickenSold(int chickenValue)
     {
-        currentCash += chickenValue;
+        currentCash += 5 * chickenValue;
 
         //Disparamos el Evento de Galiina vendida
         //enviando el Valor de la Gallina a los Delegados
@@ -70,7 +73,7 @@ public class GameManager : MonoBehaviour
 
     public void TriggerEvent_FoodRefill()
     {
-        currentCash -= 50;
+        currentCash -= 30;
 
         //Hacemos que el SoundsManager reproduzca sonido de Compra de Recurso
         GameSoundsController.Instance.PlayResourceBoughtSound();
@@ -80,13 +83,22 @@ public class GameManager : MonoBehaviour
         OnFoodRefill?.Invoke();
     }
 
+    public void TriggerEvent_GasRefill()
+    {
+        currentCash -= 50;
+
+        //Hacemos que el SoundsManager reproduzca sonido de Compra de Recurso
+        GameSoundsController.Instance.PlayResourceBoughtSound();
+
+        //Disparamos el Evento de Refill de Comida
+        //enviando el Valor de la Gallina a los Delegados
+        OnGasRefill?.Invoke();
+    }
+
     public void TriggerEvent_OnChickenDeath()
     {
         //Incrementamos la cantidad de Pollitos Muertos.
         currentDeathChicken++;
-
-        //Hacemos que el SoundsManager reproduzca sonido de Compra de Recurso
-        GameSoundsController.Instance.PlayResourceBoughtSound();
 
         //Disparamos el Evento de Refill de Comida
         //enviando el Valor de la Gallina a los Delegados

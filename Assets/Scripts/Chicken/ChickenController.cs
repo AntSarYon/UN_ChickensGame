@@ -62,7 +62,7 @@ public class ChickenController : MonoBehaviour
 
     //-----------------------------------------------------------------------------
 
-    private void OnChickenSoldDelegate(int chickenPrice)
+    private void OnChickenSoldDelegate(float chickenPrice)
     {
         //Hacemos que las gallinas se muevan mas rapido por 2 segundos
         //como consecuencia de ver morir a su amigo
@@ -72,15 +72,20 @@ public class ChickenController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Si el HP del pollito llega  0
-        if (mChickenStats.hp == 0)
+        //Si el pollito sigue vivo...
+        if (isAlive)
         {
-            // Desactivamos Flag de "esta vivo"
-            isAlive = false;
+            //Si el HP del pollito llega  0
+            if (mChickenStats.hp == 0)
+            {
+                // Desactivamos Flag de "esta vivo"
+                isAlive = false;
 
-            //Reproducimos las Acciones de Muerte.
-            Die();
+                //Reproducimos las Acciones de Muerte.
+                Die();
+            }
         }
+
     }
 
     private void FixedUpdate()
@@ -168,7 +173,7 @@ public class ChickenController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        
+
     }
 
     private void OnCollisionStay2D(Collision2D collision)

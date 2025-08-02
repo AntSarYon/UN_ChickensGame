@@ -8,6 +8,7 @@ public class SelfMovementToTarget : MonoBehaviour
 
     //Velocidad de movimiento
     [SerializeField] private float moveSpeed;
+    private float speedMultiplier;
 
     //Direccion del movimiento
     private Vector2 moveDirection;
@@ -47,6 +48,9 @@ public class SelfMovementToTarget : MonoBehaviour
         mRb = GetComponent<Rigidbody2D>();
         mSpritesController = GetComponent<SpritesController>();
         mChickenStats = GetComponent<ChickenStats>();
+
+        //Inicializamos el multiplicador de velocidad en 1
+        speedMultiplier = 1;
     }
 
     //-----------------------------------------------------------------------------------
@@ -131,7 +135,7 @@ public class SelfMovementToTarget : MonoBehaviour
         else
         {
             //Asignamos Velocidad y direccion en base a los calculos anteriores sobre el destino (Target o Waypoint)
-            mRb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed;
+            mRb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed * speedMultiplier;
 
             //Si no hay un Target (movimiento aleatorio)
             if (!target)
@@ -154,6 +158,25 @@ public class SelfMovementToTarget : MonoBehaviour
     {
         //Definimos un nuevo Destino
         randomWaypoint = new Vector2(Random.Range(-maxXDistance, maxXDistance+1), Random.Range(-maxYDistance, maxYDistance + 1));
+    }
+
+    //-----------------------------------------------------------------------------------
+    // FUNCION - Modificamos la velocidad de movimiento temporalmente
+    public void MultiplySpeedTemporary(float timeForRun)
+    {
+        //Modificamos el multiplicador de velocidad a 3
+        speedMultiplier = 3.25f;
+
+        //Devolveremos la velocidad a la normalidad tras haber pasado X segundos.
+        Invoke(nameof(SetSpeedMultiplierBackToNormal), timeForRun);
+    }
+
+    //-----------------------------------------------------------------------------------
+    // FUNCION - Devolver el multiplicador de velocidad a 1 
+    public void SetSpeedMultiplierBackToNormal()
+    {
+        //Devolvemos el multiplicador de velocidad a 1
+        speedMultiplier = 1;
     }
 
     #endregion

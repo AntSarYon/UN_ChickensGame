@@ -11,6 +11,12 @@ public class GameManager : MonoBehaviour
     //Evento - Pollo vendido
     public UnityAction<int> OnChickenSold;
 
+    //Evento - Pollo vendido
+    public UnityAction OnFoodRefill;
+
+    //Evento - Pollo vendido
+    //public UnityAction<int> OnChickenSold;
+
     //---------------------------------------------------
     void Awake()
     {
@@ -40,5 +46,18 @@ public class GameManager : MonoBehaviour
         //Disparamos el Evento de Galiina vendida
         //enviando el Valor de la Gallina a los Delegados
         OnChickenSold?.Invoke(chickenValue);
+    }
+
+    //-----------------------------------------------------------
+    // Funcion de Evento - Food 
+
+    public void TriggerEvent_FoodRefill()
+    {
+        //Hacemos que el SoundsManager reproduzca sonido de Compra de Recurso
+        GameSoundsController.Instance.PlayResourceBoughtSound();
+
+        //Disparamos el Evento de Refill de Comida
+        //enviando el Valor de la Gallina a los Delegados
+        OnFoodRefill?.Invoke();
     }
 }

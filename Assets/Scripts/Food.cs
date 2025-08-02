@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,7 @@ public class Food : MonoBehaviour
 
     //Referencia a Componentes
     private Collider2D mCollider;
+    private Animator mAnimator;
 
     //Lista de GameObjects (Pollos) que estan chocando con la Comida
     private List<GameObject> chickensList = new List<GameObject>();
@@ -20,13 +22,34 @@ public class Food : MonoBehaviour
 
     void Awake()
     {
+        //Obtenemos referencia a componentes
         mCollider = GetComponent<Collider2D>();
+        mAnimator = GetComponent<Animator>();
     }
+
+    //--------------------------------------------------------------------------------------
 
     void Start()
     {
+        //Asignamos funcion Delegado para el evento de FoodRefill
+        GameManager.Instance.OnFoodRefill += OnFoodRefillDelegate;
+
         //Traemos los parametros del RulesManager
         foodDecreaseSpeed = GameRulesManager.instance.foodDecreaseSpeed;
+    }
+
+    //--------------------------------------------------------------------------------------
+
+    private void OnFoodRefillDelegate()
+    {
+        //Reproducimos Animacion
+        mAnimator.Play("refill");
+
+        //Llevamnos el valor del Slider al Maximo
+        mFoodLevelSlider.value = mFoodLevelSlider.maxValue;
+
+        
+
     }
 
     //--------------------------------------------------------------------------------------

@@ -23,8 +23,6 @@ public class UIController : MonoBehaviour
     //Nivel de comida actual
     private float currentFoodLevel;
 
-    [SerializeField] private TextMeshProUGUI txtMoreFood;
-
     #endregion
 
     //----------------------------------------------------------------------------------
@@ -59,8 +57,6 @@ public class UIController : MonoBehaviour
         //Asignamos que el nivel de Comida actual es el maximo
         currentFoodLevel = maxValueForGeneralFoodSlider;
 
-        //Desactivamos el mensaje de "Comida solicitada"
-        txtMoreFood.gameObject.SetActive(false);
 
     }
 
@@ -130,17 +126,10 @@ public class UIController : MonoBehaviour
         //Hacemos que el boton no sea interactuable...
         btnMoreFoodOrder.interactable = false;
 
-        //Sctivamos el Mensaje...
-        txtMoreFood.gameObject.SetActive(true);
-
-        //Desactivamos el mensaje tras 4 segundos
-        Invoke(nameof(HideFoodMessage), 4);
+        //Disparamos el Evento de "Pedir mas comida"
+        GameManager.Instance.TriggerEvent_FoodRefill();
     }
 
-    public void HideFoodMessage()
-    {
-        txtMoreFood.gameObject.SetActive(false);
-    }
 
     #endregion
 }

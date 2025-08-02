@@ -14,11 +14,23 @@ public class ChickenController : MonoBehaviour
     //Flag - esta en zona de venta
     private bool bInBillingZone;
 
+    //Probabilidad de que escape del Drag
+    [Header("Probabilidad de que la Gallina escape")]
+    [Range(0.00f,1.00f)] [SerializeField] private float dragEscapeProb;
+
     // COMPONENTES
     private ChickenStats mChickenStats;
     private SpritesController mSpritesController;
     private Draggable mDraggable;
     private SelfMovementToTarget mSelfMovementToTarget;
+
+    private AudioSource mAudioSource;
+
+    // Clips de Audio del Pollito:
+    [Header("Clips de Audio")]
+    [SerializeField] private AudioClip clipDragged;
+    [SerializeField] private AudioClip clipEscaped;
+    [SerializeField] private AudioClip clipWings;
 
 
     //-----------------------------------------------------------------------------
@@ -30,6 +42,8 @@ public class ChickenController : MonoBehaviour
         mDraggable = GetComponent<Draggable>();
         mChickenStats = GetComponent<ChickenStats>();
         mSelfMovementToTarget = GetComponent<SelfMovementToTarget>();
+
+        mAudioSource = GetComponent<AudioSource>();
     }
 
     //-----------------------------------------------------------------------------
@@ -69,8 +83,30 @@ public class ChickenController : MonoBehaviour
 
     private void OnMouseDown()
     {
-        //Agarramos a la gallina
-        mDraggable.Catch();
+        //Obtenemos un valor random
+        float randomProb = Random.Range(0.00f, 1.00f);
+
+        //Si la probabilidad random es menor al margen definido
+        if (randomProb <= dragEscapeProb)
+        {
+            //Escapa
+
+            //Reproducimos sonido de Escape
+            mAudioSource.PlayOneShot(clipEscaped, 0.70f);
+
+            //Multiplicamos la velocidad por 1.5 segundos...
+            mSelfMovementToTarget.MultiplySpeedTemporary(0.75f);
+
+        }
+        //Caso contrario
+        else
+        {
+            //Reproducimos sonido de Escape
+            mAudioSource.PlayOneShot(clipDragged, 0.70f);
+
+            //Agarramos a la gallina
+            mDraggable.Catch();
+        }
     }
 
     //-----------------------------------------------------------------------------------
@@ -78,8 +114,13 @@ public class ChickenController : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        //Movemos la Posicion del pollo
-        mDraggable.MovePosition();
+        //Si el flag de "Esta siendo Arrastrado" esta activo
+        if (mDraggable.bIsBeingDragged)
+        {
+            //Movemos la Posicion del pollo
+            mDraggable.MovePosition();
+        }
+        
     }
 
     //-----------------------------------------------------------------------------------

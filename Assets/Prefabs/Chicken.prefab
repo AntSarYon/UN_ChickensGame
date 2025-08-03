@@ -768,7 +768,7 @@ MonoBehaviour:
   fightingFlag: 0
   sleepingFlag: 0
   isAlive: 1
-  dragEscapeProb: 0.5
+  dragEscapeProb: 0.35
   clipDragged: {fileID: 8300000, guid: e4cbc3d12676ce345a7581c043431c1b, type: 3}
   clipEscaped: {fileID: 8300000, guid: a6ca57d5c41a17f40af3cf6c5d728ab5, type: 3}
   clipWings: {fileID: 8300000, guid: 2786bd1d71a11a1459338181fbdae2ae, type: 3}

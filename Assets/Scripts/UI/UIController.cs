@@ -13,6 +13,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private Button btnSleepOrder;
     [SerializeField] private Button btnMoreFoodOrder;
     [SerializeField] private Button btnMoreGasOrder;
+    [SerializeField] private Button btnAddNewChicken;
     [SerializeField] private GameObject LightPanel;
 
 
@@ -41,6 +42,7 @@ public class UIController : MonoBehaviour
         btnSleepOrder.onClick.AddListener(ToggleSleepOrder);
         btnMoreFoodOrder.onClick.AddListener(AskForFood);
         btnMoreGasOrder.onClick.AddListener(AskForGas);
+        btnAddNewChicken.onClick.AddListener(AskForChicken);
 
         //Obtenemos Array con todos los Food
         arrFoods = FindObjectsByType<Food>(FindObjectsSortMode.None);
@@ -144,6 +146,14 @@ public class UIController : MonoBehaviour
 
         //Llevamos el valor del Slider al maximo
         GasSlider.value = GasSlider.maxValue;
+    }
+
+    public void AskForChicken()
+    {
+        //Disparamos el Evento de "Pedir mas comida"
+        GameManager.Instance.TriggerEvent_GenerateNewChicken();
+
+
     }
 
 

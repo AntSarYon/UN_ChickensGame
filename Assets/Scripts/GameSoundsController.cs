@@ -14,6 +14,9 @@ public class GameSoundsController : MonoBehaviour
     [SerializeField] private AudioClip[] arrChickenSoldScreamsSound = new AudioClip[2];
     [SerializeField] private AudioClip chickenDeathSound;
 
+    [SerializeField] private AudioClip[] arrChickenSpawnSounds = new AudioClip[2];
+    [SerializeField] private AudioClip bubbleSound;
+
     //-----------------------------------------------------------------
 
     void Awake()
@@ -62,5 +65,20 @@ public class GameSoundsController : MonoBehaviour
     {
         //Reproducimos sonido de Venta de Pollo
         mAudioSource.PlayOneShot(chickenDeathSound, 0.50f);
+    }
+
+    public void PlayChickenSpawnSound()
+    {
+        //Obtenemos indice aleatorio para el grito del pollo
+        int screamIndex = Random.Range(0, 2);
+
+        //Reproducimos sonido de Recurso Comprado
+        mAudioSource.PlayOneShot(resourceBoughtSound, 0.35f);
+
+        //Reproducimos sonido de Burbuja
+        mAudioSource.PlayOneShot(bubbleSound, 0.40f);
+
+        //Reproducimos sonido de Grito de Pollo sefgun el indice
+        mAudioSource.PlayOneShot(arrChickenSpawnSounds[screamIndex], 0.65f);
     }
 }

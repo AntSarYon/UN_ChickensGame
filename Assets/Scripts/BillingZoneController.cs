@@ -98,7 +98,20 @@ public class BillingZoneController : MonoBehaviour
         if (bChickenDraggedInSaleZone || chickenForSale != null)
         {
             //Decimos al GameManager que dispare el evento de Pollo vendido
-            GameManager.Instance.TriggerEvent_ChickenSold(chickenForSale.peso);
+
+            //Si el Pollo en cuestion esta vivo...
+            if (chickenForSale.GetComponent<ChickenController>().isAlive)
+            {
+                //Lo vendemos en base a su Peso
+                GameManager.Instance.TriggerEvent_ChickenSold(chickenForSale.peso);
+            }
+            //Si el Pollo esta muerto...
+            else
+            {
+                //Lo vendemos con un valor de 0
+                GameManager.Instance.TriggerEvent_ChickenSold(0);
+            }
+            
 
             //Disparamos el efecto de Billete (venta)
             mEffectAnimator.Play("Sold");

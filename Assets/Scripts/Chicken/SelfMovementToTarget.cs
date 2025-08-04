@@ -127,6 +127,9 @@ public class SelfMovementToTarget : MonoBehaviour
         //Si el Pollito esta muerto...
         if (!mChickenController.isAlive)
         {
+            //AZsignamos 0 velocidad
+            mRb.velocity = Vector2.zero;
+
             return;
         }
         //En caso este vivo

@@ -10,6 +10,7 @@ public class SpritesController : MonoBehaviour
     private Color defaultColor;
     private Color draggedColor = Color.gray;
     private Color fightingColor = Color.red;
+    private Color starvingColor = Color.red;
     private Color deathColor = Color.blue;
 
     //Vector con la escala original del pollito
@@ -101,6 +102,13 @@ public class SpritesController : MonoBehaviour
         {
             LookAtLeft();
         }
+
+        //Si el flag de "Starving" esta activo...
+        if (GetComponent<ChickenController>().isAlive && mChickenStats.starvingFlag)
+        {
+            //Hacemos que el Pollito este de rojo
+            mSrenderer.color = starvingColor;
+        }
     }
 
     //-----------------------------------------------------------------------------------
@@ -125,6 +133,9 @@ public class SpritesController : MonoBehaviour
     {
         //Activamos trigger de Muerte
         mAnimator.SetTrigger("Die");
+
+        //Desactivamos la UI de informacion del Pollo
+        chickenUI.HideChickenInfo();
 
         //Lo pintamos de Azul
         mSrenderer.color = deathColor;
@@ -253,6 +264,9 @@ public class SpritesController : MonoBehaviour
         //Si chocamos con un contenedor de Comida o Agua
         else if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
         {
+            //Si empieza a comer o tomar agua, su color se normaliza
+            mSrenderer.color = defaultColor;
+
             //Si el objeto colisionado esta hacia la derecha
             if (collision.transform.position.x > transform.position.x)
             {

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Food : MonoBehaviour
 {
     public Slider mFoodLevelSlider;
+    public Button btnReloadFood;
 
     //Referencia a Componentes
     private Collider2D mCollider;
@@ -36,6 +37,32 @@ public class Food : MonoBehaviour
 
         //Traemos los parametros del RulesManager
         foodDecreaseSpeed = GameRulesManager.instance.foodDecreaseSpeed;
+
+        //Agregamos Listener al Boton de Recarga individual
+        btnReloadFood.onClick.AddListener(ReloadSpecificFood);
+
+        //Desactivamos el Boton (no se visualizará)
+        btnReloadFood.gameObject.SetActive(false);
+    }
+
+    //--------------------------------------------------------------------------------------
+
+    public void ReloadSpecificFood()
+    {
+        //Lanzamos sonido de Gasto...
+        GameSoundsController.Instance.PlayResourceBoughtSound();
+
+        //Reproducimos Animacion
+        mAnimator.Play("refill");
+
+        //Llevamnos el valor del Slider al Maximo
+        mFoodLevelSlider.value = mFoodLevelSlider.maxValue;
+
+        //Reducimos el Cash en 5
+        GameManager.Instance.currentCash -= 5;
+
+        //Reproducimos la animacion de Reduccion de Cash
+        FindObjectOfType<CashUIController>().OnFoodRefillDelegate();
     }
 
     //--------------------------------------------------------------------------------------
@@ -47,8 +74,6 @@ public class Food : MonoBehaviour
 
         //Llevamnos el valor del Slider al Maximo
         mFoodLevelSlider.value = mFoodLevelSlider.maxValue;
-
-        
 
     }
 
@@ -90,5 +115,25 @@ public class Food : MonoBehaviour
                 chickensList.Remove(collision.gameObject);
             }
         }
+    }
+
+    private void OnMouseOver()
+    {
+        //Activamos el Boton (no se visualizará)
+        btnReloadFood.gameObject.SetActive(true);
+        btnReloadFood.interactable = true;
+    }
+
+    private void OnMouseDown()
+    {
+        ReloadSpecificFood();
+    }
+
+
+
+    private void OnMouseExit()
+    {
+        //Desactivamos el Boton (no se visualizará)
+        btnReloadFood.gameObject.SetActive(false);
     }
 }

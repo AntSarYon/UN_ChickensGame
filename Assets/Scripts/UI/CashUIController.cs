@@ -57,7 +57,7 @@ public class CashUIController : MonoBehaviour
         mAnimator.Play("increase");
     }
 
-    private void OnFoodRefillDelegate()
+    public void OnFoodRefillDelegate()
     {
         mAnimator.Play("reduce");
     }

@@ -118,6 +118,7 @@ public class MenuRulesController : MonoBehaviour
         GameRulesManager.instance.estresParaPelear = sliderEstresPelear.value;
         GameRulesManager.instance.velocidadIncrementoPeso = sliderAumentoPeso.value;
         GameRulesManager.instance.velocidadReduccionPeso = sliderReduccionPeso.value;
+        GameRulesManager.instance.velocidadReduccionHP = sliderReduccionSalud.value;
         GameRulesManager.instance.foodDecreaseSpeed = sliderConsumoAlimento.value;
         GameRulesManager.instance.startingTime = (int)sliderHoraInicio.value;
         GameRulesManager.instance.finishTime = (int)sliderHoraFin.value;

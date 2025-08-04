@@ -6,6 +6,7 @@ public class ChickenStats : MonoBehaviour
 {
     //Flags de Estado del Pollito
     [HideInInspector] public bool eatingFlag = false;
+    [HideInInspector] public bool starvingFlag = false;
     [HideInInspector] public bool drinkingFlag = false;
     [HideInInspector] public bool stressfulFlag = false;
     [HideInInspector] public bool fightingFlag = false;
@@ -57,7 +58,7 @@ public class ChickenStats : MonoBehaviour
         hp = 100;
         hambre = Random.Range(35.00f, 80.00f);
         estres = Random.Range(35.00f, 80.00f);
-        peso = Random.Range(2.00f, 7.00f);
+        peso = 1; // El Peso empieza en 1 siempre // Random.Range(1.00f, 7.00f);
 
         //Funcion Delegafa del Evento "Orden de Dormir"
         DayStatusManager.instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
@@ -83,7 +84,7 @@ public class ChickenStats : MonoBehaviour
             hambre = Mathf.Clamp(hambre, 0.00f, 100.00f);
 
             peso += velocidadIncrementoPeso * Time.deltaTime;
-            peso = Mathf.Clamp(peso, 2.00f, 7.00f);
+            peso = Mathf.Clamp(peso, 1.00f, 7.00f);
         }
         //Si el Flag de "Comiendo"; esta desactivado
         else
@@ -93,12 +94,12 @@ public class ChickenStats : MonoBehaviour
             hambre = Mathf.Clamp(hambre, 0.00f, 100.00f);
 
             peso -= velocidadReduccionPeso * Time.deltaTime;
-            peso = Mathf.Clamp(peso, 2.00f, 7.00f);
+            peso = Mathf.Clamp(peso, 1.00f, 7.00f);
         }
 
 
         //Si el flag de "peleando" esta activo
-        if (fightingFlag)
+        if (fightingFlag || starvingFlag)
         {
             //Incrementamos la salud Progresivamente
             hp -= velocidadReduccionHP * Time.deltaTime;
@@ -118,6 +119,18 @@ public class ChickenStats : MonoBehaviour
             //Aumentamos el estres Progresivamente
             estres += velocidadIncrementoEstres * Time.deltaTime;
             estres = Mathf.Clamp(estres, 0.00f, 100.00f);
+        }
+
+        //Si el Hambre esta al maximo...
+        if (hambre == 100)
+        {
+            //Activamos el flag de "Starving" 
+            starvingFlag = true;
+        }
+        else
+        {
+            //Activamos el flag de "Starving" 
+            starvingFlag = false;
         }
 
     }
@@ -197,6 +210,20 @@ public class ChickenStats : MonoBehaviour
         }
     }
 
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        //Si el objeto con el que estamos colisionamos es Comida 
+        if (collision.gameObject.CompareTag("Food"))
+        {
+            //Si el Comedero esta vacio...
+            if (collision.gameObject.GetComponent<Food>().mFoodLevelSlider.value == 0)
+            {
+                //Desactivamos Flag de "Esta comiendo"
+                eatingFlag = false;
+            }
+        }
+    }
+
     private void OnCollisionExit2D(Collision2D collision)
     {
         //Si el objeto con el que colisionamos es otro Pollito
@@ -209,7 +236,7 @@ public class ChickenStats : MonoBehaviour
         //Si el objeto con el que colisionamos es otro Pollito
         else if (collision.gameObject.CompareTag("Food"))
         {
-            //Desactivamos Flag de "Esta peleando"
+            //Desactivamos Flag de "Esta comiendo"
             eatingFlag = false;
         }
 

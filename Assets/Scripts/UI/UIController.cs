@@ -24,6 +24,8 @@ public class UIController : MonoBehaviour
 
     [SerializeField] private Food[] arrFoods;
 
+    [SerializeField] private GameObject GameOverPanel;
+
     //Nivel de comida actual
     private float currentFoodLevel;
 
@@ -35,6 +37,9 @@ public class UIController : MonoBehaviour
 
     void Start()
     {
+        //El Panel de GameOver empieza desactivado
+        GameOverPanel.SetActive(false);
+
         //La luz inicia encendida
         TurnOnLight();
 
@@ -68,6 +73,12 @@ public class UIController : MonoBehaviour
 
     void Update()
     {
+        //Si ya hay GameOver...
+        if (GameManager.Instance.bGameOver)
+        {
+            GameOverPanel.SetActive(true);
+        }
+
         //Var temporal para el nuevo total de comida actual
         float newCurrentFoodLevel = 0;
 
@@ -90,7 +101,7 @@ public class UIController : MonoBehaviour
         }
 
         //El Gas (y la temperatura) se recue constantemente...
-        GasSlider.value -= 3.5f * Time.deltaTime;
+        GasSlider.value -= 2.75f * Time.deltaTime;
         
         // Igualamos el valor de la temperatura al del Gas (por ahora)
         TemperatureSlider.value= GasSlider.value;

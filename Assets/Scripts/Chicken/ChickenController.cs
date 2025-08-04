@@ -18,7 +18,9 @@ public class ChickenController : MonoBehaviour
 
     //Probabilidad de que escape del Drag
     [Header("Probabilidad de que la Gallina escape")]
-    [Range(0.00f,1.00f)] [SerializeField] private float dragEscapeProb;
+    [Range(0.00f,1.00f)] public float dragEscapeProb;
+    private float dragEscapedefaultProb;
+    private float dragEscapeMinProb = 0;
 
     // COMPONENTES
     private ChickenStats mChickenStats;
@@ -46,6 +48,10 @@ public class ChickenController : MonoBehaviour
         mSelfMovementToTarget = GetComponent<SelfMovementToTarget>();
 
         mAudioSource = GetComponent<AudioSource>();
+
+        //Almacenamos la probabilidad seteada de escape
+        dragEscapedefaultProb = dragEscapeProb;
+        dragEscapeMinProb = 0;
     }
 
     //-----------------------------------------------------------------------------
@@ -84,6 +90,20 @@ public class ChickenController : MonoBehaviour
                 //Reproducimos las Acciones de Muerte.
                 Die();
             }
+
+            //Si el pollito esta peleando
+            if (mChickenStats.fightingFlag)
+            {
+                //Su probabilidad de escape del Drag e sminima (0)
+                dragEscapeProb = dragEscapeMinProb;
+            }
+            //Si no esta peleand
+            else
+            {
+                //Regresamos la Probabilidad a la normalidad
+                dragEscapeProb = dragEscapedefaultProb;
+            }
+
         }
 
     }
@@ -210,6 +230,9 @@ public class ChickenController : MonoBehaviour
 
     public void Die()
     {
+        //Seteamos que la probabilidad de ecape este al 0%
+        dragEscapeProb = dragEscapeMinProb;
+
         //Llamamos al Evento de Pollito muerto
         GameManager.Instance.TriggerEvent_OnChickenDeath();
 

@@ -11,11 +11,10 @@ public class SpritesController : MonoBehaviour
     private Color draggedColor = Color.gray;
     private Color fightingColor = Color.red;
     private Color starvingColor = Color.red;
-    private Color deathColor = Color.blue;
 
     //Vector con la escala original del pollito
     private Vector3 originalScale;
-    private Vector3 draggedScale = new Vector3(0.80f, 0.80f, 0.80f);
+    private Vector3 draggedScale = new Vector3(1.35f, 1.35f, 1.35f);
 
     //Flag para reconocer si esta siendo arrastrado
     [SerializeField] private bool isBeingDragged;
@@ -76,7 +75,8 @@ public class SpritesController : MonoBehaviour
     {
         if (sleepOrder)
         {
-            mAnimator.Play("Sit");
+            mAnimator.SetTrigger("GoToSleep");
+            mAnimator.SetBool("Sleeping", true);
         }
 
         //Si se ha recibido al orden de dormir...
@@ -84,6 +84,7 @@ public class SpritesController : MonoBehaviour
         {
             //Actualizamos el SleepingFlag en base a si la orden esta activa o no
             mAnimator.SetTrigger("WakeUp");
+            mAnimator.SetBool("Sleeping", false);
         }
         
     }
@@ -92,16 +93,32 @@ public class SpritesController : MonoBehaviour
 
     void Update()
     {
-        //Si el movimiento se esta dando hacia la derecha...
-        if (mRigidbody.velocity.x > 0)
+        //Si el Pollito tiene Velocidad en su RB
+        if (mRigidbody.velocity != Vector2.zero)
         {
-            LookAtRight();
+            //Activams flag de animacion 'Is Walking'
+            mAnimator.SetBool("IsWalking",true);
+
+            //Si el movimiento se esta dando hacia la derecha...
+            if (mRigidbody.velocity.x > 0)
+            {
+                LookAtRight();
+            }
+            //Si el movimiento se esta dando hacia la izquierda...
+            else if (mRigidbody.velocity.x < 0)
+            {
+                LookAtLeft();
+            }
         }
-        //Si el movimiento se esta dando hacia la izquierda...
-        else if (mRigidbody.velocity.x < 0)
+
+        //En caso de que la Velocidad si sea igual a 0...
+        else
         {
-            LookAtLeft();
+            //Desactivamos flag de animacion 'Is Walking'
+            mAnimator.SetBool("IsWalking", false);
         }
+
+        
 
         //Si el flag de "Starving" esta activo...
         if (GetComponent<ChickenController>().isAlive && mChickenStats.starvingFlag)
@@ -117,13 +134,13 @@ public class SpritesController : MonoBehaviour
     public void LookAtLeft()
     {
         //El sprite se muestra en su sentido orignal
-        mSrenderer.flipX = false;
+        mSrenderer.flipX = true;
     }
 
     public void LookAtRight()
     {
         // Voltemos el Sprite (derecha)
-        mSrenderer.flipX = true;
+        mSrenderer.flipX = false;
     }
 
     //-----------------------------------------------------------------------------------
@@ -136,9 +153,6 @@ public class SpritesController : MonoBehaviour
 
         //Desactivamos la UI de informacion del Pollo
         chickenUI.HideChickenInfo();
-
-        //Lo pintamos de Azul
-        mSrenderer.color = deathColor;
     }
 
     //-----------------------------------------------------------------------------------
@@ -182,14 +196,15 @@ public class SpritesController : MonoBehaviour
         {
             //Asignamos el color de agarre;
             mSrenderer.color = draggedColor;
+
+            //Le asignamos la escala de Agarre
+            transform.localScale = draggedScale;
+
+            //Activamos Flag de "esta siendo arrastrado"
+            isBeingDragged = true;
+
         }
             
-        //Le asignamos la escala de Agarre
-        transform.localScale = draggedScale;
-
-        //Activamos Flag de "esta siendo arrastrado"
-        isBeingDragged = true;
-
     }
 
     //-----------------------------------------------------------------------------------
@@ -210,14 +225,15 @@ public class SpritesController : MonoBehaviour
         {
             //Asignamos el color de por defecto;
             mSrenderer.color = defaultColor;
+
+            //Le devolvemos la escala orignal
+            transform.localScale = originalScale;
+
+            //Desactivamos Flag de "esta siendo arrastrado"
+            isBeingDragged = false;
+
         }
-            
 
-        //Le devolvemos la escala orignal
-        transform.localScale = originalScale;
-
-        //Desactivamos Flag de "esta siendo arrastrado"
-        isBeingDragged = false;
     }
 
     //-----------------------------------------------------------------------------------

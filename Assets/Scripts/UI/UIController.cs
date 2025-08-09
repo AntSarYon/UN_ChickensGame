@@ -24,6 +24,7 @@ public class UIController : MonoBehaviour
 
     [SerializeField] private Food[] arrFoods;
 
+    [SerializeField] private GameObject FadeOutPanel;
     [SerializeField] private GameObject GameOverPanel;
 
     //Nivel de comida actual

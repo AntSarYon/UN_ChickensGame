@@ -90,23 +90,23 @@ public class MenuRulesController : MonoBehaviour
 
     void Update()
     {
-        txtAumentoHambre.text = sliderAumentoHambre.value.ToString();
-        txtReduccionHambre.text = sliderReduccionHambre.value.ToString();
+        txtAumentoHambre.text = sliderAumentoHambre.value.ToString("F2");
+        txtReduccionHambre.text = sliderReduccionHambre.value.ToString("F2");
 
-        txtConsumoAlimento.text = sliderConsumoAlimento.value.ToString();
+        txtConsumoAlimento.text = sliderConsumoAlimento.value.ToString("F2");
 
-        txtReduccionEstres.text = sliderReduccionEstres.value.ToString();
-        txtAumentoEstres.text = sliderAumentoEstres.value.ToString();
-        txtEstresPelear.text = sliderEstresPelear.value.ToString();
+        txtReduccionEstres.text = sliderReduccionEstres.value.ToString("F2");
+        txtAumentoEstres.text = sliderAumentoEstres.value.ToString("F2");
+        txtEstresPelear.text = sliderEstresPelear.value.ToString("F2");
 
-        txtAumentoPeso.text = sliderAumentoPeso.value.ToString();
-        txtReduccionPeso.text = sliderReduccionPeso.value.ToString();
+        txtAumentoPeso.text = sliderAumentoPeso.value.ToString("F2");
+        txtReduccionPeso.text = sliderReduccionPeso.value.ToString("F2");
 
-        txtReduccionSalud.text = sliderReduccionSalud.value.ToString();
+        txtReduccionSalud.text = sliderReduccionSalud.value.ToString("F2");
 
-        txtHoraInicio.text = sliderHoraInicio.value.ToString();
-        txtHoraFin.text = sliderHoraFin.value.ToString();
-        txtEscalaTiempo.text = sliderEscalaTiempo.value.ToString();
+        txtHoraInicio.text = sliderHoraInicio.value.ToString("F2");
+        txtHoraFin.text = sliderHoraFin.value.ToString("F2");
+        txtEscalaTiempo.text = sliderEscalaTiempo.value.ToString("F2");
     }
 
     public void GuardarParametros()

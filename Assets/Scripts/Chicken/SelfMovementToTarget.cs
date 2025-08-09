@@ -32,7 +32,6 @@ public class SelfMovementToTarget : MonoBehaviour
 
     //Componente RigidBody
     private Rigidbody2D mRb;
-    private SpritesController mSpritesController;
     private ChickenStats mChickenStats;
     private ChickenController mChickenController;
 
@@ -47,9 +46,6 @@ public class SelfMovementToTarget : MonoBehaviour
     {
         //Obtencion de componentes
         mRb = GetComponent<Rigidbody2D>();
-        mSpritesController = GetComponent<SpritesController>();
-        mChickenStats = GetComponent<ChickenStats>();
-        mChickenController = GetComponent<ChickenController>();
 
         //Inicializamos el multiplicador de velocidad en 1
         speedMultiplier = 1;
@@ -59,29 +55,6 @@ public class SelfMovementToTarget : MonoBehaviour
 
     void Update()
     {
-        //Si el Pollito está comiendo, Bebiendo, Durmiendo, o Peleando
-        if (mChickenStats.eatingFlag || mChickenStats.drinkingFlag || mChickenStats.sleepingFlag || mChickenStats.fightingFlag)
-        {
-            //Si el Stat de hambre esta por debajo de 40
-            if (mChickenStats.hambre < 40)
-            {
-                //Desactivamos los Flags de Comiendo y Bebiendo
-                mChickenStats.eatingFlag = false;
-                mChickenStats.drinkingFlag = false;
-            }
-
-            //No hace nada
-            return;
-        }
-        //En caso no est{e haciendo ninguna de esas acciones...
-        else
-        {
-            //Seteamos una direccion para su movimiento
-            SetMovementDirection();
-        }
-
-
-
         if (Input.GetKeyDown(KeyCode.F))
         {
             target = GameObject.Find("Food").transform;
@@ -122,49 +95,38 @@ public class SelfMovementToTarget : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
 
-    void FixedUpdate()
+    public void StopMoving()
     {
-        //Si el Pollito esta muerto...
-        if (!mChickenController.isAlive)
+        //AZsignamos 0 velocidad
+        mRb.velocity = Vector2.zero;
+
+        return;
+    }
+
+    //------------------------------------------------------------------------------------------------------
+    //FUNCION: Moverse hacia el objetivo de Movimiento (independientemente de si es Target o RandomWaypoint)
+
+    public void MoveToTarget()
+    {
+        //Asignamos Velocidad y direccion en base a los calculos anteriores sobre el destino (Target o Waypoint)
+        mRb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed * speedMultiplier;
+    }
+
+    //------------------------------------------------------------------------------------------------------
+    //FUNCION: Revisa si se necesita un nuevo RandomWaypoint (ya llegó al anterior)
+
+    public void CheckIfNeedNewRandomWaypoint()
+    {
+        //Si no hay un Target (movimiento aleatorio)
+        if (!target)
         {
-            //AZsignamos 0 velocidad
-            mRb.velocity = Vector2.zero;
-
-            return;
-        }
-        //En caso este vivo
-        else
-        {
-            //Si el Pollito está comiendo, Bebiendo, Durmiendo, o Peleando
-            if (mChickenStats.eatingFlag || mChickenStats.drinkingFlag || mChickenStats.sleepingFlag || mChickenStats.fightingFlag)
+            //Si la distancia entre el Pollito y el Waypoint esta dentro del rango minimo definido;
+            if (Vector2.Distance(transform.position, randomWaypoint) < minRange)
             {
-                //Anulamos la velocidad del pollo
-                mRb.velocity = Vector2.zero;
-
-                //No hace nada
-                return;
-            }
-            //En caso no est{e haciendo ninguna de esas acciones...
-            else
-            {
-                //Asignamos Velocidad y direccion en base a los calculos anteriores sobre el destino (Target o Waypoint)
-                mRb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed * speedMultiplier;
-
-                //Si no hay un Target (movimiento aleatorio)
-                if (!target)
-                {
-                    //Si la distancia entre el Pollito y el Waypoint esta dentro del rango minimo definido;
-                    if (Vector2.Distance(transform.position, randomWaypoint) < minRange)
-                    {
-                        //cambiamos de Waypoint para que el pollito siga moviendose
-                        SetNewRandomWaypoint();
-                    }
-                }
+                //cambiamos de Waypoint para que el pollito siga moviendose
+                SetNewRandomWaypoint();
             }
         }
-
-        
-
     }
 
     //-----------------------------------------------------------------------------------
@@ -172,8 +134,32 @@ public class SelfMovementToTarget : MonoBehaviour
 
     public void SetNewRandomWaypoint()
     {
+        //Obtenemos nuevas coordenadas Random...
+        float newRandomX = Random.Range(-maxXDistance, maxXDistance + 1);
+        float newRandomY = Random.Range(-maxYDistance, maxYDistance + 1);
+
         //Definimos un nuevo Destino
-        randomWaypoint = new Vector2(Random.Range(-maxXDistance, maxXDistance+1), Random.Range(-maxYDistance, maxYDistance + 1));
+        randomWaypoint = new Vector2(newRandomX, newRandomY);
+    }
+
+    public void SetNewRandomWaypointToRight(float leftXLimit)
+    {
+        //Obtenemos nuevas coordenadas Random, considirando la limitante de X
+        float newRandomX = Random.Range(leftXLimit+0.5f, maxXDistance + 1);
+        float newRandomY = Random.Range(-maxYDistance, maxYDistance + 1);
+
+        //Definimos un nuevo Destino
+        randomWaypoint = new Vector2(newRandomX, newRandomY);
+    }
+
+    public void SetNewRandomWaypointToLeft(float rightLimitX)
+    {
+        //Obtenemos nuevas coordenadas Random, considirando la limitante de X
+        float newRandomX = Random.Range(-maxXDistance, rightLimitX+0.5f);
+        float newRandomY = Random.Range(-maxYDistance, maxYDistance + 1);
+
+        //Definimos un nuevo Destino
+        randomWaypoint = new Vector2(newRandomX, newRandomY);
     }
 
     //-----------------------------------------------------------------------------------

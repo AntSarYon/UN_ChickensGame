@@ -62,14 +62,12 @@ public class SpritesController : MonoBehaviour
         //Almacenamos la escala original del pollito
         originalScale = transform.localScale;
 
-        //Inicia con el flag de "Siendo arrastrado" en false
-        isBeingDragged = false;
-
         //Funcion Delegafa del Evento "Orden de Dormir"
         DayStatusManager.instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
     }
 
-    //-----------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------
+    // FUNCION DELEGADA: Dependiendo de la Orden de dormir; se activa o desactiva la Animacion
 
     private void OnSleepOrderClickedDelegate(bool sleepOrder)
     {
@@ -91,13 +89,13 @@ public class SpritesController : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
 
-    void Update()
+    public void ManageWalkingAnim()
     {
         //Si el Pollito tiene Velocidad en su RB
         if (mRigidbody.velocity != Vector2.zero)
         {
             //Activams flag de animacion 'Is Walking'
-            mAnimator.SetBool("IsWalking",true);
+            mAnimator.SetBool("IsWalking", true);
 
             //Si el movimiento se esta dando hacia la derecha...
             if (mRigidbody.velocity.x > 0)
@@ -117,15 +115,23 @@ public class SpritesController : MonoBehaviour
             //Desactivamos flag de animacion 'Is Walking'
             mAnimator.SetBool("IsWalking", false);
         }
+    }
 
-        
+    //-----------------------------------------------------------------------------------
 
+    public void ManageStarvingAnim()
+    {
         //Si el flag de "Starving" esta activo...
-        if (GetComponent<ChickenController>().isAlive && mChickenStats.starvingFlag)
+        if (mChickenStats.starvingFlag)
         {
             //Hacemos que el Pollito este de rojo
             mSrenderer.color = starvingColor;
         }
+        //else
+        //{
+        //    //Hacemos que el Pollito este normal
+        //    mSrenderer.color = defaultColor;
+        //}
     }
 
     //-----------------------------------------------------------------------------------
@@ -151,90 +157,53 @@ public class SpritesController : MonoBehaviour
         //Activamos trigger de Muerte
         mAnimator.SetTrigger("Die");
 
+        //Regresamos su Color a la normalidad
+        mSrenderer.color = defaultColor;
+
         //Desactivamos la UI de informacion del Pollo
         chickenUI.HideChickenInfo();
     }
 
     //-----------------------------------------------------------------------------------
-    // Funcion - Cuando El Mouse pasa por encima o sale
+    // Funcion - Controlar Animacion de Dragged 
 
-    private void OnMouseOver()
+    public void ManageHoverAnimation()
     {
+        //Cambiamos su color al de Dragged...
         mSrenderer.color = draggedColor;
 
-        if (GetComponent<ChickenController>().isAlive)
-        {
-            //Si NO esta siendo arrastrado
-            if (!isBeingDragged)
-            {
-                //Mostramos la UI de informacion del Pollo
-                chickenUI.ShowChickenInfo();
-            }
-        }
-        
+        Debug.Log("Color cambiado a gris");
     }
 
-    private void OnMouseExit()
+    public void ManageUnhoverAnimation()
     {
-        if (GetComponent<ChickenController>().isAlive)
-        {
-            //Asignamos el color de por defecto;
-            mSrenderer.color = defaultColor;
-
-            //Desactivamos la UI de informacion del Pollo
-            chickenUI.HideChickenInfo();
-        }
-        
+        //Asignamos el color de por defecto;
+        mSrenderer.color = defaultColor;
     }
+
 
     //-----------------------------------------------------------------------------------
     // Funcion - Cuando oprimimos el Click
 
-    private void OnMouseDown()
+    public void ManageDragAnimation()
     {
-        if (GetComponent<ChickenController>().isAlive)
-        {
-            //Asignamos el color de agarre;
-            mSrenderer.color = draggedColor;
+        //Asignamos el color de agarre;
+        mSrenderer.color = draggedColor;
+        Debug.Log("Color cambiado a gris");
 
-            //Le asignamos la escala de Agarre
-            transform.localScale = draggedScale;
-
-            //Activamos Flag de "esta siendo arrastrado"
-            isBeingDragged = true;
-
-        }
-            
+        //Le asignamos la escala de Agarre
+        transform.localScale = draggedScale;
     }
 
-    //-----------------------------------------------------------------------------------
-    // Funcion - Mientras se mantenga el Mouse oprimido y se detecta el arrastre...
-
-    private void OnMouseDrag()
+    public void ManageUndragAnimation()
     {
-        //Desactivamos la UI de informacion del Pollo
-        chickenUI.HideChickenInfo();
+        //Asignamos el color de por defecto;
+        mSrenderer.color = defaultColor;
+
+        //Le devolvemos la escala orignal
+        transform.localScale = originalScale;
     }
 
-    //-----------------------------------------------------------------------------------
-    // Funcion - Cuando soltamos el Click
-
-    private void OnMouseUp()
-    {
-        if (GetComponent<ChickenController>().isAlive)
-        {
-            //Asignamos el color de por defecto;
-            mSrenderer.color = defaultColor;
-
-            //Le devolvemos la escala orignal
-            transform.localScale = originalScale;
-
-            //Desactivamos Flag de "esta siendo arrastrado"
-            isBeingDragged = false;
-
-        }
-
-    }
 
     //-----------------------------------------------------------------------------------
 
@@ -274,26 +243,24 @@ public class SpritesController : MonoBehaviour
                 }
 
             }
-        }
 
-
-        //Si chocamos con un contenedor de Comida o Agua
-        else if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
-        {
-            //Si empieza a comer o tomar agua, su color se normaliza
-            mSrenderer.color = defaultColor;
-
-            //Si el objeto colisionado esta hacia la derecha
-            if (collision.transform.position.x > transform.position.x)
+            //Si chocamos con un contenedor de Comida o Agua
+            else if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
             {
-                LookAtRight();
-            }
-            else
-            {
-                LookAtLeft();
+                //Si empieza a comer o tomar agua, su color se normaliza
+                mSrenderer.color = defaultColor;
+
+                //Si el objeto colisionado esta hacia la derecha
+                if (collision.transform.position.x > transform.position.x)
+                {
+                    LookAtRight();
+                }
+                else
+                {
+                    LookAtLeft();
+                }
             }
         }
-        
     }
 
     //-----------------------------------------------------------------------------------

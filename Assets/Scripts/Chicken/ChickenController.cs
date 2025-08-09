@@ -12,6 +12,7 @@ public class ChickenController : MonoBehaviour
     [HideInInspector] public bool sleepingFlag = false;
 
     [HideInInspector] public bool isAlive = true;
+    [HideInInspector] public bool isBeingDragged = false;
 
     //Flag - esta en zona de venta
     private bool bInBillingZone;
@@ -27,6 +28,9 @@ public class ChickenController : MonoBehaviour
     private SpritesController mSpritesController;
     private Draggable mDraggable;
     private SelfMovementToTarget mSelfMovementToTarget;
+
+    [Header("Chicken UI")]
+    [SerializeField] private ChickenUI chickenUI;
 
     private AudioSource mAudioSource;
 
@@ -52,6 +56,10 @@ public class ChickenController : MonoBehaviour
         //Almacenamos la probabilidad seteada de escape
         dragEscapedefaultProb = dragEscapeProb;
         dragEscapeMinProb = 0;
+
+        //Iniciamos Flags
+        isAlive = true;
+        isBeingDragged = false;
     }
 
     //-----------------------------------------------------------------------------
@@ -81,15 +89,11 @@ public class ChickenController : MonoBehaviour
         //Si el pollito sigue vivo...
         if (isAlive)
         {
-            //Si el HP del pollito llega  0
-            if (mChickenStats.hp == 0)
-            {
-                // Desactivamos Flag de "esta vivo"
-                isAlive = false;
+            //Controlamos la Animacion de Caminata
+            mSpritesController.ManageWalkingAnim();
 
-                //Reproducimos las Acciones de Muerte.
-                Die();
-            }
+            //Controlamos la Animacion de Hambre
+            mSpritesController.ManageStarvingAnim();
 
             //Si el pollito esta peleando
             if (mChickenStats.fightingFlag)
@@ -104,24 +108,106 @@ public class ChickenController : MonoBehaviour
                 dragEscapeProb = dragEscapedefaultProb;
             }
 
+            //Si el Pollito esta haciendo alguna de estas acciones...
+            if (mChickenStats.eatingFlag || mChickenStats.drinkingFlag || mChickenStats.sleepingFlag || mChickenStats.fightingFlag)
+            {
+                //Si el Stat de hambre esta por debajo de 40
+                if (mChickenStats.hambre < 40)
+                {
+                    //Desactivamos los Flags de Comiendo y Bebiendo
+                    mChickenStats.eatingFlag = false;
+                    mChickenStats.drinkingFlag = false;
+                }
+            }
+            else
+            {
+                //Seteamos una direccion de Movimiento
+                mSelfMovementToTarget.SetMovementDirection();
+            }
+
+            //Si el HP del pollito llega  0
+            if (mChickenStats.hp == 0)
+            {
+                // Desactivamos Flag de "esta vivo"
+                isAlive = false;
+
+                //Su probabilidad de escape del Drag es minima (0)
+                dragEscapeProb = dragEscapeMinProb;
+
+                //Reproducimos las Acciones de Muerte.
+                Die();
+            }
         }
 
     }
 
     private void FixedUpdate()
     {
-        
+        //Si el Pollito esta vivo...
+        if (isAlive)
+        {
+            //Si el Pollito está comiendo, Bebiendo, Durmiendo, o Peleando
+            if (mChickenStats.eatingFlag || mChickenStats.drinkingFlag || mChickenStats.sleepingFlag || mChickenStats.fightingFlag)
+            {
+                //Hacemos que deje de moverse (Velocidad a 0)
+                mSelfMovementToTarget.StopMoving();
+            }
+
+            //En caso no este haciendo alguna accion en Particular...
+            else
+            {
+                //Hacemos que el Pollito de Mueva hacia su Target de Movimiento
+                //(aplica tanto randomWaypoint como Target)
+                mSelfMovementToTarget.MoveToTarget();
+
+                //Revisamos si es que necesita un nuevo RandomWaypoint (ya llegó al anterior)
+                mSelfMovementToTarget.CheckIfNeedNewRandomWaypoint();
+            }
+        }
+
+        //Si el Pollito esta muerto...
+        else
+        {
+            //Hacemos que deje de moverse (Velocidad a 0)
+            mSelfMovementToTarget.StopMoving();
+        }
     }
 
     //------------------------------------------------------------------------------
 
     private void OnMouseOver()
     {
+        //Controlamos la animacion de cuando se hace Hover
+        mSpritesController.ManageHoverAnimation();
+
+        //Si el Pollito esta vivo...
+        if (isAlive)
+        {
+            //Si No esta siendo arrastrado
+            if (!isBeingDragged)
+            {
+                //Mostramos la info del UI del pollito
+                chickenUI.ShowChickenInfo();
+            }
+        }
         
     }
 
     private void OnMouseExit()
     {
+        //Controlamos la animacion de cuando se hace Hover
+        mSpritesController.ManageUnhoverAnimation();
+
+        //Si el Pollito esta vivo...
+        if (isAlive)
+        {
+            //Si la UI esta activa...
+            if (chickenUI.gameObject.activeSelf)
+            {
+                //Ocultamos la info del UI
+                chickenUI.HideChickenInfo();
+            }
+        }
         
     }
 
@@ -156,6 +242,14 @@ public class ChickenController : MonoBehaviour
 
             //Agarramos a la gallina
             mDraggable.Catch();
+
+            //Activamos Flag de "esta siendo arrastrado"
+            isBeingDragged = true;
+
+            //Controlamos la Animacion de Drag
+            mSpritesController.ManageDragAnimation();
+
+            
         }
     }
 
@@ -164,6 +258,14 @@ public class ChickenController : MonoBehaviour
 
     private void OnMouseDrag()
     {
+        //Si la UI del pollito esta activa...
+        if (chickenUI.gameObject.activeSelf)
+        {
+            //Ocultamos su informacion...
+            chickenUI.HideChickenInfo();
+        }
+
+
         //Si el flag de "Esta siendo Arrastrado" esta activo
         if (mDraggable.bIsBeingDragged)
         {
@@ -181,6 +283,12 @@ public class ChickenController : MonoBehaviour
         //Soltamos la pollito
         mDraggable.Drop();
 
+        //Controlamos la animacion de soltar
+        mSpritesController.ManageUndragAnimation();
+
+        //Desactivamos flag de "esta siendo agarrado"
+        isBeingDragged = false;
+
         //Si esta en Zona de Venta...
         if (bInBillingZone)
         {
@@ -193,17 +301,41 @@ public class ChickenController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        //Si el pollito esta vivo...
+        if (isAlive)
+        {
+            //Si estams colisionando con otro Pollito...
+            if (collision.gameObject.CompareTag("Chicken"))
+            {
 
+            }
+
+            //Si chocamos con un contenedor de Comida o Agua
+            else if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
+            {
+
+            }
+        }
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        
+        if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
+        {
+
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        
+        if (isAlive)
+        {
+            //Si ha dejado de chocar con otro pollito
+            if (collision.gameObject.CompareTag("Chicken"))
+            {
+
+            }
+        }
     }
 
     //------------------------------------------------------------------------------
@@ -228,6 +360,8 @@ public class ChickenController : MonoBehaviour
         }
     }
 
+    //-----------------------------------------------------------------------------------
+
     public void Die()
     {
         //Seteamos que la probabilidad de ecape este al 0%
@@ -241,5 +375,8 @@ public class ChickenController : MonoBehaviour
 
         //Reproducimos la Animacion de Muerte
         mSpritesController.PlayDeath();
+
+        //Desactivamos la UI del Pollito
+        chickenUI.gameObject.SetActive(false);
     }
 }

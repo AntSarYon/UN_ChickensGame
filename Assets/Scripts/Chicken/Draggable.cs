@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Draggable : MonoBehaviour
 {
-    //Flag, esta siendo sujetado
-    [HideInInspector] public bool bIsBeingDragged;
-
     //Posicion Offset del mouse respecto al centro del objeto.
     private Vector3 mousePositionOffset;
 
@@ -41,8 +38,6 @@ public class Draggable : MonoBehaviour
         //Capturamos la posicion Offset del Mouse restandole a la posicon del objeto la posicion del mouse, obteniendo la diferencia
         mousePositionOffset = gameObject.transform.position - GetMouseInWorldPosition();
 
-        //Activamos el flag "Siendo sujetado"
-        bIsBeingDragged = true;
     }
 
     //-----------------------------------------------------------------------------------
@@ -59,16 +54,8 @@ public class Draggable : MonoBehaviour
 
     public void Drop()
     {
-        //Si estaba siendo sujetado
-        if (bIsBeingDragged)
-        {
-            //Ponemos la velocidad en 0
-            mRb.velocity = Vector2.zero;
-
-            //Activamos el flag "Siendo sujetado"
-            bIsBeingDragged = false;
-        }
-        
+        //Ponemos la velocidad en 0
+        mRb.velocity = Vector2.zero;
     }
 
     #endregion

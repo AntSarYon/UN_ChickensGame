@@ -119,19 +119,35 @@ public class SpritesController : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
 
-    public void ManageStarvingAnim()
+    public void EnterStarvingAnim()
     {
-        //Si el flag de "Starving" esta activo...
-        if (mChickenStats.starvingFlag)
+        //Hacemos que el Pollito este de rojo
+        mSrenderer.color = starvingColor;
+        
+    }
+
+    public void ExitStarvingAnim()
+    {
+        //Hacemos que el Pollito este normal
+        mSrenderer.color = defaultColor;
+    }
+
+    //-----------------------------------------------------------------------------------
+    // FUNCION: Mirar en Direccion de un Target
+
+    public void LookAtTarget(Vector3 viewTarget)
+    {
+        // Si el objetivo esta hacia la derecha
+        if (viewTarget.x > transform.position.x)
         {
-            //Hacemos que el Pollito este de rojo
-            mSrenderer.color = starvingColor;
+            LookAtRight();
         }
-        //else
-        //{
-        //    //Hacemos que el Pollito este normal
-        //    mSrenderer.color = defaultColor;
-        //}
+
+        //Si el Objetivo esta hacia la izquierda
+        else
+        {
+            LookAtLeft();
+        }
     }
 
     //-----------------------------------------------------------------------------------
@@ -167,15 +183,13 @@ public class SpritesController : MonoBehaviour
     //-----------------------------------------------------------------------------------
     // Funcion - Controlar Animacion de Dragged 
 
-    public void ManageHoverAnimation()
+    public void EnterHoverAnimation()
     {
         //Cambiamos su color al de Dragged...
         mSrenderer.color = draggedColor;
-
-        Debug.Log("Color cambiado a gris");
     }
 
-    public void ManageUnhoverAnimation()
+    public void ExitHoverAnimation()
     {
         //Asignamos el color de por defecto;
         mSrenderer.color = defaultColor;
@@ -185,17 +199,18 @@ public class SpritesController : MonoBehaviour
     //-----------------------------------------------------------------------------------
     // Funcion - Cuando oprimimos el Click
 
-    public void ManageDragAnimation()
+    public void EnterDragAnimation()
     {
         //Asignamos el color de agarre;
         mSrenderer.color = draggedColor;
-        Debug.Log("Color cambiado a gris");
 
         //Le asignamos la escala de Agarre
         transform.localScale = draggedScale;
     }
 
-    public void ManageUndragAnimation()
+    //-----------------------------------------------------------------------------------
+
+    public void SetSpriteBackToNormal()
     {
         //Asignamos el color de por defecto;
         mSrenderer.color = defaultColor;
@@ -204,99 +219,26 @@ public class SpritesController : MonoBehaviour
         transform.localScale = originalScale;
     }
 
-
     //-----------------------------------------------------------------------------------
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void EnterFightAnim()
     {
-        if (GetComponent<ChickenController>().isAlive)
-        {
-            //Si chocamos con otra Gallina...
-            if (collision.gameObject.CompareTag("Chicken"))
-            {
-                //Si los Stats del Pollo indican que esta estresado...
-                if (mChickenStats.estres > mChickenStats.estresParaPelear)
-                {
-                    //Asignamos el color de agarre;
-                    mSrenderer.color = fightingColor;
+        //Asignamos el color de agarre;
+        mSrenderer.color = fightingColor;
 
-                    //Mostramos la UI de la pelea
-                    chickenUI.ShowFightInfo();
-                }
-
-                //En caso el nivel de estres no esté en el Nivel...
-                else
-                {
-                    //Obtenemos los Stats del pollo con el que yhemos chocado
-                    ChickenStats otherChickenStats = collision.gameObject.GetComponent<ChickenStats>();
-
-                    //Revisamos si el Estres del otro Pollo essta en el limite...
-                    if (otherChickenStats.estres >= otherChickenStats.estresParaPelear)
-                    {
-                        //De ser el caso...
-                        //Asignamos el color de agarre;
-                        mSrenderer.color = fightingColor;
-
-                        //Mostramos la UI de la pelea
-                        chickenUI.ShowFightInfo();
-                    }
-                }
-
-            }
-
-            //Si chocamos con un contenedor de Comida o Agua
-            else if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
-            {
-                //Si empieza a comer o tomar agua, su color se normaliza
-                mSrenderer.color = defaultColor;
-
-                //Si el objeto colisionado esta hacia la derecha
-                if (collision.transform.position.x > transform.position.x)
-                {
-                    LookAtRight();
-                }
-                else
-                {
-                    LookAtLeft();
-                }
-            }
-        }
+        //Mostramos la UI de la pelea
+        chickenUI.ShowFightInfo();
     }
 
     //-----------------------------------------------------------------------------------
 
-    private void OnCollisionExit2D(Collision2D collision)
+    public void ExitFightAnim()
     {
-        if (GetComponent<ChickenController>().isAlive)
-        {
-            //Si ha dejado de chocar con otro pollito
-            if (collision.gameObject.CompareTag("Chicken"))
-            {
-                //Asignamos el color de agarre;
-                mSrenderer.color = defaultColor;
+        //Asignamos el color de agarre;
+        mSrenderer.color = defaultColor;
 
-                //Ocultamos la UI de la pelea
-                chickenUI.HideFightInfo();
-            }
-        }
-        
-            
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
-        {
-            //Si el objeto colisionado esta hacia la derecha
-            if (collision.transform.position.x > transform.position.x)
-            {
-                LookAtRight();
-            }
-            else
-            {
-                LookAtLeft();
-            }
-        }
+        //Ocultamos la UI de la pelea
+        chickenUI.HideFightInfo();
     }
 
     #endregion

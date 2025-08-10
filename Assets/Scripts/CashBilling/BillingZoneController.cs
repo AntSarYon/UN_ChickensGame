@@ -48,7 +48,7 @@ public class BillingZoneController : MonoBehaviour
         if (collision.gameObject.CompareTag("Chicken"))
         {
             //Si la gallina esta siendo sujetada...
-            if (collision.gameObject.GetComponent<Draggable>().bIsBeingDragged)
+            if (collision.gameObject.GetComponent<ChickenController>().isBeingDragged)
             {
                 //Activamos flag de "Gallina en zona de venta"
                 bChickenDraggedInSaleZone = true;
@@ -72,7 +72,7 @@ public class BillingZoneController : MonoBehaviour
         if (collision.gameObject.CompareTag("Chicken"))
         {
             //Si la gallina estaba siendo sujetada...
-            if (collision.gameObject.GetComponent<Draggable>().bIsBeingDragged)
+            if (collision.gameObject.GetComponent<ChickenController>().isBeingDragged)
             {
                 //Desactivamos flag de "Gallina en zona de venta"
                 bChickenDraggedInSaleZone = false;

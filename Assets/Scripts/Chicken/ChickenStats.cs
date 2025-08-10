@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class ChickenStats : MonoBehaviour
 {
-    //Flags de Estado del Pollito
-    [HideInInspector] public bool eatingFlag = false;
-    [HideInInspector] public bool starvingFlag = false;
-    [HideInInspector] public bool drinkingFlag = false;
-    [HideInInspector] public bool stressfulFlag = false;
-    [HideInInspector] public bool fightingFlag = false;
-    [HideInInspector] public bool sleepingFlag = false;
 
     //Salud del Pollito
     [HideInInspector] public float hp = 100;
@@ -60,23 +53,13 @@ public class ChickenStats : MonoBehaviour
         estres = Random.Range(35.00f, 80.00f);
         peso = 1; // El Peso empieza en 1 siempre // Random.Range(1.00f, 7.00f);
 
-        //Funcion Delegafa del Evento "Orden de Dormir"
-        DayStatusManager.instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
     }
 
     //-----------------------------------------------------------------------
+    // FUNCION: Manejo de Stats segun estados...
 
-    private void OnSleepOrderClickedDelegate(bool sleepOrder)
+    public void ManageStats_HambreYPeso(bool eatingFlag)
     {
-        //Actualizamos el SleepingFlag en base a si la orden esta activa o no
-        sleepingFlag = sleepOrder;
-    }
-
-    //-----------------------------------------------------------------------
-
-    void Update()
-    {
-        //Si el Flag de "Comiendo"; esta Activado
         if (eatingFlag)
         {
             //Reducimos el Stat de Hambre progresivamente
@@ -96,8 +79,12 @@ public class ChickenStats : MonoBehaviour
             peso -= velocidadReduccionPeso * Time.deltaTime;
             peso = Mathf.Clamp(peso, 1.00f, 7.00f);
         }
+    }
 
+    //-----------------------------------------------------------------------
 
+    public void ManageStats_HP(bool fightingFlag, bool starvingFlag)
+    {
         //Si el flag de "peleando" esta activo
         if (fightingFlag || starvingFlag)
         {
@@ -105,7 +92,12 @@ public class ChickenStats : MonoBehaviour
             hp -= velocidadReduccionHP * Time.deltaTime;
             hp = Mathf.Clamp(hp, 0.00f, 100.00f);
         }
+    }
 
+    //-----------------------------------------------------------------------
+
+    public void ManageStats_Estres(bool sleepingFlag)
+    {
         // Si el Flag de "Durmiendo" esta activo
         if (sleepingFlag)
         {
@@ -120,131 +112,6 @@ public class ChickenStats : MonoBehaviour
             estres += velocidadIncrementoEstres * Time.deltaTime;
             estres = Mathf.Clamp(estres, 0.00f, 100.00f);
         }
-
-        //Si el Hambre esta al maximo...
-        if (hambre == 100)
-        {
-            //Activamos el flag de "Starving" 
-            starvingFlag = true;
-        }
-        else
-        {
-            //Activamos el flag de "Starving" 
-            starvingFlag = false;
-        }
-
     }
 
-    //-----------------------------------------------------------------------
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //Si el objeto con el que colisionamos es otro Pollito
-        if (collision.gameObject.CompareTag("Chicken"))
-        {
-            //Si el nivel de Estres esta por encima del nivel definido para las Peleas...
-            if (estres > estresParaPelear)
-            {
-                //Activamos Flag de "Esta peleando"
-                fightingFlag = true;
-            }
-            //En caso el nivel de estres no esté en el Nivel...
-            else
-            {
-                //Obtenemos los Stats del pollo con el que yhemos chocado
-                ChickenStats otherChickenStats = collision.gameObject.GetComponent<ChickenStats>();
-
-                //Revisamos si el Estres del otro Pollo essta en el limite...
-                if (otherChickenStats.estres >= estresParaPelear)
-                {
-                    //De ser el caso...
-                    //Activamos Flag de "Esta peleando"
-                    fightingFlag = true;
-                }
-                else
-                {
-                    //Hacemos que se asigne un nuevo TargetRandom
-                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
-                }
-            }
-
-        }
-
-        //Si el objeto con el que colisionamos es otro Pollito
-        else if (collision.gameObject.CompareTag("Food"))
-        {
-            //Si tiene hambre...
-            if (hambre > 40)
-            {
-                //Activamos Flag de "Esta comiendeo"
-                eatingFlag = true;
-            }
-            else
-            {
-                //Seteamos un nuevo target de movimiento random
-                GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
-
-                //Desactivamos Flag de "Esta comiendeo"
-                eatingFlag = false;
-            }
-            
-        }
-
-        //Si el objeto con el que colisionamos es otro Pollito
-        else if (collision.gameObject.CompareTag("Water"))
-        {
-            //Si tiene hambre...
-            if (hambre > 40)
-            {
-                //Activamos Flag de "Esta peleando"
-                drinkingFlag = true;
-            }
-            else
-            {
-                //Seteamos un nuevo target de movimiento random
-                GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
-
-                //Desactivamos Flag de "Esta comiendeo"
-                drinkingFlag = false;
-            }
-        }
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        //Si el objeto con el que estamos colisionamos es Comida 
-        if (collision.gameObject.CompareTag("Food"))
-        {
-            //Si el Comedero esta vacio...
-            if (collision.gameObject.GetComponent<Food>().mFoodLevelSlider.value == 0)
-            {
-                //Desactivamos Flag de "Esta comiendo"
-                eatingFlag = false;
-            }
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        //Si el objeto con el que colisionamos es otro Pollito
-        if (collision.gameObject.CompareTag("Chicken"))
-        {
-            //Desactivamos Flag de "Esta peleando"
-            fightingFlag = false;
-        }
-
-        //Si el objeto con el que colisionamos es otro Pollito
-        else if (collision.gameObject.CompareTag("Food"))
-        {
-            //Desactivamos Flag de "Esta comiendo"
-            eatingFlag = false;
-        }
-
-        //Si el objeto con el que colisionamos es otro Pollito
-        else if (collision.gameObject.CompareTag("Water"))
-        {
-            //Desactivamos Flag de "Esta peleando"
-            drinkingFlag = false;
-        }
-    }
 }

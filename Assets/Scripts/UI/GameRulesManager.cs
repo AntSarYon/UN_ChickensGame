@@ -50,6 +50,18 @@ public class GameRulesManager : MonoBehaviour
 
     void Awake()
     {
+        // Inicialmente No hay parametros (nuevos) guardados
+        nuevosParametrosGuardados = false;
+
+        //Manejamos unica instancia del Singleton
+        ManageInstance();
+        
+    }
+
+    //-----------------------------------------------------------
+
+    private void ManageInstance()
+    {
         //Si no hay instancia
         if (!instance)
         {
@@ -60,7 +72,6 @@ public class GameRulesManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-        
     }
 
 }

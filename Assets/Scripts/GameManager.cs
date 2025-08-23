@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
         }
         */
         Instance = this;
+
         //El dinero empieza en 250$
         currentCash = 300.00f;
 

@@ -86,7 +86,7 @@ public class MenuRulesController : MonoBehaviour
 
     }
 
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     void Update()
     {
@@ -108,6 +108,8 @@ public class MenuRulesController : MonoBehaviour
         txtHoraFin.text = sliderHoraFin.value.ToString("F2");
         txtEscalaTiempo.text = sliderEscalaTiempo.value.ToString("F2");
     }
+
+    // -----------------------------------------------------------------------
 
     public void GuardarParametros()
     {

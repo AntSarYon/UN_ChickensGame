@@ -16,6 +16,8 @@ public class UIController : MonoBehaviour
     [SerializeField] private Button btnAddNewChicken;
     [SerializeField] private GameObject LightPanel;
 
+    [SerializeField] private UI_FadeOut UI_fadeOut;
+
 
     [Header("Medidores")]
     [SerializeField] private Slider FoodSlider;

@@ -33,8 +33,8 @@ public class StatsResumeUI : MonoBehaviour
 
     void Start()
     {
-        GameManager.Instance.OnChickenDeath += OnChickenDeathDelegate;
-        GameManager.Instance.OnGenerateNewChicken += OnGenerateNewChickenDelegate;
+        DayStatusManager.Instance.OnChickenDeath += OnChickenDeathDelegate;
+        DayStatusManager.Instance.OnGenerateNewChicken += OnGenerateNewChickenDelegate;
 
 
         ChickenStats[] arrChickensStats = FindObjectsByType<ChickenStats>(FindObjectsSortMode.None);

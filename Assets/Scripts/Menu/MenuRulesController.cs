@@ -128,9 +128,5 @@ public class MenuRulesController : MonoBehaviour
 
         //Activamos Flag de nuevos Parametros guardados
         GameRulesManager.instance.nuevosParametrosGuardados = true;
-
-        SceneManager.LoadScene("Level1");
-
-        
     }
 }

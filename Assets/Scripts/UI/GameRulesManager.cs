@@ -41,7 +41,7 @@ public class GameRulesManager : MonoBehaviour
     [Range(0, 24)] public int finishTime = 18;
 
     [Header("Cuan rápido pasa el tiempo")]
-    [Range(1, 100)] public float timeScale = 2.00f;
+    [Range(1, 5)] public float timeScale = 2.00f;
 
     //Flag de Parametros guardados
     [HideInInspector] public bool nuevosParametrosGuardados = false;

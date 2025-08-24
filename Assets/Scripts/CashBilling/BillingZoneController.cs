@@ -103,13 +103,13 @@ public class BillingZoneController : MonoBehaviour
             if (chickenForSale.GetComponent<ChickenController>().isAlive)
             {
                 //Lo vendemos en base a su Peso
-                GameManager.Instance.TriggerEvent_ChickenSold(chickenForSale.peso);
+                DayStatusManager.Instance.TriggerEvent_ChickenSold(chickenForSale.peso);
             }
             //Si el Pollo esta muerto...
             else
             {
                 //Lo vendemos con un valor de 0
-                GameManager.Instance.TriggerEvent_ChickenSold(0);
+                DayStatusManager.Instance.TriggerEvent_ChickenSold(0);
             }
             
 

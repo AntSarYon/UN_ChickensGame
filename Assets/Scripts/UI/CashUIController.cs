@@ -24,10 +24,10 @@ public class CashUIController : MonoBehaviour
 
     void Start()
     {
-        GameManager.Instance.OnChickenSold += OnChickenSoldDelegate;
-        GameManager.Instance.OnFoodRefill += OnFoodRefillDelegate;
-        GameManager.Instance.OnGasRefill += OnGasRefillDelegate;
-        GameManager.Instance.OnGenerateNewChicken += OnGenerateNewChickenDelegate;
+        DayStatusManager.Instance.OnChickenSold += OnChickenSoldDelegate;
+        DayStatusManager.Instance.OnFoodRefill += OnFoodRefillDelegate;
+        DayStatusManager.Instance.OnGasRefill += OnGasRefillDelegate;
+        DayStatusManager.Instance.OnGenerateNewChicken += OnGenerateNewChickenDelegate;
 
         //Traemos la cantidad de Dinero disponible
         UpdateCashAmount();
@@ -67,7 +67,7 @@ public class CashUIController : MonoBehaviour
     public void UpdateCashAmount()
     {
         //Traemos el valor del Cash desde el GameManager
-        txtCashAmount.text = Mathf.Round(GameManager.Instance.currentCash).ToString();
+        txtCashAmount.text = Mathf.Round(DayStatusManager.Instance.currentCash).ToString();
     }
 
 }

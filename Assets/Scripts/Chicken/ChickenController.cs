@@ -75,10 +75,10 @@ public class ChickenController : MonoBehaviour
         mSelfMovementToTarget.SetNewRandomWaypoint();
 
         //Agregamos Funcion Delegado al Evento de Pollo vendido
-        GameManager.Instance.OnChickenSold += OnChickenSoldDelegate;
+        DayStatusManager.Instance.OnChickenSold += OnChickenSoldDelegate;
 
         //Funcion Delegafa del Evento "Orden de Dormir"
-        DayStatusManager.instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
+        DayStatusManager.Instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
     }
 
     //-----------------------------------------------------------------------------
@@ -559,7 +559,7 @@ public class ChickenController : MonoBehaviour
         dragEscapeProb = dragEscapeMinProb;
 
         //Llamamos al Evento de Pollito muerto
-        GameManager.Instance.TriggerEvent_OnChickenDeath();
+        DayStatusManager.Instance.TriggerEvent_OnChickenDeath();
 
         //Hacemos que se reproduzca el Sonido de Pollito muerto
         GameSoundsController.Instance.PlayChickenDeathSound();

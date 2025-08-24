@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -27,22 +28,18 @@ public class UIController : MonoBehaviour
     [SerializeField] private Food[] arrFoods;
 
     [SerializeField] private GameObject FadeOutPanel;
-    [SerializeField] private GameObject GameOverPanel;
 
     //Nivel de comida actual
     private float currentFoodLevel;
 
     #endregion
 
-    //----------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------
 
     #region methods
 
     void Start()
     {
-        //El Panel de GameOver empieza desactivado
-        GameOverPanel.SetActive(false);
-
         //La luz inicia encendida
         TurnOnLight();
 
@@ -71,15 +68,26 @@ public class UIController : MonoBehaviour
         //Asignamos que el nivel de Comida actual es el maximo
         currentFoodLevel = maxValueForGeneralFoodSlider;
 
-
+        DayStatusManager.Instance.OnDayOver += OnDayOverDelegate;
     }
+
+    // ----------------------------------------------------------------------------------
+    // FUNCION DELEGADA - DIA TERMINADO
+
+    private void OnDayOverDelegate()
+    {
+        // Hacemos que la UI de FadeOut muestre la animacion correspondiente
+        UI_fadeOut.Play_FadeInDayOver();
+    }
+
+    // ----------------------------------------------------------------------------------
 
     void Update()
     {
         //Si ya hay GameOver...
-        if (GameManager.Instance.bGameOver)
+        if (DayStatusManager.Instance.bGameOver)
         {
-            GameOverPanel.SetActive(true);
+            UI_fadeOut.Play_FadeInGameOver();
         }
 
         //Var temporal para el nuevo total de comida actual
@@ -144,19 +152,21 @@ public class UIController : MonoBehaviour
 
     public void ToggleSleepOrder()
     {
-        DayStatusManager.instance.SleepOrderClicked();
+        DayStatusManager.Instance.SleepOrderClicked();
     }
+
+    // ----------------------------------------------------------------------------------
 
     public void AskForFood()
     {
         //Disparamos el Evento de "Pedir mas comida"
-        GameManager.Instance.TriggerEvent_FoodRefill();
+        DayStatusManager.Instance.TriggerEvent_FoodRefill();
     }
 
     public void AskForGas()
     {
         //Disparamos el Evento de "Pedir mas comida"
-        GameManager.Instance.TriggerEvent_GasRefill();
+        DayStatusManager.Instance.TriggerEvent_GasRefill();
 
         //Llevamos el valor del Slider al maximo
         GasSlider.value = GasSlider.maxValue;
@@ -165,9 +175,7 @@ public class UIController : MonoBehaviour
     public void AskForChicken()
     {
         //Disparamos el Evento de "Pedir mas comida"
-        GameManager.Instance.TriggerEvent_GenerateNewChicken();
-
-
+        DayStatusManager.Instance.TriggerEvent_GenerateNewChicken();
     }
 
 

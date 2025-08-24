@@ -12,7 +12,7 @@ public class ChickenSpawner : MonoBehaviour
 
     void Start()
     {
-        GameManager.Instance.OnGenerateNewChicken += OnGenerateNewChicken;
+        DayStatusManager.Instance.OnGenerateNewChicken += OnGenerateNewChicken;
     }
 
     private void OnGenerateNewChicken()

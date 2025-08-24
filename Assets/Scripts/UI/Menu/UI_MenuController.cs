@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UI_MenuController : MonoBehaviour
@@ -10,8 +11,9 @@ public class UI_MenuController : MonoBehaviour
     [SerializeField] private Button btnParameters;
     [SerializeField] private Button btnCloseParametersPanel;
 
-    [Header("Boton de Jugar")]
-    [SerializeField] private Button btnPlay;
+    [Header("Botones de Jugar")]
+    [SerializeField] private Button btnPlayNewCmpaign;
+    [SerializeField] private Button btnPlayContinueCampaign;
 
     //-------------------------------------------------------
 
@@ -19,6 +21,9 @@ public class UI_MenuController : MonoBehaviour
     {
         btnCloseParametersPanel.onClick.AddListener(CloseParametersPanel);
         btnParameters.onClick.AddListener(OpenParametersPanel);
+
+        btnPlayNewCmpaign.onClick.AddListener(StartNewGame);
+        btnPlayContinueCampaign.onClick.AddListener(ContinueGame);
 
         CloseParametersPanel();
     }
@@ -35,5 +40,21 @@ public class UI_MenuController : MonoBehaviour
     {
         //Desactivamos el Panel de Parametros...
         parametersPanel.SetActive(false);
+    }
+
+    //-------------------------------------------------------
+
+    public void StartNewGame()
+    {
+        // Reiniciamos a la primera campaña
+        CampaignManager.Instance.RestartToFirstCampaign();
+
+        // Cargamos la escena del juego
+        SceneManager.LoadScene("Level1");
+    }
+
+    public void ContinueGame()
+    {
+        SceneManager.LoadScene("Level1");
     }
 }

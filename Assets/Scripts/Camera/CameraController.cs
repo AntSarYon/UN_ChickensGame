@@ -30,7 +30,7 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         //Asignamos Delegado al Evento de Pollo Vendido
-        GameManager.Instance.OnChickenSold += OnChickenSoldDelegate;
+        DayStatusManager.Instance.OnChickenSold += OnChickenSoldDelegate;
     }
 
     // ------------------------------------------------------------------------

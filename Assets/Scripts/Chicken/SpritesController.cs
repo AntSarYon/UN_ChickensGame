@@ -63,7 +63,7 @@ public class SpritesController : MonoBehaviour
         originalScale = transform.localScale;
 
         //Funcion Delegafa del Evento "Orden de Dormir"
-        DayStatusManager.instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
+        DayStatusManager.Instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
     }
 
     //----------------------------------------------------------------------------------------

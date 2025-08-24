@@ -33,7 +33,7 @@ public class Food : MonoBehaviour
     void Start()
     {
         //Asignamos funcion Delegado para el evento de FoodRefill
-        GameManager.Instance.OnFoodRefill += OnFoodRefillDelegate;
+        DayStatusManager.Instance.OnFoodRefill += OnFoodRefillDelegate;
 
         //Traemos los parametros del RulesManager
         foodDecreaseSpeed = GameRulesManager.instance.foodDecreaseSpeed;
@@ -59,7 +59,7 @@ public class Food : MonoBehaviour
         mFoodLevelSlider.value = mFoodLevelSlider.maxValue;
 
         //Reducimos el Cash en 5
-        GameManager.Instance.currentCash -= 5;
+        DayStatusManager.Instance.currentCash -= 5;
 
         //Reproducimos la animacion de Reduccion de Cash
         FindObjectOfType<CashUIController>().OnFoodRefillDelegate();

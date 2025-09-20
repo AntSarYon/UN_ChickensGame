@@ -8,11 +8,13 @@ using UnityEngine.UI;
 
 public class GameClockController : MonoBehaviour
 {
-    [Header("Clock UI")]
-    [SerializeField] private TextMeshProUGUI txtDayClock;
+    public static GameClockController Instance;
 
     [Header("LightPanel UI")]
     [SerializeField] private Image LightPanelUI;
+
+    //Txt con el texto de la Hora actual
+    private string clockString;
 
     private Color lightPanelColor;
 
@@ -44,7 +46,16 @@ public class GameClockController : MonoBehaviour
     [Header("Cuan rápido pasa el tiempo")]
     [Range(1,5)] [SerializeField] private float timeScale = 2f;
 
-    //-------------------------------------------------------------------------------------------------
+    public string ClockString { get => clockString; private set => clockString = value; }
+
+    // -------------------------------------------------------------------------------------------------
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    // -------------------------------------------------------------------------------------------------
 
     void Start()
     {
@@ -110,10 +121,7 @@ public class GameClockController : MonoBehaviour
         //Creamos el String con los datos de tiempo
         //string clockString = string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
         //Creamos el String con los datos de tiempo
-        string clockString = string.Format("{0:00}:{1:00}", hours, minutes);
-
-        //Asignamos el String creado al elemento de UI
-        txtDayClock.text = clockString;
+        clockString = string.Format("{0:00}:{1:00}", hours, minutes);
     }
 
     //-------------------------------------------------------------------------------------------------

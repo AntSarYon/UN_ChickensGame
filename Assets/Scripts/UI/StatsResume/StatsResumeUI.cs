@@ -2,10 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.MPE;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class StatsResumeUI : MonoBehaviour
 {
+    private Animator panelAnimator;
+
     [SerializeField] private TextMeshProUGUI txtPesoPrmedio;
     [SerializeField] private TextMeshProUGUI txtMortalidad;
     [SerializeField] private TextMeshProUGUI txtPoblacion;
@@ -33,6 +37,10 @@ public class StatsResumeUI : MonoBehaviour
 
     void Start()
     {
+        // Obtenemos referencia al Animator del Panel de stats
+        panelAnimator = GetComponentInChildren<Animator>();
+
+        // Asignamos Funciones delegadas
         DayStatusManager.Instance.OnChickenDeath += OnChickenDeathDelegate;
         DayStatusManager.Instance.OnGenerateNewChicken += OnGenerateNewChickenDelegate;
 
@@ -63,6 +71,7 @@ public class StatsResumeUI : MonoBehaviour
 
     void Update()
     {
+
         //Incrementamos el tiempo constantemente.
         timer += Time.deltaTime;
 
@@ -79,7 +88,6 @@ public class StatsResumeUI : MonoBehaviour
             timer = 0;
         }
 
-        
     }
 
     //----------------------------------------------------------------------------
@@ -153,5 +161,18 @@ public class StatsResumeUI : MonoBehaviour
         Debug.Log(poblacion);
     }
 
-    
+    //----------------------------------------------------------------------------
+
+    public void ShowPanel()
+    {
+        Debug.Log("Mouse quiere ver panel");
+        panelAnimator.SetBool("mouseInArea",true);
+    }
+
+    public void HidePanel()
+    {
+        Debug.Log("Mouse quiere ocultar panel");
+        panelAnimator.SetBool("mouseInArea", false);
+    }
+
 }

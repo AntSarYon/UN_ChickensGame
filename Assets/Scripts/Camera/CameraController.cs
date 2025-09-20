@@ -51,28 +51,24 @@ public class CameraController : MonoBehaviour
         //Si el Mouse esta cerca al Borde (superior) de la Pantalla (segun definimos el margen)
         if (Input.mousePosition.y >= Screen.height - panBorderThickness)
         {
-            Debug.Log("Mouse en el limite");
             //Actualizamos la referencia a la posicion en base a la velocidad
             position.y += panSpeed * Time.deltaTime;
         }
         //Si el Mouse esta cerca al Borde (inferior) de la Pantalla (segun definimos el margen)
         if (Input.mousePosition.y <= panBorderThickness)
         {
-            Debug.Log("Mouse en el limite");
             //Actualizamos la referencia a la posicion en base a la velocidad
             position.y -= panSpeed * Time.deltaTime;
         }
         //Si el Mouse esta cerca al Borde (superior) de la Pantalla (segun definimos el margen)
         if (Input.mousePosition.x >= Screen.width - panBorderThickness)
         {
-            Debug.Log("Mouse en el limite");
             //Actualizamos la referencia a la posicion en base a la velocidad
             position.x += panSpeed * Time.deltaTime;
         }
         //Si el Mouse esta cerca al Borde (superior) de la Pantalla (segun definimos el margen)
         if (Input.mousePosition.x <= panBorderThickness)
         {
-            Debug.Log("Mouse en el limite");
             //Actualizamos la referencia a la posicion en base a la velocidad
             position.x -= panSpeed * Time.deltaTime;
         }

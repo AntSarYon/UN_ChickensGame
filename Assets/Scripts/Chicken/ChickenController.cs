@@ -68,7 +68,6 @@ public class ChickenController : MonoBehaviour
 
     //-----------------------------------------------------------------------------
 
-    // Start is called before the first frame update
     void Start()
     {
         //Definimos un nuevo destino aleatorio para la gallina
@@ -108,7 +107,7 @@ public class ChickenController : MonoBehaviour
             starvingFlag = true;
 
             //Entramos en Animacion de Starving
-            mSpritesController.EnterStarvingAnim();
+            mSpritesController.EnableStarvingAnim();
         }
         else
         {
@@ -119,7 +118,7 @@ public class ChickenController : MonoBehaviour
             if (!onHover)
             {
                 //Hacemos que su color vuelva a la normalidad...
-                mSpritesController.ExitStarvingAnim();
+                mSpritesController.DisableStarvingAnim();
             }
             
         }
@@ -130,11 +129,10 @@ public class ChickenController : MonoBehaviour
 
     public void ManageStats()
     {
-
         //Manejamos los Stats segun loos flags
-        mChickenStats.ManageStats_HambreYPeso(eatingFlag);
+        mChickenStats.ManageStats_HambreYPeso(eatingFlag, isBeingDragged);
         mChickenStats.ManageStats_HP(fightingFlag, starvingFlag);
-        mChickenStats.ManageStats_Estres(sleepingFlag);
+        mChickenStats.ManageStats_Estres(sleepingFlag, eatingFlag, isBeingDragged);
     }
 
     //------------------------------------------------------------------------------------------
@@ -145,14 +143,18 @@ public class ChickenController : MonoBehaviour
         //Si el pollito sigue vivo...
         if (isAlive)
         {
-            //Revisamos si tenemos hambre...
-            CheckIfStarving();
-
             //Controlamos los Stats
             ManageStats();
 
-            //Controlamos la Animacion de Caminata
-            mSpritesController.ManageWalkingAnim();
+            //Si no esta siendo Draggeado...
+            if (!isBeingDragged)
+            {
+                //Revisamos si tenemos hambre...
+                CheckIfStarving();
+
+                //Controlamos la Animacion de Caminata
+                mSpritesController.ManageWalkingAnim();
+            }
 
             //Si el pollito esta peleando
             if (fightingFlag)
@@ -480,7 +482,7 @@ public class ChickenController : MonoBehaviour
                 if (mChickenStats.hambre < 95)
                 {
                     //Salimos de la Animacion de Starving
-                    mSpritesController.ExitStarvingAnim();
+                    mSpritesController.DisableStarvingAnim();
                 }
 
                 //Si el Comedero esta vacio...

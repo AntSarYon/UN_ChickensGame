@@ -20,9 +20,11 @@ public class UI_DayInfo : MonoBehaviour
         txtDay.text = $"Dia {CampaignManager.Instance.DayCounter}";
     }
 
-    // Update is called once per frame
+    // -------------------------------------------------------
+
     void Update()
     {
-        
+        //Asignamos el String con la hora al elemento de UI
+        txtTimeClock.text = GameClockController.Instance.ClockString;
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class ChickenStats : MonoBehaviour
@@ -28,6 +29,7 @@ public class ChickenStats : MonoBehaviour
     [HideInInspector] public float peso = 100;
     [Header("Velocidad Cambio de Stats: Peso")]
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadIncrementoPeso = 0.15f;
+    private float multiplicadorIncrementoPesoSegunEstres = 1;
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadReduccionPeso = 0.10f;
 
     //-----------------------------------------------------------------------
@@ -46,6 +48,7 @@ public class ChickenStats : MonoBehaviour
 
         velocidadIncrementoPeso = GameRulesManager.instance.velocidadIncrementoPeso;
         velocidadReduccionPeso = GameRulesManager.instance.velocidadReduccionPeso;
+        multiplicadorIncrementoPesoSegunEstres = 1;
 
         //Seteamos los stats iniciales del pollo
         hp = 100;
@@ -58,22 +61,35 @@ public class ChickenStats : MonoBehaviour
     //-----------------------------------------------------------------------
     // FUNCION: Manejo de Stats segun estados...
 
-    public void ManageStats_HambreYPeso(bool eatingFlag)
+    public void ManageStats_HambreYPeso(bool eatingFlag, bool isbeingDragged)
     {
         if (eatingFlag)
         {
+            Debug.Log("COMIENDO");
             //Reducimos el Stat de Hambre progresivamente
             hambre -= velocidadReduccionHambre * Time.deltaTime;
             hambre = Mathf.Clamp(hambre, 0.00f, 100.00f);
 
-            peso += velocidadIncrementoPeso * Time.deltaTime;
+            peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunEstres;
             peso = Mathf.Clamp(peso, 1.00f, 7.00f);
         }
         //Si el Flag de "Comiendo"; esta desactivado
         else
         {
-            //Aumentamos el Stat de Hambre progresivamente
-            hambre += velocidadIncrementoHambre * Time.deltaTime;
+            Debug.Log("NO ESTOY COMIENDO");
+            //Si esta siendo sujetado...
+            if (isbeingDragged)
+            {
+                //Aumentamos el Stat de Hambre progresivamente (más rapido)
+                hambre += velocidadIncrementoHambre * 1.75f * Time.deltaTime;
+            }
+            else
+            {
+                //Aumentamos el Stat de Hambre progresivamente
+                hambre += velocidadIncrementoHambre * Time.deltaTime;
+            }
+            
+
             hambre = Mathf.Clamp(hambre, 0.00f, 100.00f);
 
             peso -= velocidadReduccionPeso * Time.deltaTime;
@@ -96,21 +112,62 @@ public class ChickenStats : MonoBehaviour
 
     //-----------------------------------------------------------------------
 
-    public void ManageStats_Estres(bool sleepingFlag)
+    public void ManageStats_Estres(bool sleepingFlag, bool eatingFlag, bool isBeingDragged)
     {
-        // Si el Flag de "Durmiendo" esta activo
-        if (sleepingFlag)
+        // Si el Flag de "Durmiendo" o "Comiendo" esta activo
+        if (sleepingFlag || eatingFlag)
         {
             //Reducimos el estres Progresivamente
             estres -= velocidadReduccionEstres * Time.deltaTime;
             estres = Mathf.Clamp(estres, 0.00f, 100.00f);
+
+            //Actualizamos el indice de incremento de Peso por Estres
+            UpdateIncrementoPesoPorEstres();
+
+
         }
-        // Si el Flag de "Durmiendo" esta Desactivo
+        // Si el Flag de "Durmiendo" y "Comiendo" estan Desactivados
         else
         {
-            //Aumentamos el estres Progresivamente
-            estres += velocidadIncrementoEstres * Time.deltaTime;
+            if (isBeingDragged)
+            {
+                //Aumentamos el estres Progresivamente (más rapido)
+                estres += velocidadIncrementoEstres * 1.75f * Time.deltaTime;
+            }
+            else
+            {
+                //Aumentamos el estres Progresivamente
+                estres += velocidadIncrementoEstres * Time.deltaTime;
+            }
+
+            //Limitamos el Estres dentro de un rango hasta 100
             estres = Mathf.Clamp(estres, 0.00f, 100.00f);
+
+            //Actualizamos el indice de incremento de Peso por Estres
+            UpdateIncrementoPesoPorEstres();
+        }
+    }
+
+    //-----------------------------------------------------------------------
+
+    private void UpdateIncrementoPesoPorEstres()
+    {
+        // Mientras mas elevado el estres, menos engordará al comer
+        if (estres <= 20.00f)
+        {
+            multiplicadorIncrementoPesoSegunEstres = 3;
+        }
+        else if (estres <= 50.00f)
+        {
+            multiplicadorIncrementoPesoSegunEstres = 2;
+        }
+        else if (estres <= 80.00f)
+        {
+            multiplicadorIncrementoPesoSegunEstres = 1;
+        }
+        else
+        {
+            multiplicadorIncrementoPesoSegunEstres = 0.5f;
         }
     }
 

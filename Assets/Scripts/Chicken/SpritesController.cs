@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,11 +17,16 @@ public class SpritesController : MonoBehaviour
     private Vector3 originalScale;
     private Vector3 draggedScale = new Vector3(1.35f, 1.35f, 1.35f);
 
-    //Flag para reconocer si esta siendo arrastrado
-    [SerializeField] private bool isBeingDragged;
-
     //UI del pollito
     [SerializeField] private ChickenUI chickenUI;
+
+    // Flag Modo starving
+    private bool bStarvingModeOn;
+
+    private float starvingInterpolation = 0;
+    private float starvingSpeed = 2;
+    // Flag de "Debe volverse volviendose rojo"
+    private bool mustTurnRed = false;
 
     #endregion
 
@@ -47,6 +53,12 @@ public class SpritesController : MonoBehaviour
         mRigidbody = GetComponent<Rigidbody2D>();
         mAnimator = GetComponent<Animator>();
         mChickenStats = GetComponent<ChickenStats>();
+
+        // El flag de "modo starving" empieza en false
+        bStarvingModeOn = false;
+        starvingInterpolation = 0;
+        starvingSpeed = 2;
+        mustTurnRed = false;
     }
 
     //-----------------------------------------------------------------------------------
@@ -64,6 +76,69 @@ public class SpritesController : MonoBehaviour
 
         //Funcion Delegafa del Evento "Orden de Dormir"
         DayStatusManager.Instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
+    }
+
+    void Update()
+    {
+        // Controlamos (si se requiere) la animacion de starving
+        ControlStarvingAnim();
+                
+    }
+
+    //----------------------------------------------------------------------------------------
+    // FUNCION: Controlar la Animacion de Starving
+
+    private void ControlStarvingAnim()
+    {
+        //Si el "Modo Starving" esta activo...
+        if (bStarvingModeOn)
+        {
+            //Si el flag de "Debe cambiar a Rojo" esta activo
+            if (mustTurnRed)
+            {
+                // Si la interpolacion aun es menor a 1 (no llega a rojo)
+                if (starvingInterpolation < 1)
+                {
+                    //Incrementamos el valor de interpolacion
+                    starvingInterpolation += Time.deltaTime * starvingSpeed;
+                }
+                //En caso ya haya llegado a Rojo...
+                else
+                {
+                    //Desactivamos Flag de "Debe hacerse rojo"
+                    mustTurnRed = false;
+                }
+            }
+            // En caso el flag este desactivado
+            else
+            {
+                // Si el valor de interpolacion aun es mayor que 0
+                if (starvingInterpolation > 0)
+                {
+                    // Reducimos el valor de interpolacion
+                    starvingInterpolation -= Time.deltaTime * starvingSpeed;
+                }
+                // En caso ya este en 0
+                else
+                {
+                    // Activamos Flag de "Debe hacerse rojo"
+                    mustTurnRed = true;
+                }
+            }
+
+            //Actualizamos el Color seg{un corresponda
+            mSrenderer.color = Color.Lerp(defaultColor, starvingColor, starvingInterpolation);
+        }
+
+        //En caso No estar en "Modo Starving"
+        else
+        {
+            //El valor de interpolacion vuelve a 0
+            starvingInterpolation = 0;
+
+            //Activamos Flag de "Debe converitrse en Rojo" para cuando se requiera nuevamente
+            mustTurnRed = true;
+        }
     }
 
     //----------------------------------------------------------------------------------------
@@ -119,17 +194,16 @@ public class SpritesController : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
 
-    public void EnterStarvingAnim()
+    public void EnableStarvingAnim()
     {
-        //Hacemos que el Pollito este de rojo
-        mSrenderer.color = starvingColor;
-        
+        // Activamos el flag de Modo Starving
+        bStarvingModeOn = true;
     }
 
-    public void ExitStarvingAnim()
+    public void DisableStarvingAnim()
     {
-        //Hacemos que el Pollito este normal
-        mSrenderer.color = defaultColor;
+        // Desactivamos el flag de Modo Starving
+        bStarvingModeOn = false;
     }
 
     //-----------------------------------------------------------------------------------
@@ -170,11 +244,14 @@ public class SpritesController : MonoBehaviour
 
     public void PlayDeath()
     {
-        //Activamos trigger de Muerte
-        mAnimator.SetTrigger("Die");
+        // Desactivamos la Animacion de "Starving"
+        DisableStarvingAnim();
 
         //Regresamos su Color a la normalidad
         mSrenderer.color = defaultColor;
+
+        //Activamos trigger de Muerte
+        mAnimator.SetTrigger("Die");
 
         //Desactivamos la UI de informacion del Pollo
         chickenUI.HideChickenInfo();

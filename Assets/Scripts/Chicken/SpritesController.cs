@@ -74,8 +74,6 @@ public class SpritesController : MonoBehaviour
         //Almacenamos la escala original del pollito
         originalScale = transform.localScale;
 
-        //Funcion Delegafa del Evento "Orden de Dormir"
-        DayStatusManager.Instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
     }
 
     void Update()

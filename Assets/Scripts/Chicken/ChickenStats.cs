@@ -18,18 +18,18 @@ public class ChickenStats : MonoBehaviour
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadIncrementoHambre = 2.75f;
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadReduccionHambre = 4;
 
-    //Estres del pollito
-    [HideInInspector] public float estres = 100;
-    [Header("Velocidad Cambio de Stats: Estres")]
-    [Range(0.00f, 10.00f)] [SerializeField] private float velocidadIncrementoEstres = 1;
-    [Range(0.00f, 10.00f)] [SerializeField] private float velocidadReduccionEstres = 3;
-    [Range(0.00f, 100.00f)] public float estresParaPelear = 60;
+    //felicidad del pollito
+    [HideInInspector] public float felicidad = 100;
+    [Header("Velocidad Cambio de Stats: felicidad")]
+    [Range(0.00f, 10.00f)] [SerializeField] private float velocidadIncrementofelicidad = 1;
+    [Range(0.00f, 10.00f)] [SerializeField] private float velocidadReduccionfelicidad = 3;
+    [Range(0.00f, 100.00f)] public float felicidadParaPelear = 60;
 
     //Peso del Pollito
     [HideInInspector] public float peso = 100;
     [Header("Velocidad Cambio de Stats: Peso")]
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadIncrementoPeso = 0.15f;
-    private float multiplicadorIncrementoPesoSegunEstres = 1;
+    private float multiplicadorIncrementoPesoSegunfelicidad = 1;
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadReduccionPeso = 0.10f;
 
     //-----------------------------------------------------------------------
@@ -37,23 +37,20 @@ public class ChickenStats : MonoBehaviour
     void Start()
     {
         //Traemos los parametros segun se haya ingresado en el Menu Inicial
-        velocidadReduccionHP = GameRulesManager.instance.velocidadReduccionHP;
-
         velocidadIncrementoHambre = GameRulesManager.instance.velocidadIncrementoHambre;
         velocidadReduccionHambre = GameRulesManager.instance.velocidadReduccionHambre;
 
-        velocidadIncrementoEstres = GameRulesManager.instance.velocidadIncrementoEstres;
-        velocidadReduccionEstres = GameRulesManager.instance.velocidadReduccionEstres;
-        estresParaPelear = GameRulesManager.instance.estresParaPelear;
+        velocidadIncrementofelicidad = GameRulesManager.instance.velocidadIncrementofelicidad;
+        velocidadReduccionfelicidad = GameRulesManager.instance.velocidadReduccionfelicidad;
 
         velocidadIncrementoPeso = GameRulesManager.instance.velocidadIncrementoPeso;
         velocidadReduccionPeso = GameRulesManager.instance.velocidadReduccionPeso;
-        multiplicadorIncrementoPesoSegunEstres = 1;
+        multiplicadorIncrementoPesoSegunfelicidad = 1;
 
         //Seteamos los stats iniciales del pollo
         hp = 100;
         hambre = Random.Range(35.00f, 80.00f);
-        estres = Random.Range(35.00f, 80.00f);
+        felicidad = Random.Range(35.00f, 80.00f);
         peso = 1; // El Peso empieza en 1 siempre // Random.Range(1.00f, 7.00f);
 
     }
@@ -70,7 +67,7 @@ public class ChickenStats : MonoBehaviour
             hambre -= velocidadReduccionHambre * Time.deltaTime;
             hambre = Mathf.Clamp(hambre, 0.00f, 100.00f);
 
-            peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunEstres;
+            peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunfelicidad;
             peso = Mathf.Clamp(peso, 1.00f, 7.00f);
         }
         //Si el Flag de "Comiendo"; esta desactivado
@@ -112,17 +109,17 @@ public class ChickenStats : MonoBehaviour
 
     //-----------------------------------------------------------------------
 
-    public void ManageStats_Estres(bool sleepingFlag, bool eatingFlag, bool isBeingDragged)
+    public void ManageStats_felicidad(bool sleepingFlag, bool eatingFlag, bool isBeingDragged)
     {
         // Si el Flag de "Durmiendo" o "Comiendo" esta activo
         if (sleepingFlag || eatingFlag)
         {
-            //Reducimos el estres Progresivamente
-            estres -= velocidadReduccionEstres * Time.deltaTime;
-            estres = Mathf.Clamp(estres, 0.00f, 100.00f);
+            //Reducimos el felicidad Progresivamente
+            felicidad -= velocidadReduccionfelicidad * Time.deltaTime;
+            felicidad = Mathf.Clamp(felicidad, 0.00f, 100.00f);
 
-            //Actualizamos el indice de incremento de Peso por Estres
-            UpdateIncrementoPesoPorEstres();
+            //Actualizamos el indice de incremento de Peso por felicidad
+            UpdateIncrementoPesoPorfelicidad();
 
 
         }
@@ -131,43 +128,43 @@ public class ChickenStats : MonoBehaviour
         {
             if (isBeingDragged)
             {
-                //Aumentamos el estres Progresivamente (más rapido)
-                estres += velocidadIncrementoEstres * 1.75f * Time.deltaTime;
+                //Aumentamos el felicidad Progresivamente (más rapido)
+                felicidad += velocidadIncrementofelicidad * 1.75f * Time.deltaTime;
             }
             else
             {
-                //Aumentamos el estres Progresivamente
-                estres += velocidadIncrementoEstres * Time.deltaTime;
+                //Aumentamos el felicidad Progresivamente
+                felicidad += velocidadIncrementofelicidad * Time.deltaTime;
             }
 
-            //Limitamos el Estres dentro de un rango hasta 100
-            estres = Mathf.Clamp(estres, 0.00f, 100.00f);
+            //Limitamos el felicidad dentro de un rango hasta 100
+            felicidad = Mathf.Clamp(felicidad, 0.00f, 100.00f);
 
-            //Actualizamos el indice de incremento de Peso por Estres
-            UpdateIncrementoPesoPorEstres();
+            //Actualizamos el indice de incremento de Peso por felicidad
+            UpdateIncrementoPesoPorfelicidad();
         }
     }
 
     //-----------------------------------------------------------------------
 
-    private void UpdateIncrementoPesoPorEstres()
+    private void UpdateIncrementoPesoPorfelicidad()
     {
-        // Mientras mas elevado el estres, menos engordará al comer
-        if (estres <= 20.00f)
+        // Mientras mas elevado el felicidad, menos engordará al comer
+        if (felicidad <= 20.00f)
         {
-            multiplicadorIncrementoPesoSegunEstres = 3;
+            multiplicadorIncrementoPesoSegunfelicidad = 3;
         }
-        else if (estres <= 50.00f)
+        else if (felicidad <= 50.00f)
         {
-            multiplicadorIncrementoPesoSegunEstres = 2;
+            multiplicadorIncrementoPesoSegunfelicidad = 2;
         }
-        else if (estres <= 80.00f)
+        else if (felicidad <= 80.00f)
         {
-            multiplicadorIncrementoPesoSegunEstres = 1;
+            multiplicadorIncrementoPesoSegunfelicidad = 1;
         }
         else
         {
-            multiplicadorIncrementoPesoSegunEstres = 0.5f;
+            multiplicadorIncrementoPesoSegunfelicidad = 0.5f;
         }
     }
 

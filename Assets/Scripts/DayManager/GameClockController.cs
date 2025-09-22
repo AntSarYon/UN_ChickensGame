@@ -59,11 +59,6 @@ public class GameClockController : MonoBehaviour
 
     void Start()
     {
-        //Traemos los parametros del RulesManager
-        startingTime = GameRulesManager.instance.startingTime;
-        finishTime = GameRulesManager.instance.finishTime;
-        timeScale = GameRulesManager.instance.timeScale;
-
         //Definir Tiempo (Hora) inicial
         elapsedTime = startingTime * 3600f; // (Hora deseada x 3600 segundos)
 
@@ -99,8 +94,6 @@ public class GameClockController : MonoBehaviour
             // Si el tiempo transcurrido lleg{o al final del dia...
             if (elapsedTime >= dayFinishTime)
             {
-                //Llamamos al evento de Fin del Dia.
-                DayStatusManager.Instance.TriggerEvent_DayOver();
 
                 //Desactivamos Flag de "Dia esta corriendo"
                 bDayIsRunning = false;

@@ -26,7 +26,6 @@ public class CashUIController : MonoBehaviour
     {
         DayStatusManager.Instance.OnChickenSold += OnChickenSoldDelegate;
         DayStatusManager.Instance.OnFoodRefill += OnFoodRefillDelegate;
-        DayStatusManager.Instance.OnGasRefill += OnGasRefillDelegate;
         DayStatusManager.Instance.OnGenerateNewChicken += OnGenerateNewChickenDelegate;
 
         //Traemos la cantidad de Dinero disponible

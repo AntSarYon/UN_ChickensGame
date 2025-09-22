@@ -10,27 +10,24 @@ public class UIController : MonoBehaviour
 {
     #region Props
 
-    [SerializeField] private Button btnLightSwitch;
-    [SerializeField] private Button btnSleepOrder;
-    [SerializeField] private Button btnMoreFoodOrder;
-    [SerializeField] private Button btnMoreGasOrder;
+    //Boton de agregar nuevo Pollo
     [SerializeField] private Button btnAddNewChicken;
-    [SerializeField] private GameObject LightPanel;
 
+    // Panel de FadeIn/ Out
     [SerializeField] private UI_FadeOut UI_fadeOut;
-
-
-    [Header("Medidores")]
-    [SerializeField] private Slider FoodSlider;
-    [SerializeField] private Slider GasSlider;
-    [SerializeField] private Slider TemperatureSlider;
-
-    [SerializeField] private Food[] arrFoods;
-
     [SerializeField] private GameObject FadeOutPanel;
 
-    //Nivel de comida actual
-    private float currentFoodLevel;
+    // Barra de comida (unico, adaptable para cada corral)
+    [Header("Medidores")]
+    [SerializeField] private Slider FoodSlider;
+
+    
+
+    // Corral Objetivo actual
+    private Yard currentTargetYard;
+
+    //Nivel de comida del Corral actual
+    private float currentYardFoodLevel;
 
     #endregion
 
@@ -40,44 +37,14 @@ public class UIController : MonoBehaviour
 
     void Start()
     {
-        //La luz inicia encendida
-        TurnOnLight();
-
-        btnLightSwitch.onClick.AddListener(ToggleLight);
-        btnSleepOrder.onClick.AddListener(ToggleSleepOrder);
-        btnMoreFoodOrder.onClick.AddListener(AskForFood);
-        btnMoreGasOrder.onClick.AddListener(AskForGas);
+        // Agregamos Listener de Agregar nuevo pollito
         btnAddNewChicken.onClick.AddListener(AskForChicken);
 
-        //Obtenemos Array con todos los Food
-        arrFoods = FindObjectsByType<Food>(FindObjectsSortMode.None);
+        //Asignamos como Valor maximo del Sliderl el maximo del Corral en turno (podria variar)
+        FoodSlider.maxValue = currentTargetYard.totalFoodMaxValue;
 
-        //Definimos var para el Valor maximo del Slider de comida global...
-        float maxValueForGeneralFoodSlider = 0;
-
-        //Por cada Food
-        foreach (Food food in arrFoods)
-        {
-            //Incrementamos el valor maximo
-            maxValueForGeneralFoodSlider += food.mFoodLevelSlider.maxValue;
-        }
-
-        //Asignamos el Valor maximo obtenido como el maximo del Slider de comida
-        FoodSlider.maxValue = maxValueForGeneralFoodSlider;
-
-        //Asignamos que el nivel de Comida actual es el maximo
-        currentFoodLevel = maxValueForGeneralFoodSlider;
-
-        DayStatusManager.Instance.OnDayOver += OnDayOverDelegate;
-    }
-
-    // ----------------------------------------------------------------------------------
-    // FUNCION DELEGADA - DIA TERMINADO
-
-    private void OnDayOverDelegate()
-    {
-        // Hacemos que la UI de FadeOut muestre la animacion correspondiente
-        UI_fadeOut.Play_FadeInDayOver();
+        //Asignamos como valor del Slider el nivel de Comida actual en el corral
+        FoodSlider.value = currentTargetYard.currentTotalFoodLevel;
     }
 
     // ----------------------------------------------------------------------------------
@@ -92,7 +59,7 @@ public class UIController : MonoBehaviour
 
         //Var temporal para el nuevo total de comida actual
         float newCurrentFoodLevel = 0;
-
+        /*
         //Por cada Food
         foreach (Food food in arrFoods)
         {
@@ -104,55 +71,13 @@ public class UIController : MonoBehaviour
         currentFoodLevel = newCurrentFoodLevel;
 
         //Asignamos el valor de Comida en el Slider
-        FoodSlider.value = currentFoodLevel;
+        FoodSlider.value = currentFoodLevel;*/
 
         if (Input.GetKeyDown(KeyCode.M))
         {
             SceneManager.LoadScene("Menu");
         }
 
-        //El Gas (y la temperatura) se recue constantemente...
-        GasSlider.value -= 2.75f * Time.deltaTime;
-        
-        // Igualamos el valor de la temperatura al del Gas (por ahora)
-        TemperatureSlider.value= GasSlider.value;
-    }
-
-    //----------------------------------------------------------------------------------
-
-    public void TurnOffLight()
-    {
-        LightPanel.SetActive(true);
-    }
-
-    public void TurnOnLight()
-    {
-        LightPanel.SetActive(false);
-    }
-
-    //----------------------------------------------------------------------------------
-
-    public void ToggleLight()
-    {
-        //Si el Panel esta activo (Luz apagada)
-        if (LightPanel.activeSelf)
-        {
-            //Activamos la Luz (desactivamos el panel)
-            TurnOnLight();
-        }
-        //Caso ontrario
-        else
-        {
-            //Apagamos la luz (Activamos el Panel)
-            TurnOffLight();
-        }
-    }
-
-    //----------------------------------------------------------------------------------
-
-    public void ToggleSleepOrder()
-    {
-        DayStatusManager.Instance.SleepOrderClicked();
     }
 
     // ----------------------------------------------------------------------------------
@@ -161,15 +86,6 @@ public class UIController : MonoBehaviour
     {
         //Disparamos el Evento de "Pedir mas comida"
         DayStatusManager.Instance.TriggerEvent_FoodRefill();
-    }
-
-    public void AskForGas()
-    {
-        //Disparamos el Evento de "Pedir mas comida"
-        DayStatusManager.Instance.TriggerEvent_GasRefill();
-
-        //Llevamos el valor del Slider al maximo
-        GasSlider.value = GasSlider.maxValue;
     }
 
     public void AskForChicken()

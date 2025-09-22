@@ -76,8 +76,6 @@ public class ChickenController : MonoBehaviour
         //Agregamos Funcion Delegado al Evento de Pollo vendido
         DayStatusManager.Instance.OnChickenSold += OnChickenSoldDelegate;
 
-        //Funcion Delegafa del Evento "Orden de Dormir"
-        DayStatusManager.Instance.OnSleepOrderClicked += OnSleepOrderClickedDelegate;
     }
 
     //-----------------------------------------------------------------------------
@@ -132,7 +130,7 @@ public class ChickenController : MonoBehaviour
         //Manejamos los Stats segun loos flags
         mChickenStats.ManageStats_HambreYPeso(eatingFlag, isBeingDragged);
         mChickenStats.ManageStats_HP(fightingFlag, starvingFlag);
-        mChickenStats.ManageStats_Estres(sleepingFlag, eatingFlag, isBeingDragged);
+        mChickenStats.ManageStats_felicidad(sleepingFlag, eatingFlag, isBeingDragged);
     }
 
     //------------------------------------------------------------------------------------------
@@ -378,8 +376,8 @@ public class ChickenController : MonoBehaviour
             //Si estams colisionando con otro Pollito...
             if (collision.gameObject.CompareTag("Chicken"))
             {
-                //Si los Stats del Pollo indican que esta estresado...
-                if (mChickenStats.estres > mChickenStats.estresParaPelear)
+                //Si los Stats del Pollo indican que esta felicidadado...
+                if (mChickenStats.felicidad > mChickenStats.felicidadParaPelear)
                 {
                     //Activamos Flag de "Esta peleando"
                     fightingFlag = true;
@@ -387,14 +385,14 @@ public class ChickenController : MonoBehaviour
                     //Controlamos la Animacion de Pelea
                     mSpritesController.EnterFightAnim();
                 }
-                //En caso el nivel de estres no esté en el Nivel...
+                //En caso el nivel de felicidad no esté en el Nivel...
                 else
                 {
                     //Obtenemos los Stats del pollo con el que hemos chocado
                     ChickenStats otherChickenStats = collision.gameObject.GetComponent<ChickenStats>();
                     
-                    //Revisamos si el Estres del otro Pollo essta en el limite...
-                    if (otherChickenStats.estres >= otherChickenStats.estresParaPelear)
+                    //Revisamos si el felicidad del otro Pollo essta en el limite...
+                    if (otherChickenStats.felicidad >= otherChickenStats.felicidadParaPelear)
                     {
                         //De ser el caso...
 
@@ -404,7 +402,7 @@ public class ChickenController : MonoBehaviour
                         //Controlamos la Animacion de Pelea
                         mSpritesController.EnterFightAnim();
                     }
-                    //En caso tampoco este estresado...
+                    //En caso tampoco este felicidadado...
                     else
                     {
                         //Hacemos que se asigne un nuevo TargetRandom

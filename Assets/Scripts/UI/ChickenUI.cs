@@ -23,7 +23,7 @@ public class ChickenUI : MonoBehaviour
     [Header("Stats Bars")]
     [SerializeField] private Slider statsHpBar;
     [SerializeField] private Slider statsHambreBar;
-    [SerializeField] private Slider statsEstresBar;
+    [SerializeField] private Slider statsfelicidadBar;
     [SerializeField] private Slider statsPesoBar;
 
 
@@ -42,7 +42,7 @@ public class ChickenUI : MonoBehaviour
         //Obtenemos referencia a las Barras de Stadisticas
         statsHpBar = statsPanel.transform.Find("HP").Find("HPSlider").GetComponent<Slider>();
         statsHambreBar = statsPanel.transform.Find("Hambre").Find("HambreSlider").GetComponent<Slider>();
-        statsEstresBar = statsPanel.transform.Find("Estres").Find("EstresSlider").GetComponent<Slider>();
+        statsfelicidadBar = statsPanel.transform.Find("felicidad").Find("felicidadSlider").GetComponent<Slider>();
         statsPesoBar = statsPanel.transform.Find("Peso").Find("PesoSlider").GetComponent<Slider>();
 
         //Iniciamos con todos los Elementos de la UI Desactivados
@@ -92,7 +92,7 @@ public class ChickenUI : MonoBehaviour
         statsHpBar.value = chickenStats.hp;
 
         statsHambreBar.value = chickenStats.hambre;
-        statsEstresBar.value = chickenStats.estres;
+        statsfelicidadBar.value = chickenStats.felicidad;
         statsPesoBar.value = chickenStats.peso;
 
     }

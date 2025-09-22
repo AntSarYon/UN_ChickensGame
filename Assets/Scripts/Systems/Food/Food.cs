@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class Food : MonoBehaviour
 {
+    //Slider del nivel de la Comida (Va de 0 a 100)
     public Slider mFoodLevelSlider;
-    public Button btnReloadFood;
 
     //Referencia a Componentes
     private Collider2D mCollider;
@@ -18,7 +18,6 @@ public class Food : MonoBehaviour
 
     //Velocidad con la que disminuye la comida
     [Range(1,5)] [SerializeField] private float foodDecreaseSpeed;
-
     //--------------------------------------------------------------------------------------
 
     void Awake()
@@ -33,16 +32,10 @@ public class Food : MonoBehaviour
     void Start()
     {
         //Asignamos funcion Delegado para el evento de FoodRefill
-        DayStatusManager.Instance.OnFoodRefill += OnFoodRefillDelegate;
 
         //Traemos los parametros del RulesManager
         foodDecreaseSpeed = GameRulesManager.instance.foodDecreaseSpeed;
 
-        //Agregamos Listener al Boton de Recarga individual
-        btnReloadFood.onClick.AddListener(ReloadSpecificFood);
-
-        //Desactivamos el Boton (no se visualizará)
-        btnReloadFood.gameObject.SetActive(false);
     }
 
     //--------------------------------------------------------------------------------------
@@ -117,11 +110,11 @@ public class Food : MonoBehaviour
         }
     }
 
+    //--------------------------------------------------------------------------------------
+
     private void OnMouseOver()
     {
-        //Activamos el Boton (no se visualizará)
-        btnReloadFood.gameObject.SetActive(true);
-        btnReloadFood.interactable = true;
+        
     }
 
     private void OnMouseDown()
@@ -133,7 +126,6 @@ public class Food : MonoBehaviour
 
     private void OnMouseExit()
     {
-        //Desactivamos el Boton (no se visualizará)
-        btnReloadFood.gameObject.SetActive(false);
+        
     }
 }

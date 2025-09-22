@@ -14,7 +14,6 @@ public class UI_MenuController : MonoBehaviour
     [Header("Botones de Jugar")]
     [SerializeField] private Button btnPlayNewCmpaign;
     [SerializeField] private Button btnPlayContinueCampaign;
-    [SerializeField] private Button btnPlayground;
 
     //-------------------------------------------------------
 
@@ -25,8 +24,6 @@ public class UI_MenuController : MonoBehaviour
 
         btnPlayNewCmpaign.onClick.AddListener(StartNewGame);
         btnPlayContinueCampaign.onClick.AddListener(ContinueGame);
-        btnPlayground.onClick.AddListener(GoToPlayground);
-
         CloseParametersPanel();
     }
 
@@ -49,7 +46,7 @@ public class UI_MenuController : MonoBehaviour
     public void StartNewGame()
     {
         // Reiniciamos a la primera campaña
-        CampaignManager.Instance.RestartToFirstCampaign();
+        //CampaignManager.Instance.RestartToFirstCampaign();
 
         // Cargamos la escena del juego
         SceneManager.LoadScene("Level1");
@@ -58,10 +55,5 @@ public class UI_MenuController : MonoBehaviour
     public void ContinueGame()
     {
         SceneManager.LoadScene("Level1");
-    }
-
-    public void GoToPlayground()
-    {
-        SceneManager.LoadScene("Playground");
     }
 }

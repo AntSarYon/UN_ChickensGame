@@ -21,20 +21,11 @@ public class DayStatusManager : MonoBehaviour
 
     [HideInInspector] public bool bGameOver = false;
 
-    //FLAG - Orden para dormir
-    [HideInInspector] public bool orderedToSleep;
-
-    //EVENTO - Orden de Dormir Clickeada...
-    public UnityAction<bool> OnSleepOrderClicked;
-
     //Evento - Pollo vendido
     public UnityAction<float> OnChickenSold;
 
     //Evento - Pollo vendido
     public UnityAction OnFoodRefill;
-
-    //Evento - Pollo vendido
-    public UnityAction OnGasRefill;
 
     //Evento - Pollo vendido
     public UnityAction OnChickenDeath;
@@ -54,9 +45,6 @@ public class DayStatusManager : MonoBehaviour
     {
         //Asignamos Instancia de clase
         Instance = this;
-
-        //La orden para Dormir inicia desactivada
-        orderedToSleep = false;
 
     }
 
@@ -87,15 +75,6 @@ public class DayStatusManager : MonoBehaviour
 
     // ---------------------------------------------------------------------
     // Funcion disparadora de Evento: Orden de Dormir clickeada
-
-    public void SleepOrderClicked()
-    {
-        //Invertimos el valor de la Orden
-        orderedToSleep = !orderedToSleep;
-
-        //Invocamos a los delegados,  indicando el estado de la orden
-        OnSleepOrderClicked?.Invoke(orderedToSleep);
-    }
 
     public void TriggerEvent_ChickenSold(float chickenValue)
     {
@@ -140,21 +119,6 @@ public class DayStatusManager : MonoBehaviour
         CheckCashAndGameOver();
     }
 
-    public void TriggerEvent_GasRefill()
-    {
-        currentCash -= 50;
-
-        //Hacemos que el SoundsManager reproduzca sonido de Compra de Recurso
-        GameSoundsController.Instance.PlayResourceBoughtSound();
-
-        //Disparamos el Evento de Refill de Comida
-        //enviando el Valor de la Gallina a los Delegados
-        OnGasRefill?.Invoke();
-
-        //Revisamos si el dinero llegó a 0 para GameOver
-        CheckCashAndGameOver();
-    }
-
     public void TriggerEvent_OnChickenDeath()
     {
         //Incrementamos la cantidad de Pollitos Muertos.
@@ -185,15 +149,6 @@ public class DayStatusManager : MonoBehaviour
 
         //Reproducimos un Sonido de Spawn de Pollito
         GameSoundsController.Instance.PlayChickenSpawnSound();
-    }
-
-    public void TriggerEvent_DayOver()
-    {
-        // Disparamos evento de Dia Terminado
-        OnDayOver?.Invoke();
-
-        //Pasamos al siguiente dia
-        CampaignManager.Instance.IncreaseDay();
     }
 
     private void CheckCashAndGameOver()

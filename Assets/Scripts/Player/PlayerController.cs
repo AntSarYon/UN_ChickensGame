@@ -4,10 +4,26 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("UI de Player")]
+    public PlayerUI pUI;
+
+    [Header("Velocidad")]
     [SerializeField] private float speed;
     private float origSpeed;
+
+    [Header("Cuerpo")]
+    [SerializeField] private Transform orientationBody;
+    [SerializeField] private SpriteRenderer spriteBody;
+
+    // Referencia al RigidBody
     private Rigidbody mRb;
+    private AudioSource mAudioSource;
+
+    //Vector Input de Movimiento
     private Vector3 movementInput;
+
+    [Header("Clips de Audio")]
+    [SerializeField] private AudioClip ApplauseClip;
 
     // ----------------------------------------------------
 
@@ -15,6 +31,7 @@ public class PlayerController : MonoBehaviour
     {
         //Obtenemos referencia a componentes
         mRb = GetComponent<Rigidbody>();
+        mAudioSource = GetComponent<AudioSource>();
     }
 
     // -------------------------------------------------------
@@ -31,19 +48,19 @@ public class PlayerController : MonoBehaviour
         //Input empieza en Zero
         movementInput = Vector3.zero;
 
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             movementInput.z = 1;
         }
-        else if (Input.GetKey(KeyCode.S))
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             movementInput.z = -1;
         }
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             movementInput.x = -1;
         }
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             movementInput.x = 1;
         }
@@ -57,6 +74,16 @@ public class PlayerController : MonoBehaviour
             speed = 5.00f;
         } 
         else speed = origSpeed;
+
+        // Si se oprime la tecla C
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            //Aplaudimos
+            Applause();
+        }
+
+        // Hacemos que el Body siempre mire hacia donde se dirige el movimiento
+        orientationBody.LookAt(transform.position + movementInput);
     }
 
     // ---------------------------------------------------
@@ -71,6 +98,14 @@ public class PlayerController : MonoBehaviour
     public void Move(Vector3 direction)
     {
         mRb.MovePosition(mRb.position + direction.normalized * speed * Time.fixedDeltaTime);
+    }
+
+    // ----------------------------------------------------
+
+    public void Applause()
+    {
+        //Reproducimos el sonido de Aplauso
+        mAudioSource.PlayOneShot(ApplauseClip, 1);
     }
     
 }

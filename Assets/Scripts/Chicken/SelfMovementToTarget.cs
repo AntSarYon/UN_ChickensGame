@@ -74,29 +74,6 @@ public class SelfMovementToTarget : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            target = GameObject.Find("Food").transform;
-        }
-
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            target = GameObject.Find("Water").transform;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            target = null;
-            //Asignamos un nuevo target aleatorio
-            SetNewRandomWaypoint();
-        }
-
-    }
-
-    //-----------------------------------------------------------------------------------
-
     public void SetMovementDirection()
     {
         //Si tiene un Target
@@ -119,7 +96,11 @@ public class SelfMovementToTarget : MonoBehaviour
     public void StopMoving()
     {
         //AZsignamos 0 velocidad
-        mRb.velocity = Vector3.zero;
+        mRb.velocity = new Vector3(
+            0,
+            mRb.velocity.y,
+            0
+            );
 
         return;
     }
@@ -130,7 +111,11 @@ public class SelfMovementToTarget : MonoBehaviour
     public void MoveToTarget()
     {
         //Asignamos Velocidad y direccion en base a los calculos anteriores sobre el destino (Target o Waypoint)
-        mRb.velocity = new Vector3(moveDirection.x, moveDirection.y, moveDirection.z) * moveSpeed * speedMultiplier;
+        mRb.velocity = new Vector3(
+            moveDirection.x * moveSpeed * speedMultiplier, 
+            mRb.velocity.y, 
+            moveDirection.z * moveSpeed * speedMultiplier
+            );
     }
 
     //------------------------------------------------------------------------------------------------------

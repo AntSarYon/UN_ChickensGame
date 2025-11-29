@@ -165,7 +165,7 @@ public class SpritesController : MonoBehaviour
     public void ManageWalkingAnim()
     {
         //Si el Pollito tiene Velocidad en su RB
-        if (mRigidbody.velocity != Vector3.zero)
+        if (!GetComponent<ChickenController>().isBeingDragged && mRigidbody.velocity != Vector3.zero)
         {
             //Activams flag de animacion 'Is Walking'
             mAnimator.SetBool("IsWalking", true);

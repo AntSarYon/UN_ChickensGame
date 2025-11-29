@@ -310,7 +310,7 @@ public class ChickenController : MonoBehaviour
             mAudioSource.PlayOneShot(clipDragged, 0.25f);
 
             //Agarramos a la gallina
-            mDraggable.Catch();
+            //mDraggable.Catch();
 
             //Activamos Flag de "siendo arrastrado"
             isBeingDragged = true;
@@ -339,7 +339,7 @@ public class ChickenController : MonoBehaviour
         if (isBeingDragged)
         {
             //Movemos la Posicion del pollo
-            mDraggable.MovePosition();
+            //mDraggable.MovePosition();
         }
         
     }
@@ -350,7 +350,7 @@ public class ChickenController : MonoBehaviour
     private void OnMouseUp()
     {
         //Soltamos al pollito
-        mDraggable.Drop();
+        //mDraggable.Drop();
 
         //Hacemos que el Sprite vuelva a la Normalidad
         mSpritesController.SetSpriteBackToNormal();
@@ -548,6 +548,18 @@ public class ChickenController : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
+        //Si el Triger al que entramos es la zona de interacción
+        if (collision.tag == "PlayerInteractionZone")
+        {
+            //Obtenemos el PickupController del PlayerBody (Padre del Triger)
+            //para asignarle que este será el Objeto a coger.
+            collision.GetComponentInParent<PickUpController>().targetObject = this.gameObject;
+
+            //Controlamos la animacion de cuando se hace Hover
+            mSpritesController.EnterHoverAnimation();
+
+        }
+
         //Si el Pollito ha entrado en la zona de Venta...
         if (collision.gameObject.CompareTag("BillingZone"))
         {
@@ -576,6 +588,21 @@ public class ChickenController : MonoBehaviour
 
     private void OnTriggerExit(Collider collision)
     {
+        //Si el Triger del que salimos es la zona de interacción
+        if (collision.tag == "PlayerInteractionZone")
+        {
+            //Si la ultima referencia que tenia la zona era la de este objeto...
+            if (collision.GetComponentInParent<PickUpController>().targetObject == this.gameObject)
+            {
+                //Obtenemos el PickupController del Player (Padre del Triger)
+                //para indicar que ya no habrá ningun Objeto Asignado.
+                collision.GetComponentInParent<PickUpController>().targetObject = null;
+
+                //Controlamos la animacion de cuando se hace Hover
+                mSpritesController.ExitHoverAnimation();
+            }
+        }
+
         //Si el Pollito ha salido de la zona de Venta...
         if (collision.gameObject.CompareTag("BillingZone"))
         {

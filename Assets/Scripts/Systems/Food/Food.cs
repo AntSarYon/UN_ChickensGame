@@ -270,11 +270,46 @@ public class Food : MonoBehaviour
 
     //--------------------------------------------------------------------------------------
 
+    private void OnTriggerEnter(Collider other)
+    {
+        //Si el triggerpertenece a la zona de interaccion del jugador...
+        if (other.CompareTag("PlayerInteractionZone"))
+        {
+            //Obtenemos el PickupController del PlayerBody (Padre del Triger)
+            //para asignarle que este será el Objeto a coger.
+            other.GetComponentInParent<PickUpController>().targetObject = this.gameObject;
+
+            // Mostramos el Toggle con ingredientes
+            ShowIngredientsInfo();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        // Ocultamos el Toogle con ingredientes
+        HideIngredientsInfo();
+
+        //Si el Triger del que salimos es la zona de interacción
+        if (other.tag == "PlayerInteractionZone")
+        {
+            //Si la ultima referencia que tenia la zona era la de este objeto...
+            if (other.GetComponentInParent<PickUpController>().targetObject == this.gameObject)
+            {
+                //Obtenemos el PickupController del Player (Padre del Triger)
+                //para indicar que ya no habrá ningun Objeto Asignado.
+                other.GetComponentInParent<PickUpController>().targetObject = null;
+            }
+        }
+    }
+
+
+    /*
     private void OnMouseOver()
     {
         // Mostramos el Toggle con ingredientes
         ShowIngredientsInfo();
     }
+    */
 
     private void OnMouseDown()
     {
@@ -284,10 +319,11 @@ public class Food : MonoBehaviour
     }
 
 
-
+    /*
     private void OnMouseExit()
     {
         // Ocultamos el Toogle con ingredientes
         HideIngredientsInfo();
     }
+    */
 }

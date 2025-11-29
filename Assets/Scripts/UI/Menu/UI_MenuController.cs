@@ -45,15 +45,15 @@ public class UI_MenuController : MonoBehaviour
 
     public void StartNewGame()
     {
-        // Reiniciamos a la primera campaña
+        // Reiniciamos a la primera campaï¿½a
         //CampaignManager.Instance.RestartToFirstCampaign();
 
         // Cargamos la escena del juego
-        SceneManager.LoadScene("Level1");
+        SceneManager.LoadScene("SFv1");
     }
 
     public void ContinueGame()
     {
-        SceneManager.LoadScene("Level1");
+        SceneManager.LoadScene("SFv1");
     }
 }

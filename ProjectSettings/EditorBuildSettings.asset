@@ -17,5 +17,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Playground.unity
     guid: f26d991c53ca732408c5841306f2e640
+  - enabled: 1
+    path: Assets/Scenes/Level1SF.unity
+    guid: 9af037f08c9de344fab53452f19716e7
+  - enabled: 1
+    path: Assets/Scenes/SFv1.unity
+    guid: 98937458f1738254e89d60037e5a4a3e
   m_configObjects:
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: c85ef24f23fbeea44b0bbeed34bd9b9d, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 4589f0f6d6543ff4c9ac7f5c8bc09713, type: 2}

@@ -12,6 +12,8 @@ TagManager:
   - Floor
   - Toy
   - PlayerInteractionZone
+  - ApplauseArea
+  - FoodPool
   layers:
   - Default
   - TransparentFX

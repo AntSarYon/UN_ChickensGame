@@ -19,7 +19,6 @@ public class ChickenSpawner : MonoBehaviour
 
     // --------------------------------------------------------
 
-
     private void OnGenerateNewChickenRossDelegate()
     {
         //Instanciamos el Pollito

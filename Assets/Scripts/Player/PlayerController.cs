@@ -27,6 +27,9 @@ public class PlayerController : MonoBehaviour
     private Rigidbody mRb;
     private AudioSource mAudioSource;
 
+    [Header("Animator")]
+    [SerializeField] private Animator mAnimator;
+
     //Vector Input de Movimiento
     private Vector3 movementInput;
 
@@ -65,6 +68,8 @@ public class PlayerController : MonoBehaviour
         //Input empieza en Zero
         movementInput = Vector3.zero;
 
+        
+
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             movementInput.z = 1;
@@ -97,6 +102,19 @@ public class PlayerController : MonoBehaviour
         {
             //Aplaudimos
             Applause();
+        }
+
+        mAnimator.SetFloat("X", movementInput.x);
+        mAnimator.SetFloat("Y", movementInput.z);
+
+        // Si el player se esta moviendo...
+        if (movementInput != Vector3.zero)
+        {
+            mAnimator.SetBool("Moving", true);
+        }
+        else
+        {
+            mAnimator.SetBool("Moving", false);
         }
 
         // Hacemos que el Body siempre mire hacia donde se dirige el movimiento

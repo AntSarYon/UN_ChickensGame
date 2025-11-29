@@ -560,6 +560,13 @@ public class ChickenController : MonoBehaviour
 
         }
 
+        //Si el Triger al que entramos es la zona de interacción
+        if (collision.tag == "ApplauseArea")
+        {
+            //Multiplicamos la velocidad por 1.5 segundos...
+            mSelfMovementToTarget.MultiplySpeedTemporary(0.75f);
+        }
+
         //Si el Pollito ha entrado en la zona de Venta...
         if (collision.gameObject.CompareTag("BillingZone"))
         {

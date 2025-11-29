@@ -15,6 +15,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform orientationBody;
     [SerializeField] private SpriteRenderer spriteBody;
 
+    [Header("Area de influencia")]
+    [SerializeField] private Transform applauseArea;
+    [SerializeField] private Vector3 maxRadioScale = new Vector3(4.45f, 0.0085f, 4.45f);
+    [SerializeField] private Vector3 minRadioScale = Vector3.zero;
+    private float areaInterpolation;
+    private float areaIncreaseSpeed;
+    private bool bClapped;
+
     // Referencia al RigidBody
     private Rigidbody mRb;
     private AudioSource mAudioSource;
@@ -32,6 +40,15 @@ public class PlayerController : MonoBehaviour
         //Obtenemos referencia a componentes
         mRb = GetComponent<Rigidbody>();
         mAudioSource = GetComponent<AudioSource>();
+
+        //Actualizamos la escala del Area en base a la interpolacion
+        applauseArea.localScale = minRadioScale;
+
+        //Flag de "Aplaudió" empieza en false
+        bClapped = false;
+
+        areaInterpolation = 0.00f;
+        areaIncreaseSpeed = 3.00f;
     }
 
     // -------------------------------------------------------
@@ -84,6 +101,39 @@ public class PlayerController : MonoBehaviour
 
         // Hacemos que el Body siempre mire hacia donde se dirige el movimiento
         orientationBody.LookAt(transform.position + movementInput);
+
+        //Si el flag de "Aplaudió" esta activo...
+        if (bClapped)
+        {
+            //Incrementamos el valor de interpolacion
+            areaInterpolation += Time.deltaTime * areaIncreaseSpeed;
+
+            //Actualizamos la escala del Area en base a la interpolacion
+            applauseArea.localScale = Vector3.Lerp(minRadioScale, maxRadioScale, areaInterpolation);
+
+            // Si la interpolacion llega a 0
+            if (areaInterpolation >= 1)
+            {
+                //Desactivamos el flag de "Aplaudió"
+                bClapped = false;
+
+                //La retornamos a 0
+                areaInterpolation = 0;
+
+                //Restauramos el aplauso
+                Invoke(nameof(RestoreApplauseArea), 0.35f);
+
+                
+            }
+        }
+    }
+
+    // ---------------------------------------------------
+
+    private void RestoreApplauseArea()
+    {
+        //Actualizamos la escala del Area en base a la interpolacion
+        applauseArea.localScale = minRadioScale;
     }
 
     // ---------------------------------------------------
@@ -106,6 +156,9 @@ public class PlayerController : MonoBehaviour
     {
         //Reproducimos el sonido de Aplauso
         mAudioSource.PlayOneShot(ApplauseClip, 1);
+
+        //Activamos flag de "Aplaudió"
+        bClapped = true;
     }
     
 }

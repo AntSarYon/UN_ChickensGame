@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f305d0ff4ab857e479080b6d3c5c9cf7, type: 3}
+  m_Name: RossType
+  m_EditorClassIdentifier: 
+  typeName: Ross
+  likedIngredients: 0200000000000000
+  dislikedIngredients: 03000000
+  likeHarina: 1
+  likeSoja: 0
+  likeGusanos: 0
+  likeMaiz: 1
+  gustos: Estar Feliz
+  pasiva: No tiene
+  likeToys: 0

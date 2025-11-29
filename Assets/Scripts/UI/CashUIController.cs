@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class CashUIController : MonoBehaviour
 {
+    public static CashUIController instance;
+
     //Texto de Dinero en cuenta...
     [SerializeField] private TextMeshProUGUI txtCashAmount;
 
@@ -16,6 +18,9 @@ public class CashUIController : MonoBehaviour
 
     void Awake()
     {
+        // Asignamos instancia de UI de Cash
+        instance = this;
+
         //Obtenemos referencias a componentes
         mAnimator = GetComponent<Animator>();
     }
@@ -24,17 +29,8 @@ public class CashUIController : MonoBehaviour
 
     void Start()
     {
-        DayStatusManager.Instance.OnChickenSold += OnChickenSoldDelegate;
-        DayStatusManager.Instance.OnFoodRefill += OnFoodRefillDelegate;
-        DayStatusManager.Instance.OnGenerateNewChicken += OnGenerateNewChickenDelegate;
-
         //Traemos la cantidad de Dinero disponible
         UpdateCashAmount();
-    }
-
-    private void OnGenerateNewChickenDelegate()
-    {
-        mAnimator.Play("reduce");
     }
 
     void Update()
@@ -44,19 +40,12 @@ public class CashUIController : MonoBehaviour
 
     //------------------------------------------------------------------------
 
-    private void OnGasRefillDelegate()
-    {
-        mAnimator.Play("reduce");
-    }
-
-    //------------------------------------------------------------------------
-
-    private void OnChickenSoldDelegate(float chickenPrice)
+    public void PlayIncreaseCash()
     {
         mAnimator.Play("increase");
     }
 
-    public void OnFoodRefillDelegate()
+    public void PlayReduceCash()
     {
         mAnimator.Play("reduce");
     }

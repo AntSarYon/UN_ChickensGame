@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -10,8 +11,12 @@ public class UIController : MonoBehaviour
 {
     #region Props
 
+    public static UIController Instance;
+
     //Boton de agregar nuevo Pollo
-    [SerializeField] private Button btnAddNewChicken;
+    [SerializeField] private Button btnAddNewChickenRoss;
+    [SerializeField] private Button btnAddNewChickenCobb;
+    [SerializeField] private Button btnBuyToy;
 
     // Panel de FadeIn/ Out
     [SerializeField] private UI_FadeOut UI_fadeOut;
@@ -21,13 +26,11 @@ public class UIController : MonoBehaviour
     [Header("Medidores")]
     [SerializeField] private Slider FoodSlider;
 
-    
-
     // Corral Objetivo actual
-    private Yard currentTargetYard;
+    public Yard currentTargetYard;
+    [SerializeField] private TextMeshProUGUI txtYardTitle;
 
-    //Nivel de comida del Corral actual
-    private float currentYardFoodLevel;
+    [SerializeField] private UI_FoodPanel UI_foodPanel;
 
     #endregion
 
@@ -35,16 +38,58 @@ public class UIController : MonoBehaviour
 
     #region methods
 
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    // ---------------------------------------------------------------------------------
+
     void Start()
     {
+        //Obtenemos referencia al Corral actual
+        currentTargetYard = YardsManager.instance.currentYard;
+        txtYardTitle.text = $"Comida en Corral: {currentTargetYard.yardName}";
+
         // Agregamos Listener de Agregar nuevo pollito
-        btnAddNewChicken.onClick.AddListener(AskForChicken);
+        btnAddNewChickenRoss.onClick.AddListener(AskForChickenRoss);
+        btnAddNewChickenCobb.onClick.AddListener(AskForChickenCobb);
+        btnBuyToy.onClick.AddListener(AskForToy);
+
+        // Desactivamos el Panel de Comida
+        //UI_foodPanel.gameObject.SetActive(false);
 
         //Asignamos como Valor maximo del Sliderl el maximo del Corral en turno (podria variar)
         FoodSlider.maxValue = currentTargetYard.totalFoodMaxValue;
 
         //Asignamos como valor del Slider el nivel de Comida actual en el corral
         FoodSlider.value = currentTargetYard.currentTotalFoodLevel;
+
+        YardsManager.instance.OnCurrentYardChanged += OnCurrentYardChangedDelegate;
+    }
+
+    // ---------------------------------------------------------------------------------
+
+    private void OnCurrentYardChangedDelegate(Yard newCurrentYard)
+    {
+        // Actualizamos referencia al Corral actual
+        currentTargetYard = newCurrentYard;
+
+        txtYardTitle.text = $"Comida en Corral: {currentTargetYard.yardName}";
+
+        // Actualizamos el valor maximo dle slider
+        FoodSlider.maxValue = currentTargetYard.totalFoodMaxValue;
+    }
+
+    // -----------------------------------------------------------------------------------
+
+    public void DisplayPanel_with_FoodSelected(Food selectedFood)
+    {
+        // Enviamos la referencia dle Food al Panel de Food, pues sera quien lo utilice.
+        UI_foodPanel.foodReference = selectedFood;
+
+        // Activamos el Panel de Comida...
+        UI_foodPanel.ShowPanel();
     }
 
     // ----------------------------------------------------------------------------------
@@ -57,21 +102,12 @@ public class UIController : MonoBehaviour
             UI_fadeOut.Play_FadeInGameOver();
         }
 
-        //Var temporal para el nuevo total de comida actual
-        float newCurrentFoodLevel = 0;
-        /*
-        //Por cada Food
-        foreach (Food food in arrFoods)
+        // Si se tiene una referencia a un Corral actual...
+        if (currentTargetYard != null)
         {
-            //Acumulamos su cantida de comida disponible
-            newCurrentFoodLevel += food.mFoodLevelSlider.value;
+            //Asignamos como valor del Slider el nivel de Comida actual en el corral
+            FoodSlider.value = currentTargetYard.currentTotalFoodLevel;
         }
-
-        //Actualizamos la variable de "nivel de Comida actual"
-        currentFoodLevel = newCurrentFoodLevel;
-
-        //Asignamos el valor de Comida en el Slider
-        FoodSlider.value = currentFoodLevel;*/
 
         if (Input.GetKeyDown(KeyCode.M))
         {
@@ -88,10 +124,26 @@ public class UIController : MonoBehaviour
         DayStatusManager.Instance.TriggerEvent_FoodRefill();
     }
 
-    public void AskForChicken()
+    // ----------------------------------------------------------------------------------
+
+    public void AskForChickenRoss()
     {
         //Disparamos el Evento de "Pedir mas comida"
-        DayStatusManager.Instance.TriggerEvent_GenerateNewChicken();
+        DayStatusManager.Instance.TriggerEvent_GenerateNewChickenRoss();
+    }
+
+    public void AskForChickenCobb()
+    {
+        //Disparamos el Evento de "Pedir mas comida"
+        DayStatusManager.Instance.TriggerEvent_GenerateNewChickenCobb();
+    }
+
+    // -------------------------------------------------------------------------
+
+    public void AskForToy()
+    {
+        //Disparamos el Evento de "Pedir mas comida"
+        DayStatusManager.Instance.TriggerEvent_ToyBought();
     }
 
 

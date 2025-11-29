@@ -5,12 +5,14 @@ using UnityEngine.Events;
 
 public class YardsManager : MonoBehaviour
 {
+    public static YardsManager instance;
+
     //Lista de Corrales
     [SerializeField] private List<Yard> yardsList = new List<Yard>();
 
     //Referencia al corral actual (enfocado en camara)
     private int currentYardIndex;
-    private Yard currentYard;
+    public Yard currentYard;
 
     // Evento de Cambio de Corral.
     public UnityAction<Yard> OnCurrentYardChanged;
@@ -19,6 +21,8 @@ public class YardsManager : MonoBehaviour
 
     void Awake()
     {
+        instance = this;
+
         // Seteamos el 1er elemento de la lista como el index de corral actual
         currentYardIndex = 0;
     }
@@ -78,5 +82,7 @@ public class YardsManager : MonoBehaviour
     {
         // Lanzamos el Evento de Cambio de Corral.
         OnCurrentYardChanged?.Invoke(newCurrentYard);
+
+        GameSoundsController.Instance.PlayYardChangeSound();
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,19 +11,24 @@ public class GameClockController : MonoBehaviour
 {
     public static GameClockController Instance;
 
-    [Header("LightPanel UI")]
-    [SerializeField] private Image LightPanelUI;
-
     //Txt con el texto de la Hora actual
     private string clockString;
 
-    private Color lightPanelColor;
+    [SerializeField] private Light DayLight;
 
-    //Nivel de oscuridad...
-    private float currentDarknessLevel = 0.00f;
+    // Vectores RGBA de Luz objetivo
+    private Vector4 morningDayLight = Vector4.one;
+    private Vector4 AfternoonDayLight = new Color(1.00f, 0.78f, 0.57f, 1.00f);
+    private Vector4 EveningDayLight = new Color(0.42f, 0.47f, 0.95f, 1.00f);
 
-    private float initialDarknessLevel = 0.00f;
-    private float finalDarknessLevel = 0.60f;
+    // Vectores para interpolacion de Luz ...
+    private Vector4 initialDayLight;
+    private Vector4 currentDayLight;
+    private Vector4 targetDayLight;
+
+    //Tiempo para completar el cambio de iluminacion
+    private float targetChangeTime;
+
     private float interpolation = 0;
 
     //Tiempo transcurrido
@@ -35,16 +41,16 @@ public class GameClockController : MonoBehaviour
     private bool bDayIsRunning = false;
 
     [Header("Tiempo en 1 dia")]
-    [SerializeField] private float timeInADay = 86400f; // segundos a considerar
+    private float timeInADay = 24 * 3600f; // 24 Horas (* segundos)
 
     [Header("Hora de inicio del dia")]
-    [Range(0, 24)][SerializeField] private int startingTime = 9;
+    [Range(0, 24)][SerializeField] private int startingTime = 10;
 
     [Header("Hora de fin del dia")]
     [Range(0, 24)][SerializeField] private int finishTime = 18;
 
     [Header("Cuan rápido pasa el tiempo")]
-    [Range(1,5)] [SerializeField] private float timeScale = 2f;
+    [Range(1,10)] [SerializeField] private float timeScale = 2.00f;
 
     public string ClockString { get => clockString; private set => clockString = value; }
 
@@ -53,6 +59,10 @@ public class GameClockController : MonoBehaviour
     void Awake()
     {
         Instance = this;
+
+        initialDayLight = Vector4.one;
+        currentDayLight = Vector4.one;
+        targetDayLight = Vector4.one;
     }
 
     // -------------------------------------------------------------------------------------------------
@@ -62,14 +72,19 @@ public class GameClockController : MonoBehaviour
         //Definir Tiempo (Hora) inicial
         elapsedTime = startingTime * 3600f; // (Hora deseada x 3600 segundos)
 
-        //Definir Tiempo (Hora) de Fin del dia
-        dayFinishTime = finishTime * 3600f;
-
-        //Almacenamos el color original del Panel de Luz
-        lightPanelColor = LightPanelUI.color;
+        //Definir Tiempo (Hora) de Fin del dia 
+        dayFinishTime = finishTime * 3600f; // (Hora deseada x 3600 segundos)
 
         //Activamos Flag de "Dia esta corriendo"
         bDayIsRunning = true;
+
+        //Seteamos el Color Inicial de la Luz a Blanco
+        DayLight.color = new Color(
+            morningDayLight.x,
+            morningDayLight.y,
+            morningDayLight.z,
+            morningDayLight.w
+            );
     }
 
     //-------------------------------------------------------------------------------------------------
@@ -85,15 +100,43 @@ public class GameClockController : MonoBehaviour
             // Si el tiempo ranscurrido llega al total establecido por el dia; se reiniciará
             elapsedTime %= timeInADay;
 
-            //Actualizmaos la UI del tiempo (reloj)
-            UpdateClockUI();
+            // Si ya son pasadas las 5pm...
+            if (elapsedTime >= 17 * 3600f)
+            {
+                //Seteamos la luz inicial como la de a tarde
+                initialDayLight = AfternoonDayLight;
 
-            //Actualizmaos el nivel de oscuridad
-            UpdateDarknessLevel();
+                //Asignams commo Luz Target la de Evening
+                targetDayLight = EveningDayLight;
+
+                //Definimos el tiempo en que el cambio debe ser completado...
+                targetChangeTime = 18 * 3600f;
+            }
+            // Si ya son pasadas las 3pm...
+            else if (elapsedTime >= 15 * 3600f)
+            {
+
+                //Seteamos la luz inicial como la de la manana
+                initialDayLight = morningDayLight;
+
+                //Asignams commo Luz Target la de Evening
+                targetDayLight = AfternoonDayLight;
+
+                //Definimos el tiempo en que el cambio debe ser completado...
+                targetChangeTime = 17 * 3600f;
+            }
+
+            //Actualizmaos la UI del tiempo (reloj)
+            UpdateClockString();
+
+            //Actualizmaos el color de la luz del sol
+            UpdateDayLightColor();
 
             // Si el tiempo transcurrido lleg{o al final del dia...
             if (elapsedTime >= dayFinishTime)
             {
+                // Disparamos Logica de fin del dia...
+                DayStatusManager.Instance.TriggerEvent_GameOver();
 
                 //Desactivamos Flag de "Dia esta corriendo"
                 bDayIsRunning = false;
@@ -102,9 +145,9 @@ public class GameClockController : MonoBehaviour
     }
 
     //-------------------------------------------------------------------------------------------------
-    //FUNCION: Actualizar Reloj de la UI
+    //FUNCION: Actualizar String de Tiempo
 
-    public void UpdateClockUI()
+    public void UpdateClockString()
     {
         //Calculamos el valoer de Hora. minuto y segundos, en base a Tiempo Transcurrido
         int hours = Mathf.FloorToInt(elapsedTime / 3600f);
@@ -119,20 +162,32 @@ public class GameClockController : MonoBehaviour
 
     //-------------------------------------------------------------------------------------------------
     // FUNCION: Actualizar Nivel de Oscuridad
-
-    public void UpdateDarknessLevel()
+    public void UpdateDayLightColor()
     {
-        //Calculamos la interpolacion constantemente, segun que tan cerca estemos del fin del dia...
-        interpolation = elapsedTime / dayFinishTime;
+        //Calculamos la interpolacion constantemente, segun que tan cerca estemos de la siguiente hora clave...
+        interpolation = elapsedTime / targetChangeTime;
 
         //Calculamos el nivel de oscuridad actual empleando interpolacion segun el tiempo transcurrido
-        currentDarknessLevel = Mathf.Lerp(initialDarknessLevel, finalDarknessLevel, interpolation);
+        currentDayLight = Vector4.Lerp(initialDayLight, targetDayLight, interpolation);
+
+        Debug.Log(currentDayLight);
+
+        //Actualizams el color de la Luz...
+        DayLight.color = currentDayLight;
+
 
         //Obtenemos el nuevo color (se altera el Alpha en base a al interpolacion)
-        Color newDarknessColor = new Color(lightPanelColor.r, lightPanelColor.g, lightPanelColor.b, currentDarknessLevel);
+        //Color newDarknessColor = new Color(lightPanelColor.r, lightPanelColor.g, lightPanelColor.b, currentDarknessLevel);
         
         //Asignamos el nuevo color
-        LightPanelUI.color = newDarknessColor;
+        //LightPanelUI.color = newDarknessColor;
+    }
+
+    // --------------------------------------------------------
+
+    public string GetTimeString()
+    {
+        return clockString;
     }
 
 }

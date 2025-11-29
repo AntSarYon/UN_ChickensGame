@@ -16,6 +16,11 @@ public class GameSoundsController : MonoBehaviour
 
     [SerializeField] private AudioClip[] arrChickenSpawnSounds = new AudioClip[2];
     [SerializeField] private AudioClip bubbleSound;
+    [SerializeField] private AudioClip yardChangeSound;
+    [SerializeField] private AudioClip showFoodPanelSound;
+    [SerializeField] private AudioClip hideFoodPanelSound;
+
+    [SerializeField] private AudioClip toyPlacementSound;
 
     //-----------------------------------------------------------------
 
@@ -80,5 +85,33 @@ public class GameSoundsController : MonoBehaviour
 
         //Reproducimos sonido de Grito de Pollo sefgun el indice
         mAudioSource.PlayOneShot(arrChickenSpawnSounds[screamIndex], 0.65f);
+    }
+
+    public void PlayYardChangeSound()
+    {
+        //Reproducimos sonido de Venta de Pollo
+        mAudioSource.PlayOneShot(yardChangeSound, 0.50f);
+    }
+
+    public void PlayShowFoodPanelSound()
+    {
+        //Reproducimos sonido de Venta de Pollo
+        mAudioSource.PlayOneShot(showFoodPanelSound, 0.50f);
+    }
+
+    // ----------------------------------------------------
+
+    public void PlayHideFoodPanelSound()
+    {
+        //Reproducimos sonido de Venta de Pollo
+        mAudioSource.PlayOneShot(hideFoodPanelSound, 0.50f);
+    }
+
+    // -----------------------------------------------------
+
+    public void PlayToyPlacementSound()
+    {
+        //Reproducimos sonido de Venta de Pollo
+        mAudioSource.PlayOneShot(toyPlacementSound, 0.65f);
     }
 }

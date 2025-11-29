@@ -11,7 +11,7 @@ public class SelfMovementToTarget : MonoBehaviour
     private float speedMultiplier;
 
     //Direccion del movimiento
-    private Vector2 moveDirection;
+    private Vector3 moveDirection;
 
     //Transform del target
     private Transform target;
@@ -21,8 +21,10 @@ public class SelfMovementToTarget : MonoBehaviour
 
     //Rango y distancia para destino aleatorio
     [SerializeField] private float minRange;
-    [SerializeField] private float maxXDistance;
-    [SerializeField] private float maxYDistance;
+    public float maxXDistanceToRight;
+    public float maxXDistanceToLeft;
+    public float maxZDistanceToTop;
+    public float maxZDistanceToBottom;
 
     #endregion
 
@@ -31,7 +33,7 @@ public class SelfMovementToTarget : MonoBehaviour
     #region Components
 
     //Componente RigidBody
-    private Rigidbody2D mRb;
+    private Rigidbody mRb;
     private ChickenStats mChickenStats;
     private ChickenController mChickenController;
 
@@ -45,10 +47,29 @@ public class SelfMovementToTarget : MonoBehaviour
     void Awake()
     {
         //Obtencion de componentes
-        mRb = GetComponent<Rigidbody2D>();
+        mRb = GetComponent<Rigidbody>();
 
         //Inicializamos el multiplicador de velocidad en 1
         speedMultiplier = 1;
+    }
+
+    // -----------------------------------------------------------------------------------
+
+    void Start()
+    {
+        //Tratamos de obtener el Corral al que pertenece este pollito
+        Yard currentYard = GetComponent<ChickenController>().assignedYard;
+
+        //En caso de ya empezar en un Corral (Pollo no spawneado),
+        if (currentYard != null)
+        {
+            //asignamos los limites de movimiento de este Corral
+            maxXDistanceToLeft = currentYard.LeftLimit;
+            maxXDistanceToRight = currentYard.RightLimit;
+            maxZDistanceToBottom = currentYard.BottomLimit;
+            maxZDistanceToTop = currentYard.TopLimit;
+        }
+
     }
 
     //-----------------------------------------------------------------------------------
@@ -98,7 +119,7 @@ public class SelfMovementToTarget : MonoBehaviour
     public void StopMoving()
     {
         //AZsignamos 0 velocidad
-        mRb.velocity = Vector2.zero;
+        mRb.velocity = Vector3.zero;
 
         return;
     }
@@ -109,7 +130,7 @@ public class SelfMovementToTarget : MonoBehaviour
     public void MoveToTarget()
     {
         //Asignamos Velocidad y direccion en base a los calculos anteriores sobre el destino (Target o Waypoint)
-        mRb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed * speedMultiplier;
+        mRb.velocity = new Vector3(moveDirection.x, moveDirection.y, moveDirection.z) * moveSpeed * speedMultiplier;
     }
 
     //------------------------------------------------------------------------------------------------------
@@ -121,7 +142,7 @@ public class SelfMovementToTarget : MonoBehaviour
         if (!target)
         {
             //Si la distancia entre el Pollito y el Waypoint esta dentro del rango minimo definido;
-            if (Vector2.Distance(transform.position, randomWaypoint) < minRange)
+            if (Vector3.Distance(transform.position, randomWaypoint) < minRange)
             {
                 //cambiamos de Waypoint para que el pollito siga moviendose
                 SetNewRandomWaypoint();
@@ -135,31 +156,31 @@ public class SelfMovementToTarget : MonoBehaviour
     public void SetNewRandomWaypoint()
     {
         //Obtenemos nuevas coordenadas Random...
-        float newRandomX = Random.Range(-maxXDistance, maxXDistance + 1);
-        float newRandomY = Random.Range(-maxYDistance, maxYDistance + 1);
+        float newRandomX = Random.Range(maxXDistanceToLeft, maxXDistanceToRight + 1);
+        float newRandomZ = Random.Range(maxZDistanceToBottom, maxZDistanceToTop + 1);
 
         //Definimos un nuevo Destino
-        randomWaypoint = new Vector2(newRandomX, newRandomY);
+        randomWaypoint = new Vector3(newRandomX, 0.5f, newRandomZ);
     }
 
     public void SetNewRandomWaypointToRight(float leftXLimit)
     {
         //Obtenemos nuevas coordenadas Random, considirando la limitante de X
-        float newRandomX = Random.Range(leftXLimit+0.5f, maxXDistance + 1);
-        float newRandomY = Random.Range(-maxYDistance, maxYDistance + 1);
+        float newRandomX = Random.Range(leftXLimit+0.5f, maxXDistanceToRight + 1);
+        float newRandomZ = Random.Range(maxZDistanceToBottom, maxZDistanceToTop + 1);
 
         //Definimos un nuevo Destino
-        randomWaypoint = new Vector2(newRandomX, newRandomY);
+        randomWaypoint = new Vector3(newRandomX, 0.5f, newRandomZ);
     }
 
     public void SetNewRandomWaypointToLeft(float rightLimitX)
     {
         //Obtenemos nuevas coordenadas Random, considirando la limitante de X
-        float newRandomX = Random.Range(-maxXDistance, rightLimitX+0.5f);
-        float newRandomY = Random.Range(-maxYDistance, maxYDistance + 1);
+        float newRandomX = Random.Range(maxXDistanceToLeft, rightLimitX+0.5f);
+        float newRandomZ = Random.Range(maxZDistanceToBottom, maxZDistanceToTop + 1);
 
         //Definimos un nuevo Destino
-        randomWaypoint = new Vector2(newRandomX, newRandomY);
+        randomWaypoint = new Vector3(newRandomX, 0.5f, newRandomZ);
     }
 
     //-----------------------------------------------------------------------------------

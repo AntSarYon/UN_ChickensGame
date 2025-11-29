@@ -31,7 +31,15 @@ public class DayStatusManager : MonoBehaviour
     public UnityAction OnChickenDeath;
 
     //Evento - Pollo vendido
-    public UnityAction OnGenerateNewChicken;
+    public UnityAction OnGenerateNewChickenRoss;
+    public UnityAction OnGenerateNewChickenCobb;
+
+    public UnityAction<Ingredient, int> OnIngredientAdded;
+
+    public UnityAction OnCashIncrease;
+    public UnityAction OnCashReduce;
+
+    public UnityAction OnBuyNewToy;
 
     //Evento - Pollo vendido
     public UnityAction OnGameOver;
@@ -93,8 +101,11 @@ public class DayStatusManager : MonoBehaviour
             newCash = currentCash + (5 * chickenValue);
         }
 
-        //Asignamos el nuevo peso
+        //Asignamos el nuevo monto
         currentCash = newCash;
+
+        // Lllamamos a la UI de Cash para que actualice el monto
+        CashUIController.instance.PlayIncreaseCash();
 
         //Disparamos el Evento de Galiina vendida
         //enviando el Valor de la Gallina a los Delegados
@@ -110,6 +121,9 @@ public class DayStatusManager : MonoBehaviour
 
         //Hacemos que el SoundsManager reproduzca sonido de Compra de Recurso
         GameSoundsController.Instance.PlayResourceBoughtSound();
+
+        // Lllamamos a la UI de Cash para que actualice el monto
+        CashUIController.instance.PlayReduceCash();
 
         //Disparamos el Evento de Refill de Comida
         //enviando el Valor de la Gallina a los Delegados
@@ -128,14 +142,17 @@ public class DayStatusManager : MonoBehaviour
         OnChickenDeath?.Invoke();
     }
 
-    public void TriggerEvent_GenerateNewChicken()
+    public void TriggerEvent_GenerateNewChickenRoss()
     {
 
         //Disminuimos el Dinero en 15
         currentCash -= 15;
 
+        // Lllamamos a la UI de Cash para que actualice el monto
+        CashUIController.instance.PlayReduceCash();
+
         //Disparamos el Evento de Gallina Muerte para alertar a los delegados 
-        OnGenerateNewChicken?.Invoke();
+        OnGenerateNewChickenRoss?.Invoke();
 
         //Reproducimos un Sonido de Spawn de Pollito
         GameSoundsController.Instance.PlayChickenSpawnSound();
@@ -144,9 +161,63 @@ public class DayStatusManager : MonoBehaviour
         CheckCashAndGameOver();
     }
 
-    public void TriggerEvent_GameOver()
+    public void TriggerEvent_GenerateNewChickenCobb()
     {
 
+        //Disminuimos el Dinero en 15
+        currentCash -= 15;
+
+        // Lllamamos a la UI de Cash para que actualice el monto
+        CashUIController.instance.PlayReduceCash();
+
+        //Disparamos el Evento de Gallina Muerte para alertar a los delegados 
+        OnGenerateNewChickenCobb?.Invoke();
+
+        //Reproducimos un Sonido de Spawn de Pollito
+        GameSoundsController.Instance.PlayChickenSpawnSound();
+
+        //Revisamos si el dinero llegó a 0 para GameOver
+        CheckCashAndGameOver();
+    }
+
+    // -------------------------------------------
+    // Disparador de Evento: Ingrediente agregado
+    public void TriggerEvent_IngredientAdded(Ingredient ing, int ingValue)
+    {
+        //Disminuioms el Valor del Cash...
+        currentCash -= ingValue;
+
+        //Hacemos que el SoundsManager reproduzca sonido de Compra de Recurso
+        GameSoundsController.Instance.PlayResourceBoughtSound();
+
+        // Lllamamos a la UI de Cash para que actualice el monto
+        CashUIController.instance.PlayReduceCash();
+
+        // Invocamoms a los Delegados (si los hubiera)
+        OnIngredientAdded?.Invoke(ing, ingValue);
+    }
+
+    // -------------------------------------------
+    // Disparador de Evento: Juguete comprado 
+    public void TriggerEvent_ToyBought()
+    {
+        //Disminuioms el Valor del Cash...
+        currentCash -= 10;
+
+        //Hacemos que el SoundsManager reproduzca sonido de Compra de Recurso
+        GameSoundsController.Instance.PlayResourceBoughtSound();
+
+        // Lllamamos a la UI de Cash para que actualice el monto
+        CashUIController.instance.PlayReduceCash();
+
+        // Invocamoms a los Delegados (si los hubiera)
+        OnBuyNewToy?.Invoke();
+    }
+
+    // -------------------------------------------------------------------
+
+    public void TriggerEvent_GameOver()
+    {
         //Reproducimos un Sonido de Spawn de Pollito
         GameSoundsController.Instance.PlayChickenSpawnSound();
     }

@@ -28,6 +28,22 @@ public class MenuRulesController : MonoBehaviour
     [SerializeField] private Slider sliderReduccionPeso;
     [SerializeField] private TextMeshProUGUI txtReduccionPeso;
 
+    [Header("Precio de Ingredientes")]
+
+    [SerializeField] private Slider sliderHarina;
+    [SerializeField] private TextMeshProUGUI txtPrecioHarina;
+
+    [SerializeField] private Slider sliderMaiz;
+    [SerializeField] private TextMeshProUGUI txtPrecioMaiz;
+
+    [SerializeField] private Slider sliderSoya;
+    [SerializeField] private TextMeshProUGUI txtPrecioSoya;
+
+    [SerializeField] private Slider sliderGusanos;
+    [SerializeField] private TextMeshProUGUI txtPrecioGusanos;
+
+    [Space]
+
     [SerializeField] private Button btnStartGame;
 
     //-----------------------------------------------------------------------
@@ -43,7 +59,13 @@ public class MenuRulesController : MonoBehaviour
             sliderReduccionfelicidad.value = GameRulesManager.instance.velocidadReduccionfelicidad;
             sliderAumentofelicidad.value = GameRulesManager.instance.velocidadIncrementofelicidad;
             sliderAumentoPeso.value = GameRulesManager.instance.velocidadIncrementoPeso;
-            sliderReduccionPeso.value = GameRulesManager.instance.velocidadReduccionPeso;;
+            sliderReduccionPeso.value = GameRulesManager.instance.velocidadReduccionPeso;
+
+            //Iniciamoms con Precios de Ingredienntes iguales
+            sliderHarina.value = GameRulesManager.instance.precioHarina;
+            sliderMaiz.value = GameRulesManager.instance.precioMaiz;
+            sliderSoya.value = GameRulesManager.instance.precioSoya;
+            sliderGusanos.value = GameRulesManager.instance.precioGusanos;
         }
         // casoc ontrario, los que estan por defecto
         else
@@ -55,6 +77,12 @@ public class MenuRulesController : MonoBehaviour
             sliderAumentofelicidad.value = 1;
             sliderAumentoPeso.value = 0.15f;
             sliderReduccionPeso.value = 0.1f;
+
+            //Iniciamoms con Precios de Ingredienntes iguales
+            sliderHarina.value = 10;
+            sliderMaiz.value = 10;
+            sliderSoya.value = 10;
+            sliderGusanos.value = 10;
         }
 
     }
@@ -73,6 +101,11 @@ public class MenuRulesController : MonoBehaviour
 
         txtAumentoPeso.text = sliderAumentoPeso.value.ToString("F2");
         txtReduccionPeso.text = sliderReduccionPeso.value.ToString("F2");
+
+        txtPrecioHarina.text = $"$ {(int)sliderHarina.value}";
+        txtPrecioMaiz.text = $"$ {(int)sliderMaiz.value}";
+        txtPrecioSoya.text = $"$ {(int)sliderSoya.value}";
+        txtPrecioGusanos.text = $"$ {(int)sliderGusanos.value}";
     }
 
     // -----------------------------------------------------------------------
@@ -86,6 +119,11 @@ public class MenuRulesController : MonoBehaviour
         GameRulesManager.instance.velocidadIncrementoPeso = sliderAumentoPeso.value;
         GameRulesManager.instance.velocidadReduccionPeso = sliderReduccionPeso.value;
         GameRulesManager.instance.foodDecreaseSpeed = sliderConsumoAlimento.value;
+
+        GameRulesManager.instance.precioHarina = (int) sliderHarina.value;
+        GameRulesManager.instance.precioMaiz = (int) sliderMaiz.value;
+        GameRulesManager.instance.precioSoya = (int) sliderSoya.value;
+        GameRulesManager.instance.precioGusanos = (int) sliderGusanos.value;
 
 
         //Activamos Flag de nuevos Parametros guardados

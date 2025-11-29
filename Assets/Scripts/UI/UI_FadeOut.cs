@@ -26,8 +26,8 @@ public class UI_FadeOut : MonoBehaviour
     void Start()
     {
         // Actualizamos la información sobre la campaña
-        txtCampaignInfo.text = $"Jornada {CampaignManager.Instance.CampaignCounter}";
-        txtDayInfo.text = $"Dia #{CampaignManager.Instance.DayCounter}";
+        //txtCampaignInfo.text = $"Jornada {CampaignManager.Instance.CampaignCounter}";
+        //txtDayInfo.text = $"Dia #{CampaignManager.Instance.DayCounter}";
     }
 
     // --------------------------------------------------------------------

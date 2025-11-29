@@ -5,35 +5,44 @@ using UnityEngine;
 
 public class ChickenController : MonoBehaviour
 {
-    //Flags de Estado del Pollito
+    [Header("Nombre de Pollito")]
+    public string chickName;
+
+    [Header("Tipo de Pollo")]
+    public ChickenType type;
+
+    [Header("Flags de Estados")]
     [HideInInspector] public bool eatingFlag = false;
     [HideInInspector] public bool starvingFlag = false;
-    [HideInInspector] public bool drinkingFlag = false;
-    [HideInInspector] public bool stressfulFlag = false;
-    [HideInInspector] public bool fightingFlag = false;
-    [HideInInspector] public bool sleepingFlag = false;
+    [HideInInspector] public bool happinessFlag = false;
 
     [HideInInspector] public bool isAlive = true;
+
+    [HideInInspector] public bool isEstimulated = false;
+    [HideInInspector] public bool isDisgusted = false;
+
     [HideInInspector] public bool onHover = false;
     [HideInInspector] public bool isBeingDragged = false;
+
+    [Header("Corral")]
+    public Yard assignedYard;
 
     //Flag - esta en zona de venta
     private bool bInBillingZone;
 
-    //Probabilidad de que escape del Drag
-    [Header("Probabilidad de que la Gallina escape")]
+    [Header("Probabilidad que el pollito escape")]
     [Range(0.00f,1.00f)] public float dragEscapeProb;
-    private float dragEscapedefaultProb;
+    private float dragEscapeDefaultProb;
     private float dragEscapeMinProb = 0;
+
+    [Header("Chicken UI")]
+    [SerializeField] private ChickenUI chickenUI;
 
     // COMPONENTES
     private ChickenStats mChickenStats;
     private SpritesController mSpritesController;
     private Draggable mDraggable;
     private SelfMovementToTarget mSelfMovementToTarget;
-
-    [Header("Chicken UI")]
-    [SerializeField] private ChickenUI chickenUI;
 
     private AudioSource mAudioSource;
 
@@ -57,7 +66,7 @@ public class ChickenController : MonoBehaviour
         mAudioSource = GetComponent<AudioSource>();
 
         //Almacenamos la probabilidad seteada de escape
-        dragEscapedefaultProb = dragEscapeProb;
+        dragEscapeDefaultProb = dragEscapeProb;
         dragEscapeMinProb = 0;
 
         //Iniciamos Flags
@@ -70,7 +79,11 @@ public class ChickenController : MonoBehaviour
 
     void Start()
     {
-        //Definimos un nuevo destino aleatorio para la gallina
+        //Seteamos la informacion a mostrar en el Panel de Detalle
+        chickenUI.SetInfo(chickName, type.typeName, type.gustos, type.pasiva);
+        chickenUI.SetIngredientsPreference(type.likeHarina, type.likeSoja, type.likeGusanos, type.likeMaiz);
+
+        //Definimos un nuevo destino aleatorio para el pollito
         mSelfMovementToTarget.SetNewRandomWaypoint();
 
         //Agregamos Funcion Delegado al Evento de Pollo vendido
@@ -85,12 +98,6 @@ public class ChickenController : MonoBehaviour
         //Hacemos que las gallinas se muevan mas rapido por 2 segundos
         //como consecuencia de ver morir a su amigo
         mSelfMovementToTarget.MultiplySpeedTemporary(2);
-    }
-
-    private void OnSleepOrderClickedDelegate(bool sleepOrder)
-    {
-        //Actualizamos el SleepingFlag en base a si la orden esta activa o no
-        sleepingFlag = sleepOrder;
     }
 
     //------------------------------------------------------------------------------------------
@@ -129,8 +136,8 @@ public class ChickenController : MonoBehaviour
     {
         //Manejamos los Stats segun loos flags
         mChickenStats.ManageStats_HambreYPeso(eatingFlag, isBeingDragged);
-        mChickenStats.ManageStats_HP(fightingFlag, starvingFlag);
-        mChickenStats.ManageStats_felicidad(sleepingFlag, eatingFlag, isBeingDragged);
+        mChickenStats.ManageStats_HP(starvingFlag);
+        mChickenStats.ManageStats_felicidad(eatingFlag, isBeingDragged);
     }
 
     //------------------------------------------------------------------------------------------
@@ -154,28 +161,21 @@ public class ChickenController : MonoBehaviour
                 mSpritesController.ManageWalkingAnim();
             }
 
-            //Si el pollito esta peleando
-            if (fightingFlag)
-            {
-                //Su probabilidad de escape del Drag e sminima (0)
-                dragEscapeProb = dragEscapeMinProb;
-            }
             //Si no esta peleand
             else
             {
                 //Regresamos la Probabilidad a la normalidad
-                dragEscapeProb = dragEscapedefaultProb;
+                dragEscapeProb = dragEscapeDefaultProb;
             }
 
             //Si el Pollito esta haciendo alguna de estas acciones...
-            if (eatingFlag || drinkingFlag || sleepingFlag || fightingFlag)
+            if (eatingFlag)
             {
                 //Si el Stat de hambre esta por debajo de 40
                 if (mChickenStats.hambre < 40)
                 {
                     //Desactivamos los Flags de Comiendo y Bebiendo
                     eatingFlag = false;
-                    drinkingFlag = false;
                 }
             }
             else
@@ -208,7 +208,7 @@ public class ChickenController : MonoBehaviour
         if (isAlive)
         {
             //Si el Pollito está comiendo, Bebiendo, Durmiendo, o Peleando
-            if (eatingFlag || drinkingFlag || sleepingFlag || fightingFlag)
+            if (eatingFlag)
             {
                 //Hacemos que deje de moverse (Velocidad a 0)
                 mSelfMovementToTarget.StopMoving();
@@ -349,7 +349,7 @@ public class ChickenController : MonoBehaviour
 
     private void OnMouseUp()
     {
-        //Soltamos la pollito
+        //Soltamos al pollito
         mDraggable.Drop();
 
         //Hacemos que el Sprite vuelva a la Normalidad
@@ -362,13 +362,13 @@ public class ChickenController : MonoBehaviour
         if (bInBillingZone)
         {
             //Decimos al BillingZone del nivel que Trate de vendernos
-            BillingZoneController.instance.TryToSellChicken();
+            //BillingZoneController.instance.TryToSellChicken();
         }
     }
 
     //------------------------------------------------------------------------------------------
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter(Collision collision)
     {
         //Si el pollito esta vivo...
         if (isAlive)
@@ -379,11 +379,8 @@ public class ChickenController : MonoBehaviour
                 //Si los Stats del Pollo indican que esta felicidadado...
                 if (mChickenStats.felicidad > mChickenStats.felicidadParaPelear)
                 {
-                    //Activamos Flag de "Esta peleando"
-                    fightingFlag = true;
-
                     //Controlamos la Animacion de Pelea
-                    mSpritesController.EnterFightAnim();
+                    //SpritesController.EnterFightAnim();
                 }
                 //En caso el nivel de felicidad no esté en el Nivel...
                 else
@@ -396,11 +393,8 @@ public class ChickenController : MonoBehaviour
                     {
                         //De ser el caso...
 
-                        //Activamos Flag de "Esta peleando"
-                        fightingFlag = true;
-
                         //Controlamos la Animacion de Pelea
-                        mSpritesController.EnterFightAnim();
+                        //mSpritesController.EnterFightAnim();
                     }
                     //En caso tampoco este felicidadado...
                     else
@@ -425,7 +419,36 @@ public class ChickenController : MonoBehaviour
                     {
                         //Activamos Flag de "Esta comiendeo"
                         eatingFlag = true;
+
+                        //Obtenemos la lista de ingredientes de esta comida...
+                        List<Ingredient> foodIngredientes = collision.gameObject.GetComponent<Food>().ingredientsList;
+
+                        //Iniciamos flag de si le gusta la comida
+                        bool likefood = false;
+
+                        //Por cada ingrediente de este comedero
+                        foreach (Ingredient ing in foodIngredientes)
+                        {
+                            //Revisamos si elcomedero tiene un ingrediente
+                            if (type.likedIngredients.Contains(ing))
+                            {
+                                //Basta con que tenga 1, para marcar como like
+                                likefood = true;
+                            }
+                        }
+
+                        // Si le gusta la comida, mostramos el Like
+                        if (likefood)
+                        {
+                            chickenUI.ShowLike();
+
+                            // Activamos Fag de Estimulacion
+                            isEstimulated = true;
+                        }
+                        // Caso contrario, mostramos el Dislike
+                        else chickenUI.ShowDislike();
                     }
+
                     //En caso no tenga hambre...
                     else
                     {
@@ -446,7 +469,6 @@ public class ChickenController : MonoBehaviour
                     if (mChickenStats.hambre > 40)
                     {
                         //Activamos Flag de "Esta peleando"
-                        drinkingFlag = true;
                         eatingFlag = true;
                     }
                     else
@@ -455,7 +477,6 @@ public class ChickenController : MonoBehaviour
                         GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
 
                         //Desactivamos Flag de "Esta comiendeo"
-                        drinkingFlag = false;
                         eatingFlag = false;
                     }
                 }
@@ -465,7 +486,7 @@ public class ChickenController : MonoBehaviour
 
     //------------------------------------------------------------------------------------------
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionStay(Collision collision)
     {
         //Si estamos manteniendo el contacto con un recurso  de Comida o Agua...
         if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
@@ -488,6 +509,9 @@ public class ChickenController : MonoBehaviour
                 {
                     //Desactivamos Flag de "Esta comiendo"
                     eatingFlag = false;
+
+                    // Desactivamos Fag de Estimulacion
+                    isEstimulated = false;
                 }
             }
         }
@@ -495,16 +519,13 @@ public class ChickenController : MonoBehaviour
 
     //------------------------------------------------------------------------------------------
 
-    private void OnCollisionExit2D(Collision2D collision)
+    private void OnCollisionExit(Collision collision)
     {
         if (isAlive)
         {
             //Si ha dejado de chocar con otro pollito
             if (collision.gameObject.CompareTag("Chicken"))
             {
-                //Desactivamos flag de "esta peleando" (porsiacaso)
-                fightingFlag = false;
-
                 //Salimos de la Animacion de Pelea
                 mSpritesController.ExitFightAnim();
             }
@@ -513,23 +534,19 @@ public class ChickenController : MonoBehaviour
             {
                 //Desactivamos Flag de "Esta comiendo"
                 eatingFlag = false;
-            }
 
-            //Si el objeto con el que colisionamos es otro Pollito
-            else if (collision.gameObject.CompareTag("Water"))
-            {
-                //AJUSTAR ESTO!!
+                // Desactivamos Fag de Estimulacion
+                isEstimulated = false;
 
-                //Desactivamos Flag de "Esta peleando"
-                drinkingFlag = false;
-                eatingFlag = false;
+                //Desactivamos el Globo de reaccion
+                chickenUI.HideReaction();
             }
         }
     }
 
     //------------------------------------------------------------------------------------------
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter(Collider collision)
     {
         //Si el Pollito ha entrado en la zona de Venta...
         if (collision.gameObject.CompareTag("BillingZone"))
@@ -537,17 +554,45 @@ public class ChickenController : MonoBehaviour
             //Activamos flag de "en zona de venta"
             bInBillingZone = true;
         }
+
+        //Si el Pollito ha entrado en la zona de Venta...
+        if (collision.gameObject.CompareTag("Toy"))
+        {
+
+            //Si al (tipo) Pollito le gustan os juguetes...
+            if (type.likeToys)
+            {
+                // Activamos Fag de Estimulacion
+                isEstimulated = true;
+
+                //Mostramos el icono de Estimulacion
+                chickenUI.ShowEstimulation();
+
+            }
+        }
     }
 
     //------------------------------------------------------------------------------------------
 
-    private void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit(Collider collision)
     {
         //Si el Pollito ha salido de la zona de Venta...
         if (collision.gameObject.CompareTag("BillingZone"))
         {
             //Desactivamos flag de "en zona de venta"
             bInBillingZone = false;
+        }
+
+        //Si el Pollito ha entrado en la zona de Venta...
+        if (collision.gameObject.CompareTag("Toy"))
+        {
+
+            //Si al (tipo) Pollito le gustaban los juguetes...
+            if (type.likeToys)
+            {
+                //Ocultamos el icono de Estimulacion
+                chickenUI.HideEstimulation();
+            }
         }
     }
 

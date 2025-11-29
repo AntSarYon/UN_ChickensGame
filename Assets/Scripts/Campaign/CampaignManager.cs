@@ -33,7 +33,7 @@ public class CampaignManager : MonoBehaviour
         dayCounter = 1;
 
         //El dinero empieza en 300$
-        campaignCurrentCash = 300.00f;
+        campaignCurrentCash = 600.00f;
 
         //Empezamos con 0 pollitos muertos
         campaignCurrentDeathChicken = 0;

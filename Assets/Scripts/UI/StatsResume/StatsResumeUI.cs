@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.MPE;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class StatsResumeUI : MonoBehaviour
 {
@@ -42,7 +40,8 @@ public class StatsResumeUI : MonoBehaviour
 
         // Asignamos Funciones delegadas
         DayStatusManager.Instance.OnChickenDeath += OnChickenDeathDelegate;
-        DayStatusManager.Instance.OnGenerateNewChicken += OnGenerateNewChickenDelegate;
+        DayStatusManager.Instance.OnGenerateNewChickenRoss += OnGenerateNewChickenDelegate;
+        DayStatusManager.Instance.OnGenerateNewChickenCobb += OnGenerateNewChickenDelegate;
 
 
         ChickenStats[] arrChickensStats = FindObjectsByType<ChickenStats>(FindObjectsSortMode.None);
@@ -157,21 +156,17 @@ public class StatsResumeUI : MonoBehaviour
     public void CalcularMortalidad()
     {
         tasaMortalidad = pollitosMuertos / poblacion * 100.00f;
-        Debug.Log(tasaMortalidad);
-        Debug.Log(poblacion);
     }
 
     //----------------------------------------------------------------------------
 
     public void ShowPanel()
     {
-        Debug.Log("Mouse quiere ver panel");
         panelAnimator.SetBool("mouseInArea",true);
     }
 
     public void HidePanel()
     {
-        Debug.Log("Mouse quiere ocultar panel");
         panelAnimator.SetBool("mouseInArea", false);
     }
 

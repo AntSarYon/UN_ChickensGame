@@ -62,18 +62,31 @@ public class ChickenStats : MonoBehaviour
     {
         if (eatingFlag)
         {
-            Debug.Log("COMIENDO");
             //Reducimos el Stat de Hambre progresivamente
             hambre -= velocidadReduccionHambre * Time.deltaTime;
             hambre = Mathf.Clamp(hambre, 0.00f, 100.00f);
 
-            peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunfelicidad;
+            //Si esta Estimulado...
+            if (GetComponent<ChickenController>().isEstimulated)
+            {
+                peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunfelicidad * 2;
+            }
+            else if (GetComponent<ChickenController>().isDisgusted) 
+            {
+                //peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunfelicidad;
+            }
+            //Si no hay ningun efecto...
+            else
+            {
+                peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunfelicidad;
+            }
+                
+
             peso = Mathf.Clamp(peso, 1.00f, 7.00f);
         }
         //Si el Flag de "Comiendo"; esta desactivado
         else
         {
-            Debug.Log("NO ESTOY COMIENDO");
             //Si esta siendo sujetado...
             if (isbeingDragged)
             {
@@ -96,10 +109,10 @@ public class ChickenStats : MonoBehaviour
 
     //-----------------------------------------------------------------------
 
-    public void ManageStats_HP(bool fightingFlag, bool starvingFlag)
+    public void ManageStats_HP(bool starvingFlag)
     {
         //Si el flag de "peleando" esta activo
-        if (fightingFlag || starvingFlag)
+        if (starvingFlag)
         {
             //Incrementamos la salud Progresivamente
             hp -= velocidadReduccionHP * Time.deltaTime;
@@ -109,10 +122,10 @@ public class ChickenStats : MonoBehaviour
 
     //-----------------------------------------------------------------------
 
-    public void ManageStats_felicidad(bool sleepingFlag, bool eatingFlag, bool isBeingDragged)
+    public void ManageStats_felicidad(bool eatingFlag, bool isBeingDragged)
     {
         // Si el Flag de "Durmiendo" o "Comiendo" esta activo
-        if (sleepingFlag || eatingFlag)
+        if (eatingFlag)
         {
             //Reducimos el felicidad Progresivamente
             felicidad -= velocidadReduccionfelicidad * Time.deltaTime;

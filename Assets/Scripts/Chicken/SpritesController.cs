@@ -35,7 +35,7 @@ public class SpritesController : MonoBehaviour
     #region Components
 
     private SpriteRenderer mSrenderer;
-    private Rigidbody2D mRigidbody;
+    private Rigidbody mRigidbody;
     private Animator mAnimator;
     private ChickenStats mChickenStats;
 
@@ -50,7 +50,7 @@ public class SpritesController : MonoBehaviour
     {
         //Obtenemos componentes
         mSrenderer = GetComponent<SpriteRenderer>();
-        mRigidbody = GetComponent<Rigidbody2D>();
+        mRigidbody = GetComponent<Rigidbody>();
         mAnimator = GetComponent<Animator>();
         mChickenStats = GetComponent<ChickenStats>();
 
@@ -165,7 +165,7 @@ public class SpritesController : MonoBehaviour
     public void ManageWalkingAnim()
     {
         //Si el Pollito tiene Velocidad en su RB
-        if (mRigidbody.velocity != Vector2.zero)
+        if (mRigidbody.velocity != Vector3.zero)
         {
             //Activams flag de animacion 'Is Walking'
             mAnimator.SetBool("IsWalking", true);
@@ -302,7 +302,7 @@ public class SpritesController : MonoBehaviour
         mSrenderer.color = fightingColor;
 
         //Mostramos la UI de la pelea
-        chickenUI.ShowFightInfo();
+        //chickenUI.ShowFightInfo();
     }
 
     //-----------------------------------------------------------------------------------
@@ -313,7 +313,7 @@ public class SpritesController : MonoBehaviour
         mSrenderer.color = defaultColor;
 
         //Ocultamos la UI de la pelea
-        chickenUI.HideFightInfo();
+        //chickenUI.HideFightInfo();
     }
 
     #endregion

@@ -14,7 +14,6 @@ public class ChickenController : MonoBehaviour
     [Header("Flags de Estados")]
     [HideInInspector] public bool eatingFlag = false;
     [HideInInspector] public bool starvingFlag = false;
-    [HideInInspector] public bool happinessFlag = false;
 
     [HideInInspector] public bool isAlive = true;
 
@@ -24,6 +23,7 @@ public class ChickenController : MonoBehaviour
 
     [HideInInspector] public bool onHover = false;
     [HideInInspector] public bool isBeingDragged = false;
+    [HideInInspector] public bool bBeingThrow = false;
 
     [Header("Corral")]
     public Yard assignedYard;
@@ -299,28 +299,33 @@ public class ChickenController : MonoBehaviour
         //Si el Pollito esta vivo...
         if (isAlive)
         {
-            //Si el Pollito está durmiendo, NO moverse
-            if (sleepingFlag || tempSleeping)
+            //Si no esta siendo
+            if (!bBeingThrow)
             {
-                //Hacemos que deje de moverse (Velocidad a 0)
-                mSelfMovementToTarget.StopMoving();
-            }
-            //Si el Pollito está comiendo, Bebiendo, o Peleando
-            else if (eatingFlag)
-            {
-                //Hacemos que deje de moverse (Velocidad a 0)
-                mSelfMovementToTarget.StopMoving();
-            }
+                //Si el Pollito está durmiendo, NO moverse
+                if (sleepingFlag || tempSleeping)
+                {
+                    //Hacemos que deje de moverse (Velocidad a 0)
+                    mSelfMovementToTarget.StopMoving();
 
-            //En caso no este haciendo alguna accion en Particular...
-            else
-            {
-                //Hacemos que el Pollito de Mueva hacia su Target de Movimiento
-                //(aplica tanto randomWaypoint como Target)
-                mSelfMovementToTarget.MoveToTarget();
+                }
+                //Si el Pollito está comiendo, Bebiendo, o Peleando
+                else if (eatingFlag)
+                {
+                    //Hacemos que deje de moverse (Velocidad a 0)
+                    mSelfMovementToTarget.StopMoving();
+                }
 
-                //Revisamos si es que necesita un nuevo RandomWaypoint (ya llegó al anterior)
-                mSelfMovementToTarget.CheckIfNeedNewRandomWaypoint();
+                //En caso no este haciendo alguna accion en Particular...
+                else
+                {
+                    //Hacemos que el Pollito de Mueva hacia su Target de Movimiento
+                    //(aplica tanto randomWaypoint como Target)
+                    mSelfMovementToTarget.MoveToTarget();
+
+                    //Revisamos si es que necesita un nuevo RandomWaypoint (ya llegó al anterior)
+                    mSelfMovementToTarget.CheckIfNeedNewRandomWaypoint();
+                }
             }
         }
 
@@ -693,6 +698,11 @@ public class ChickenController : MonoBehaviour
                 chickenUI.ShowEstimulation();
 
             }
+        }
+
+        if (collision.CompareTag("ChickenLimitZone"))
+        {
+            Destroy(this.gameObject);
         }
     }
 

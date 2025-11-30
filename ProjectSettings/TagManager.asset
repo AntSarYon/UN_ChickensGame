@@ -15,6 +15,7 @@ TagManager:
   - ApplauseArea
   - FoodPool
   - FoodBag
+  - ChickenLimitZone
   layers:
   - Default
   - TransparentFX

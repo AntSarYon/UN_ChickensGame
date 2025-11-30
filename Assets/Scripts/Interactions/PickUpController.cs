@@ -115,9 +115,14 @@ public class PickUpController : MonoBehaviour
             {
                 if (holdedObject.GetComponent<Draggable>() != null)
                 {
-                    //Volvemos a activar la opción de isDraggable del Objeto.
+                    // Volvemos a activar la opción de isDraggable del Objeto.
                     holdedObject.GetComponent<Draggable>().Drop();
-                    //holdedObject.GetComponent<Rigidbody>().AddForce(pController.movementInput * 10, ForceMode.Impulse);
+                    
+                    // Activamos flag de "Siendo lanzado"
+                    holdedObject.GetComponent<ChickenController>().bBeingThrow = true;
+
+                    // Impulsamos al pollo en base al movimiento del personaje
+                    holdedObject.GetComponent<Rigidbody>().AddForceAtPosition(pController.movementInput * 100, holdedObject.transform.position, ForceMode.Impulse);
 
                     // Asignamos el ObjetoCogido como vacío
                     holdedObject = null;

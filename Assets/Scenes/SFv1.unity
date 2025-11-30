@@ -5410,8 +5410,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chickenRossPrefab: {fileID: 8122089820921549327, guid: 952ea75047f402a4a97370cac295aaf5, type: 3}
   chickenCobbPrefab: {fileID: 6845982175717163695, guid: 79f6796f27640e64d9929e323240ab5a, type: 3}
-  eliminationIntervalSeconds: 5
-  chickenCountToRemove: 4
+  eliminationIntervalSeconds: 30
+  chickenCountToRemove: 2
+  chickensToRemoveIncrement: 1
   minChickensRequired: 3
   rewardPerExtraChicken: 10
 --- !u!4 &1148077399
@@ -6675,6 +6676,10 @@ MonoBehaviour:
   speed: 3.5
   orientationBody: {fileID: 1530840311}
   spriteBody: {fileID: 0}
+  applauseArea: {fileID: 0}
+  maxRadioScale: {x: 4.45, y: 0.0085, z: 4.45}
+  minRadioScale: {x: 0, y: 0, z: 0}
+  mAnimator: {fileID: 0}
   ApplauseClip: {fileID: 8300000, guid: dce01431121a95144b5ba022b4b116a5, type: 3}
 --- !u!82 &1299376408
 AudioSource:
@@ -9356,8 +9361,6 @@ MonoBehaviour:
   targetObject: {fileID: 0}
   holdedObject: {fileID: 0}
   holdingZone: {fileID: 844783459}
-  pController: {fileID: 0}
-  currentFoodLoad: 0
 --- !u!1 &1539069205
 GameObject:
   m_ObjectHideFlags: 0

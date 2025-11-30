@@ -49,11 +49,11 @@ public class UI_MenuController : MonoBehaviour
         //CampaignManager.Instance.RestartToFirstCampaign();
 
         // Cargamos la escena del juego
-        SceneManager.LoadScene("SFv1");
+        SceneManager.LoadScene("Level1");
     }
 
     public void ContinueGame()
     {
-        SceneManager.LoadScene("SFv1");
+        SceneManager.LoadScene("Level1");
     }
 }

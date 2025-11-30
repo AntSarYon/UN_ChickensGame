@@ -12,7 +12,11 @@ public class ChickenSpawner : MonoBehaviour
     [Header("Sistema de Eliminación Periódica de Pollos")]
     [SerializeField] private float eliminationIntervalSeconds = 15f;
     [SerializeField] private int chickenCountToRemove = 2;
+    [Header("Incremento de pollos llevados")]
+    [SerializeField] private int chickensToRemoveIncrement = 1; // Puedes setearlo desde el inspector
+    private int currentChickenCountToRemove;
     private float eliminationTimer = 0f;
+
     [Header("Reglas de Recolección")]
     [Tooltip("Cantidad mínima de pollos que debe tener el corral al momento de llevarse a todos (si hay menos => Game Over)")]
     [SerializeField] private int minChickensRequired = 3;
@@ -26,6 +30,7 @@ public class ChickenSpawner : MonoBehaviour
         DayStatusManager.Instance.OnGenerateNewChickenRoss += OnGenerateNewChickenRossDelegate;
         DayStatusManager.Instance.OnGenerateNewChickenCobb += OnGenerateNewChickenCobbDelegate;
         eliminationTimer = eliminationIntervalSeconds;
+        currentChickenCountToRemove = chickenCountToRemove; // Inicializa con el valor base
     }
 
     // --------------------------------------------------------
@@ -38,6 +43,7 @@ public class ChickenSpawner : MonoBehaviour
         // Si el timer llega a 0, eliminamos pollos
         if (eliminationTimer <= 0f)
         {
+            Debug.Log("currentChickenCountToRemove: "+ currentChickenCountToRemove);
             RemoveAndReplaceChickens();
             eliminationTimer = eliminationIntervalSeconds; // Reiniciamos el timer
         }
@@ -49,8 +55,8 @@ public class ChickenSpawner : MonoBehaviour
     {
         //Instanciamos el Pollito
         GameObject newChicken = Instantiate(
-            chickenRossPrefab, 
-            YardsManager.instance.currentYard.PosToSpawn, 
+            chickenRossPrefab,
+            YardsManager.instance.currentYard.PosToSpawn,
             new Quaternion(0.216439605f, 0, 0, 0.976296067f)
             );
 
@@ -66,7 +72,6 @@ public class ChickenSpawner : MonoBehaviour
         newChickenMovementComp.maxXDistanceToRight = YardsManager.instance.currentYard.RightLimit;
         newChickenMovementComp.maxZDistanceToBottom = YardsManager.instance.currentYard.BottomLimit;
         newChickenMovementComp.maxZDistanceToTop = YardsManager.instance.currentYard.TopLimit;
-
     }
 
     private void OnGenerateNewChickenCobbDelegate()
@@ -90,16 +95,13 @@ public class ChickenSpawner : MonoBehaviour
         newChickenMovementComp.maxXDistanceToRight = YardsManager.instance.currentYard.RightLimit;
         newChickenMovementComp.maxZDistanceToBottom = YardsManager.instance.currentYard.BottomLimit;
         newChickenMovementComp.maxZDistanceToTop = YardsManager.instance.currentYard.TopLimit;
-
     }
 
     // --------------------------------------------------------
 
     /// <summary>
-    /// <summary>
-    /// Lleva (elimina) a todos los pollos del corral actual y trae nuevos. 
+    /// Lleva (elimina) aleatoriamente una cantidad de pollos del corral actual y trae nuevos del mismo tipo.
     /// Si al momento de llevarlos hay menos de `minChickensRequired` -> Game Over.
-    /// Si se llevaron más que el mínimo, recompensa al jugador por cada extra.
     /// </summary>
     private void RemoveAndReplaceChickens()
     {
@@ -115,42 +117,44 @@ public class ChickenSpawner : MonoBehaviour
             }
         }
 
-        int totalRemoved = chickensInCurrentYard.Count;
-
         // Si hay menos que el mínimo requerido -> Trigger Game Over
-        if (totalRemoved < minChickensRequired)
+        if (chickensInCurrentYard.Count < minChickensRequired)
         {
-            // Marca GameOver en el DayStatusManager y dispara el evento
             DayStatusManager.Instance.bGameOver = true;
             DayStatusManager.Instance.TriggerEvent_GameOver();
             return;
         }
 
-        // Calculamos recompensa por extras
-        int extras = Mathf.Max(0, totalRemoved - minChickensRequired);
-        if (extras > 0)
+        // Ajustar la cantidad a eliminar si hay menos pollos
+        int toRemove = Mathf.Min(currentChickenCountToRemove, chickensInCurrentYard.Count);
+
+        // Seleccionar aleatoriamente los pollos a eliminar
+        List<ChickenController> chickensToRemove = new List<ChickenController>();
+        System.Random rng = new System.Random();
+        while (chickensToRemove.Count < toRemove)
         {
-            float reward = extras * rewardPerExtraChicken;
-            DayStatusManager.Instance.currentCash += reward;
-            CashUIController.instance.PlayIncreaseCash();
+            int idx = rng.Next(chickensInCurrentYard.Count);
+            var selected = chickensInCurrentYard[idx];
+            if (!chickensToRemove.Contains(selected))
+                chickensToRemove.Add(selected);
         }
 
-        // Guardamos la cantidad de cada tipo (para reproducir la misma mezcla)
+        // Contar cuántos de cada tipo se eliminan
         int rossCount = 0;
         int cobbCount = 0;
-        foreach (ChickenController ch in chickensInCurrentYard)
+        foreach (ChickenController ch in chickensToRemove)
         {
             if (ch.type != null && ch.type.typeName == "Ross") rossCount++;
             else cobbCount++;
         }
 
-        // Eliminamos todos los pollos del corral
-        foreach (ChickenController ch in chickensInCurrentYard)
+        // Eliminar los pollos seleccionados
+        foreach (ChickenController ch in chickensToRemove)
         {
             Destroy(ch.gameObject);
         }
 
-        // Traemos nuevos: re-spawneamos la misma cantidad por tipo
+        // Reemplazar automáticamente los eliminados por nuevos del mismo tipo
         for (int i = 0; i < rossCount; i++)
         {
             OnGenerateNewChickenRossDelegate();
@@ -159,5 +163,8 @@ public class ChickenSpawner : MonoBehaviour
         {
             OnGenerateNewChickenCobbDelegate();
         }
+
+        // Aumentar la cantidad de pollos a llevar la próxima vez
+        currentChickenCountToRemove += chickensToRemoveIncrement;
     }
 }

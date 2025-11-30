@@ -5551,7 +5551,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chickenRossPrefab: {fileID: 8122089820921549327, guid: 952ea75047f402a4a97370cac295aaf5, type: 3}
   chickenCobbPrefab: {fileID: 6845982175717163695, guid: 79f6796f27640e64d9929e323240ab5a, type: 3}
-  eliminationIntervalSeconds: 5
+  eliminationIntervalSeconds: 15
   chickenCountToRemove: 2
   chickensToRemoveIncrement: 1
   minChickensRequired: 1
@@ -7890,7 +7890,7 @@ MonoBehaviour:
   currentChickensCount: 0
   listFoods: []
   temperature: 30
-  temperatureDecreaseInterval: 5
+  temperatureDecreaseInterval: 1
   temperatureDecreaseAmount: 1
   temperatureIncreaseAmount: 1
   temperaturaDebug: {fileID: 1397609703}

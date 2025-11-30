@@ -49,6 +49,14 @@ public class ChickenController : MonoBehaviour
     private float sleepCheckTimer = 0f;
     private float sleepDurationTimer = 0f;
 
+    // Temperatura - agrupar y dormir
+    private bool tempSleeping = false;
+    private bool groupingToSleep = false;
+    private Vector3 tempGatherPoint;
+    [SerializeField] private float temperatureSleepThreshold = 25f;
+    [SerializeField] private float gatherPointOffset = 1.5f;
+    [SerializeField] private float gatherArriveDistance = 0.8f;
+
     private AudioSource mAudioSource;
 
     // Clips de Audio del Pollito:
@@ -98,6 +106,20 @@ public class ChickenController : MonoBehaviour
         sleepCheckTimer = Random.Range(3f, 3f);
         sleepDurationTimer = 0f;
 
+        // Suscribir al evento de temperatura del corral asignado
+        if (assignedYard != null)
+        {
+            assignedYard.OnTemperatureChanged += ValidateTemperature;
+        }
+
+    }
+
+    private void OnDestroy()
+    {
+        if (assignedYard != null)
+        {
+            assignedYard.OnTemperatureChanged -= ValidateTemperature;
+        }
     }
 
     //-----------------------------------------------------------------------------
@@ -252,8 +274,14 @@ public class ChickenController : MonoBehaviour
         //Si el Pollito esta vivo...
         if (isAlive)
         {
-            //Si el Pollito est� comiendo, Bebiendo, Durmiendo, o Peleando
-            if (eatingFlag)
+            //Si el Pollito está durmiendo, NO moverse
+            if (sleepingFlag || tempSleeping)
+            {
+                //Hacemos que deje de moverse (Velocidad a 0)
+                mSelfMovementToTarget.StopMoving();
+            }
+            //Si el Pollito está comiendo, Bebiendo, o Peleando
+            else if (eatingFlag)
             {
                 //Hacemos que deje de moverse (Velocidad a 0)
                 mSelfMovementToTarget.StopMoving();
@@ -266,7 +294,7 @@ public class ChickenController : MonoBehaviour
                 //(aplica tanto randomWaypoint como Target)
                 mSelfMovementToTarget.MoveToTarget();
 
-                //Revisamos si es que necesita un nuevo RandomWaypoint (ya lleg� al anterior)
+                //Revisamos si es que necesita un nuevo RandomWaypoint (ya llegó al anterior)
                 mSelfMovementToTarget.CheckIfNeedNewRandomWaypoint();
             }
         }
@@ -705,6 +733,8 @@ public class ChickenController : MonoBehaviour
         if (!sleepingFlag) return;
 
         sleepingFlag = false;
+        tempSleeping = false;
+        groupingToSleep = false;
         mSpritesController.SetSleeping(false);
 
         // Reiniciamos el timer para volver a intentar dormir en el futuro
@@ -724,5 +754,37 @@ public class ChickenController : MonoBehaviour
 
         //Usamos el método de escape para que se mueva en esa dirección
         mSelfMovementToTarget.EscapeInDirection(runAwayDirection, 8f);
+    }
+
+    //-----------------------------------------------------------------------------------
+    // FUNCION: Validar temperatura del corral y forzar comportamiento
+    private void ValidateTemperature(float currentTemperature)
+    {
+        if (currentTemperature < temperatureSleepThreshold)
+        {
+            // Temperatura baja: FORZAR DORMIR
+            if (!sleepingFlag && !tempSleeping)
+            {
+                // Cancelar acciones que impidan dormir
+                isBeingDragged = false;
+                eatingFlag = false;
+
+                // Iniciar sueño inmediato
+                tempSleeping = true;
+                sleepingFlag = true;
+                mSelfMovementToTarget.StopMoving();
+                mSpritesController.SetSleeping(true);
+                sleepDurationTimer = Random.Range(10f, 30f);
+            }
+        }
+        else
+        {
+            // Temperatura normal: DESPERTAR y comportamiento normal
+            if (sleepingFlag || tempSleeping)
+            {
+                WakeFromSleep();
+                mSelfMovementToTarget.SetNewRandomWaypoint();
+            }
+        }
     }
 }

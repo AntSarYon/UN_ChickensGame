@@ -208,6 +208,19 @@ public class SelfMovementToTarget : MonoBehaviour
         moveDirection = (randomWaypoint - transform.position).normalized;
     }
 
+    //-----------------------------------------------------------------------------------
+    // FUNCION - Mover hacia un punto específico (usada para agruparse por temperatura)
+    public void MoveToPoint(Vector3 point)
+    {
+        // Clamp point a límites del corral
+        Vector3 clamped = point;
+        clamped.x = Mathf.Clamp(clamped.x, maxXDistanceToLeft, maxXDistanceToRight);
+        clamped.z = Mathf.Clamp(clamped.z, maxZDistanceToBottom, maxZDistanceToTop);
+
+        randomWaypoint = clamped;
+        moveDirection = (randomWaypoint - transform.position).normalized;
+    }
+
     #endregion
 
 

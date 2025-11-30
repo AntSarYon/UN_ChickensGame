@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro; // Necesario si usas TextMeshPro
+using System;
 
 public class Yard : MonoBehaviour
 {
@@ -24,14 +25,17 @@ public class Yard : MonoBehaviour
     // ------------------- TEMPERATURA -------------------
     [Header("Temperatura del Corral")]
     [SerializeField] public float temperature = 25f; // Temperatura inicial
-    [SerializeField] private float temperatureDecreaseInterval = 5f; // Cada cuántos segundos cambia
-    [SerializeField] private float temperatureDecreaseAmount = 1f;   // Cuánto baja cada vez
-    [SerializeField] private float temperatureIncreaseAmount = 1f;   // Cuánto sube cada vez
+    [SerializeField] private float temperatureDecreaseInterval = 5f; // Cada cuï¿½ntos segundos cambia
+    [SerializeField] private float temperatureDecreaseAmount = 1f;   // Cuï¿½nto baja cada vez
+    [SerializeField] private float temperatureIncreaseAmount = 1f;   // Cuï¿½nto sube cada vez
     private float temperatureTimer = 0f;
     private bool isTemperatureIncreasing = false;
 
+    // Evento para notificar cambios de temperatura
+    public event Action<float> OnTemperatureChanged;
+
     [Header("UI Debug")]
-    [SerializeField] private TMP_Text temperaturaDebug; // Arrastra el objeto temperaturaDebug aquí
+    [SerializeField] private TMP_Text temperaturaDebug; // Arrastra el objeto temperaturaDebug aquÃ­
 
     // ------------------------------------------------------------------
 
@@ -85,11 +89,14 @@ public class Yard : MonoBehaviour
                     temperature -= temperatureDecreaseAmount;
                 }
                 temperatureTimer = temperatureDecreaseInterval;
+
+                // Notificar a los suscriptores que la temperatura cambiÃ³
+                OnTemperatureChanged?.Invoke(temperature);
             }
 
             if (temperaturaDebug != null)
             {
-                temperaturaDebug.text = $"Temperatura: {temperature:0.0}°C";
+                temperaturaDebug.text = $"Temperatura: {temperature:0.0}ï¿½C";
             }
         }
     }

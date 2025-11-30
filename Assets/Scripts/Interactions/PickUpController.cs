@@ -144,6 +144,9 @@ public class PickUpController : MonoBehaviour
                         {
                             if (targetObject.CompareTag("Food"))
                             {
+                                // Recargamos el Comedero directamente
+                                targetObject.GetComponent<Food>().Refill();
+
                                 //Almacenamos el bag en una variable
                                 GameObject bag = holdedObject;
 

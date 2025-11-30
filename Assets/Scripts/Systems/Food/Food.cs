@@ -190,6 +190,19 @@ public class Food : MonoBehaviour
         mFoodLevelSlider.value = mFoodLevelSlider.maxValue;
     }
 
+    // ------------------------------------------------------------
+
+    public void Refill()
+    {
+        //Reproducimos Animacion
+        mAnimator.Play("refill");
+
+        //Llevamnos el valor del Slider al Maximo
+        mFoodLevelSlider.value = mFoodLevelSlider.maxValue;
+    }
+
+    // -------------------------------------------------------------
+
     // -------------------------------------------------------------------------------------
     // FUNCION: REVISAR INGREDIENTES PARA EL PANEL
     private void CheckIngredientsForPanel()

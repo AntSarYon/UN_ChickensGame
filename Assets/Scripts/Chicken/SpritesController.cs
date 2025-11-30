@@ -176,6 +176,7 @@ public class SpritesController : MonoBehaviour
         }
     }
 
+
     //-----------------------------------------------------------------------------------
 
     public void ManageWalkingAnim()

@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform applauseArea;
     [SerializeField] private Vector3 maxRadioScale = new Vector3(4.45f, 0.0085f, 4.45f);
     [SerializeField] private Vector3 minRadioScale = Vector3.zero;
+    [Tooltip("Multiplicador aplicado al radio visual del Applause Area para el rango de interacción (1 = escala visual exacta).")]
+    [SerializeField] private float applauseRadiusMultiplier = 1f;
     private float areaInterpolation;
     private float areaIncreaseSpeed;
     private bool bClapped;
@@ -179,7 +181,9 @@ public class PlayerController : MonoBehaviour
         bClapped = true;
 
         // Despertar y hacer escapar a los pollos que estén dentro del radio del aplauso
-        float radius = Mathf.Max(maxRadioScale.x, maxRadioScale.z);
+        // Usamos la escala actual del objeto visual `applauseArea` para determinar el radio
+        float visualRadius = Mathf.Max(applauseArea.localScale.x, applauseArea.localScale.z);
+        float radius = visualRadius * Mathf.Max(0.0001f, applauseRadiusMultiplier);
         Collider[] hits = Physics.OverlapSphere(applauseArea.position, radius);
         foreach (Collider hit in hits)
         {
@@ -188,14 +192,16 @@ public class PlayerController : MonoBehaviour
                 ChickenController ch = hit.GetComponent<ChickenController>();
                 if (ch != null)
                 {
-                    // Si estaba dormido, despertarlo
-                    if (ch.sleepingFlag)
+                    // Double-check the distance to avoid waking chickens whose colliders touch the sphere but are visually outside
+                    float sqrDist = (ch.transform.position - applauseArea.position).sqrMagnitude;
+                    if (sqrDist <= radius * radius)
                     {
-                        ch.WakeFromSleep();
-                    }
+                        // Forzar despertar (maneja tanto sueño aleatorio como por temperatura)
+                        ch.WakeUpForApplause();
 
-                    // Hacer que salga del círculo
-                    ch.RunAwayFromApplause(applauseArea.position);
+                        // Hacer que salga del círculo
+                        ch.RunAwayFromApplause(applauseArea.position);
+                    }
                 }
             }
         }

@@ -667,6 +667,10 @@ public class ChickenController : MonoBehaviour
             //Multiplicamos la velocidad por 1.5 segundos...
             mSelfMovementToTarget.MultiplySpeedTemporary(0.75f);
 
+            // Si el área de aplauso está activa, despertarnos (esto cubre casos donde
+            // el overlap desde PlayerController no alcanzó al chicken por diferencias de collider)
+            WakeUpForApplause();
+
             //Hacemos que se aleje del círculo de aplauso
             RunAwayFromApplause(collision.transform.parent.position);
         }
@@ -822,9 +826,28 @@ public class ChickenController : MonoBehaviour
             inColdSleepState = false;
             tempSleeping = false;
             groupingToSleep = false;
+            // Despertar definitivamente y resetear timer de sueño
             sleepingFlag = false;
             mSpritesController.SetSleeping(false);
+            sleepCheckTimer = Random.Range(12f, 26f);
             mSelfMovementToTarget.SetNewRandomWaypoint();
         }
+    }
+
+    //-----------------------------------------------------------------------------------
+    // FUNCION: Forzar despertar (usado por aplausos)
+    public void WakeUpForApplause()
+    {
+        // Limpiar estados de sueño por temperatura
+        inColdSleepState = false;
+        tempSleeping = false;
+        groupingToSleep = false;
+
+        // Asegurar que el pollo está despierto visualmente y en lógica
+        sleepingFlag = false;
+        mSpritesController.SetSleeping(false);
+
+        // Evitar que se vuelvan a dormir inmediatamente
+        sleepCheckTimer = Random.Range(12f, 26f);
     }
 }

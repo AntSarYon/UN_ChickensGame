@@ -42,6 +42,7 @@ public class PickUpController : MonoBehaviour
                     //Si pulsamos la tecla E...
                     if (Input.GetKeyDown(KeyCode.E))
                     {
+                        //Tomamos el Target como objeto sostenido
                         holdedObject = targetObject;
 
                         //Desactivamos la opción de isDraggable, dado que ya está cogido.
@@ -52,7 +53,6 @@ public class PickUpController : MonoBehaviour
             }
             else if (targetObject.GetComponent<PickeableObject>() != null)
             {
-
                 if (targetObject.GetComponent<PickeableObject>().isPickeable)
                 {
                     //Actualizamos y mostramos el mensaje de interaccion
@@ -99,7 +99,7 @@ public class PickUpController : MonoBehaviour
             // Si el flag de "Cargando comida" está activo, y estamos frente a un comedero
             if (pController.bisCarryingFood)
             {
-                //Si el objeto en manos es una bolsa de comida
+                //Si el objeto en manos es una bolsa de comida, y estamos apuntando a aun comedero
                 if (targetObject != null && targetObject.CompareTag("Food"))
                 {
                     //Actualizamos y mostramos el mensaje de interaccion
@@ -117,7 +117,7 @@ public class PickUpController : MonoBehaviour
                 {
                     //Volvemos a activar la opción de isDraggable del Objeto.
                     holdedObject.GetComponent<Draggable>().Drop();
-                    holdedObject.GetComponent<Rigidbody>().AddForce(pController.movementInput * 10, ForceMode.Impulse);
+                    //holdedObject.GetComponent<Rigidbody>().AddForce(pController.movementInput * 10, ForceMode.Impulse);
 
                     // Asignamos el ObjetoCogido como vacío
                     holdedObject = null;
@@ -138,29 +138,40 @@ public class PickUpController : MonoBehaviour
                     holdedObject.GetComponent<Rigidbody>().isKinematic = false;
 
                     //Si el objeto en manos es una bolsa de comida
-                    if (holdedObject.CompareTag("FoodBag") && targetObject.CompareTag("Food"))
+                    if (holdedObject.CompareTag("FoodBag"))
                     {
-                        // Destruimos el obeto en manos
-                        GameObject foodbag = holdedObject;
+                        if (targetObject != null)
+                        {
+                            if (targetObject.CompareTag("Food"))
+                            {
+                                //Almacenamos el bag en una variable
+                                GameObject bag = holdedObject;
 
-                        // Asignamos el ObjetoCogido como vacío
-                        holdedObject = null;
+                                // Asignamos el ObjetoCogido como vacío
+                                holdedObject = null;
 
-                        Destroy(foodbag);
+                                //Desactivamos la bolsa
+                                bag.SetActive(false);
+                            }
+                        }
 
                         //Desactivamos Flag de "Cargando comida"
                         pController.bisCarryingFood = false;
                     }
+
+                    // Asignamos el ObjetoCogido como vacío
+                    holdedObject = null;
+
+                    //Actualizamos y mostramos el mensaje de interaccion
+                    pController.pUI.HideInteractionMessage();
                 }
 
                 //Actualizamos y mostramos el mensaje de interaccion
                 pController.pUI.HideInteractionMessage();
-
             }
-
         }
-
-        pController.pUI.HideInteractionMessage();
+        else pController.pUI.HideInteractionMessage();
+        
 
         
     }

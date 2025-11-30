@@ -94,10 +94,6 @@ public class ChickenController : MonoBehaviour
 
     void Start()
     {
-        //Seteamos la informacion a mostrar en el Panel de Detalle
-        chickenUI.SetInfo(chickName, type.typeName, type.gustos, type.pasiva);
-        chickenUI.SetIngredientsPreference(type.likeHarina, type.likeSoja, type.likeGusanos, type.likeMaiz);
-
         //Definimos un nuevo destino aleatorio para el pollito
         mSelfMovementToTarget.SetNewRandomWaypoint();
 
@@ -352,7 +348,7 @@ public class ChickenController : MonoBehaviour
             if (!isBeingDragged)
             {
                 //Mostramos la info del UI del pollito
-                chickenUI.ShowChickenInfo();
+                //chickenUI.ShowChickenInfo();
             }
         }
         
@@ -375,7 +371,7 @@ public class ChickenController : MonoBehaviour
             if (chickenUI.gameObject.activeSelf)
             {
                 //Ocultamos la info del UI
-                chickenUI.HideChickenInfo();
+                //chickenUI.HideChickenInfo();
             }
         }
         
@@ -432,7 +428,7 @@ public class ChickenController : MonoBehaviour
         if (chickenUI.gameObject.activeSelf)
         {
             //Ocultamos su informacion...
-            chickenUI.HideChickenInfo();
+            //chickenUI.HideChickenInfo();
         }
 
 

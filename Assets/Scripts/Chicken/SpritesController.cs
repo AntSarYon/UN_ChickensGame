@@ -266,9 +266,6 @@ public class SpritesController : MonoBehaviour
 
         //Activamos trigger de Muerte
         mAnimator.SetTrigger("Die");
-
-        //Desactivamos la UI de informacion del Pollo
-        chickenUI.HideChickenInfo();
     }
 
     //-----------------------------------------------------------------------------------

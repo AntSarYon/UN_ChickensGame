@@ -28,6 +28,19 @@ public class PlayerController : MonoBehaviour
     private bool bClapped;
     [HideInInspector] public bool bisCarryingFood;
 
+    // Stamina / Sprint
+    [Header("Stamina")]
+    [SerializeField] private float maxStamina = 5f; // seconds of sprint
+    [SerializeField] private float staminaDrainPerSecond = 1f;
+    [SerializeField] private float staminaRegenPerSecond = 0.75f;
+    [SerializeField] private float sprintMultiplier = 1.8f; // how much faster when sprinting
+    [SerializeField] private float staminaCostPerApplause = 0.5f; // stamina consumed per clap
+    private float currentStamina;
+    private bool isSprinting = false;
+    [Header("Debug")]
+    [Tooltip("Habilita logs de stamina en la consola para depuración")]
+    [SerializeField] private bool debugStamina = false;
+
     // Referencia al RigidBody
     private Rigidbody mRb;
     private AudioSource mAudioSource;
@@ -66,6 +79,25 @@ public class PlayerController : MonoBehaviour
     {
         // Almacenamos la velocidad original
         origSpeed = speed;
+        currentStamina = maxStamina;
+        // Si no se asignó `pUI` en el Inspector, intentamos localizarlo en hijos o en la escena
+        if (pUI == null)
+        {
+            pUI = GetComponentInChildren<PlayerUI>();
+            if (pUI == null)
+            {
+                pUI = FindObjectOfType<PlayerUI>();
+            }
+
+            if (pUI == null)
+            {
+                Debug.LogWarning("PlayerController: pUI no asignado y no se encontró un PlayerUI en la escena.");
+            }
+            else
+            {
+                Debug.Log("PlayerController: pUI auto-asignado desde la escena.");
+            }
+        }
     }
 
     // ----------------------------------------------------
@@ -93,15 +125,28 @@ public class PlayerController : MonoBehaviour
             movementInput.x = 1;
         }
 
+        // Crouch (override)
         if (Input.GetKey(KeyCode.LeftControl))
         {
+            isSprinting = false;
             speed = 2.00f;
-        } 
-        else if (Input.GetKey(KeyCode.LeftShift))
+        }
+        else
         {
-            speed = 5.00f;
-        } 
-        else speed = origSpeed;
+            // Sprinting when holding LeftShift and moving and having stamina
+            bool wantSprint = Input.GetKey(KeyCode.LeftShift) && movementInput != Vector3.zero;
+
+            if (wantSprint && currentStamina > 0f)
+            {
+                isSprinting = true;
+                speed = origSpeed * sprintMultiplier;
+            }
+            else
+            {
+                isSprinting = false;
+                speed = origSpeed;
+            }
+        }
 
         // Si se oprime la tecla C
         if (Input.GetKeyDown(KeyCode.C))
@@ -150,6 +195,38 @@ public class PlayerController : MonoBehaviour
                 
             }
         }
+
+        // Manejo de stamina: consumir si sprinting, recargar si no
+        if (isSprinting)
+        {
+            currentStamina -= staminaDrainPerSecond * Time.deltaTime;
+            if (currentStamina <= 0f)
+            {
+                currentStamina = 0f;
+                isSprinting = false; // stop sprint when exhausted
+                speed = origSpeed;
+            }
+        }
+        else
+        {
+            // Regenerar stamina
+            if (currentStamina < maxStamina)
+            {
+                currentStamina += staminaRegenPerSecond * Time.deltaTime;
+                if (currentStamina > maxStamina) currentStamina = maxStamina;
+            }
+        }
+
+        // Actualizar UI
+        if (pUI != null)
+        {
+            float normalized = currentStamina / Mathf.Max(0.0001f, maxStamina);
+            if (debugStamina)
+            {
+                Debug.Log($"[PlayerController] Stamina: {currentStamina:F2} / {maxStamina:F2} -> normalized {normalized:F2} | isSprinting={isSprinting}");
+            }
+            pUI.UpdateStamina(normalized);
+        }
     }
 
     // ---------------------------------------------------
@@ -183,6 +260,15 @@ public class PlayerController : MonoBehaviour
 
         //Activamos flag de "Aplaudi�"
         bClapped = true;
+
+        // Consumir stamina por aplauso
+        currentStamina -= staminaCostPerApplause;
+        if (currentStamina < 0f) currentStamina = 0f;
+
+        if (debugStamina)
+        {
+            Debug.Log($"[PlayerController] Aplauso realizado. Stamina consumida: {staminaCostPerApplause}. Stamina actual: {currentStamina:F2}");
+        }
 
         // Despertar y hacer escapar a los pollos que estén dentro del radio del aplauso
         // Usamos la escala actual del objeto visual `applauseArea` para determinar el radio

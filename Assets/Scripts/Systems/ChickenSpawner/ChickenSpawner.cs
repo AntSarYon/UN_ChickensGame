@@ -11,15 +11,18 @@ public class ChickenSpawner : MonoBehaviour
 
     [Header("Sistema de Eliminación Periódica de Pollos")]
     [SerializeField] private float eliminationIntervalSeconds = 15f;
-    [SerializeField] private int chickenCountToRemove = 2;
+    [SerializeField] private int initialChickenCountToRemove = 2;
+
     [Header("Incremento de pollos llevados")]
     [SerializeField] private int chickensToRemoveIncrement = 1; // Puedes setearlo desde el inspector
     private int currentChickenCountToRemove;
     private float eliminationTimer = 0f;
 
     [Header("Reglas de Recolección")]
+
     [Tooltip("Cantidad mínima de pollos que debe tener el corral al momento de llevarse a todos (si hay menos => Game Over)")]
     [SerializeField] private int minChickensRequired = 3;
+
     [Tooltip("Dinero que recibe el jugador por cada pollo adicional llevado por encima del mínimo")]
     [SerializeField] private float rewardPerExtraChicken = 10f;
 
@@ -30,7 +33,9 @@ public class ChickenSpawner : MonoBehaviour
         DayStatusManager.Instance.OnGenerateNewChickenRoss += OnGenerateNewChickenRossDelegate;
         DayStatusManager.Instance.OnGenerateNewChickenCobb += OnGenerateNewChickenCobbDelegate;
         eliminationTimer = eliminationIntervalSeconds;
-        currentChickenCountToRemove = chickenCountToRemove; // Inicializa con el valor base
+
+        // Inicializa con el valor base de pollos por remover
+        currentChickenCountToRemove = initialChickenCountToRemove; 
     }
 
     // --------------------------------------------------------
@@ -40,12 +45,21 @@ public class ChickenSpawner : MonoBehaviour
         // Actualizamos el timer de eliminación
         eliminationTimer -= Time.deltaTime;
 
-        // Si el timer llega a 0, eliminamos pollos
+        if (eliminationTimer <= 5 && !TruckController.Instance.bIsArriving)
+        {
+            //Dispara animacion de Camion llegando
+            TruckController.Instance.PlayArrive();
+        }
+
+        // Si el timer llega a 0
         if (eliminationTimer <= 0f)
         {
+            //Eliminamos y reemplazamos los pollos
             Debug.Log("currentChickenCountToRemove: "+ currentChickenCountToRemove);
             RemoveAndReplaceChickens();
-            eliminationTimer = eliminationIntervalSeconds; // Reiniciamos el timer
+
+            // Reiniciamos el timer
+            eliminationTimer = eliminationIntervalSeconds; 
         }
     }
 
@@ -105,9 +119,10 @@ public class ChickenSpawner : MonoBehaviour
     /// </summary>
     private void RemoveAndReplaceChickens()
     {
-        // Encontramos todos los pollos en el corral actualmente seleccionado
+        // Encontramos todos los pollos
         ChickenController[] allChickens = FindObjectsOfType<ChickenController>();
 
+        // Filtramos los pollos que están en el corral actual y están vivos
         List<ChickenController> chickensInCurrentYard = new List<ChickenController>();
         foreach (ChickenController chicken in allChickens)
         {
@@ -117,7 +132,7 @@ public class ChickenSpawner : MonoBehaviour
             }
         }
 
-        // Si hay menos que el mínimo requerido -> Trigger Game Over
+        // Si hay menos pollos VIVOS que el mínimo requerido -> Trigger Game Over
         if (chickensInCurrentYard.Count < minChickensRequired)
         {
             DayStatusManager.Instance.bGameOver = true;
@@ -125,7 +140,7 @@ public class ChickenSpawner : MonoBehaviour
             return;
         }
 
-        // Ajustar la cantidad a eliminar si hay menos pollos
+        // Ajustar la cantidad a eliminar (si hay menos pollos)
         int toRemove = Mathf.Min(currentChickenCountToRemove, chickensInCurrentYard.Count);
 
         // Seleccionar aleatoriamente los pollos a eliminar
@@ -142,6 +157,7 @@ public class ChickenSpawner : MonoBehaviour
         // Contar cuántos de cada tipo se eliminan
         int rossCount = 0;
         int cobbCount = 0;
+
         foreach (ChickenController ch in chickensToRemove)
         {
             if (ch.type != null && ch.type.typeName == "Ross") rossCount++;
@@ -153,6 +169,9 @@ public class ChickenSpawner : MonoBehaviour
         {
             Destroy(ch.gameObject);
         }
+
+        // Caamion se va
+        TruckController.Instance.PlayRun();
 
         // Reemplazar automáticamente los eliminados por nuevos del mismo tipo
         for (int i = 0; i < rossCount; i++)

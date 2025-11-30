@@ -18,13 +18,6 @@ public class ChickenStats : MonoBehaviour
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadIncrementoHambre = 2.75f;
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadReduccionHambre = 4;
 
-    //felicidad del pollito
-    [HideInInspector] public float felicidad = 100;
-    [Header("Velocidad Cambio de Stats: felicidad")]
-    [Range(0.00f, 10.00f)] [SerializeField] private float velocidadIncrementofelicidad = 1;
-    [Range(0.00f, 10.00f)] [SerializeField] private float velocidadReduccionfelicidad = 3;
-    [Range(0.00f, 100.00f)] public float felicidadParaPelear = 60;
-
     //Peso del Pollito
     [HideInInspector] public float peso = 100;
     [Header("Velocidad Cambio de Stats: Peso")]
@@ -40,9 +33,6 @@ public class ChickenStats : MonoBehaviour
         velocidadIncrementoHambre = GameRulesManager.instance.velocidadIncrementoHambre;
         velocidadReduccionHambre = GameRulesManager.instance.velocidadReduccionHambre;
 
-        velocidadIncrementofelicidad = GameRulesManager.instance.velocidadIncrementofelicidad;
-        velocidadReduccionfelicidad = GameRulesManager.instance.velocidadReduccionfelicidad;
-
         velocidadIncrementoPeso = GameRulesManager.instance.velocidadIncrementoPeso;
         velocidadReduccionPeso = GameRulesManager.instance.velocidadReduccionPeso;
         multiplicadorIncrementoPesoSegunfelicidad = 1;
@@ -50,7 +40,6 @@ public class ChickenStats : MonoBehaviour
         //Seteamos los stats iniciales del pollo
         hp = 100;
         hambre = Random.Range(35.00f, 80.00f);
-        felicidad = Random.Range(35.00f, 80.00f);
         peso = 1; // El Peso empieza en 1 siempre // Random.Range(1.00f, 7.00f);
 
     }
@@ -117,67 +106,6 @@ public class ChickenStats : MonoBehaviour
             //Incrementamos la salud Progresivamente
             hp -= velocidadReduccionHP * Time.deltaTime;
             hp = Mathf.Clamp(hp, 0.00f, 100.00f);
-        }
-    }
-
-    //-----------------------------------------------------------------------
-
-    public void ManageStats_felicidad(bool eatingFlag, bool isBeingDragged)
-    {
-        // Si el Flag de "Durmiendo" o "Comiendo" esta activo
-        if (eatingFlag)
-        {
-            //Reducimos el felicidad Progresivamente
-            felicidad -= velocidadReduccionfelicidad * Time.deltaTime;
-            felicidad = Mathf.Clamp(felicidad, 0.00f, 100.00f);
-
-            //Actualizamos el indice de incremento de Peso por felicidad
-            UpdateIncrementoPesoPorfelicidad();
-
-
-        }
-        // Si el Flag de "Durmiendo" y "Comiendo" estan Desactivados
-        else
-        {
-            if (isBeingDragged)
-            {
-                //Aumentamos el felicidad Progresivamente (más rapido)
-                felicidad += velocidadIncrementofelicidad * 1.75f * Time.deltaTime;
-            }
-            else
-            {
-                //Aumentamos el felicidad Progresivamente
-                felicidad += velocidadIncrementofelicidad * Time.deltaTime;
-            }
-
-            //Limitamos el felicidad dentro de un rango hasta 100
-            felicidad = Mathf.Clamp(felicidad, 0.00f, 100.00f);
-
-            //Actualizamos el indice de incremento de Peso por felicidad
-            UpdateIncrementoPesoPorfelicidad();
-        }
-    }
-
-    //-----------------------------------------------------------------------
-
-    private void UpdateIncrementoPesoPorfelicidad()
-    {
-        // Mientras mas elevado el felicidad, menos engordará al comer
-        if (felicidad <= 20.00f)
-        {
-            multiplicadorIncrementoPesoSegunfelicidad = 3;
-        }
-        else if (felicidad <= 50.00f)
-        {
-            multiplicadorIncrementoPesoSegunfelicidad = 2;
-        }
-        else if (felicidad <= 80.00f)
-        {
-            multiplicadorIncrementoPesoSegunfelicidad = 1;
-        }
-        else
-        {
-            multiplicadorIncrementoPesoSegunfelicidad = 0.5f;
         }
     }
 

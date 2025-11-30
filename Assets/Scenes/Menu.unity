@@ -905,7 +905,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hambre: 100
-  velocidadIncrementoHambre: 2
+  velocidadIncrementoHambre: 6
   velocidadReduccionHambre: 4
   felicidad: 100
   velocidadIncrementofelicidad: 1

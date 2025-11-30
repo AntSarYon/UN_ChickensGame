@@ -14,7 +14,7 @@ public class SelfMovementToTarget : MonoBehaviour
     private Vector3 moveDirection;
 
     //Transform del target
-    private Transform target;
+    [HideInInspector] public Transform target;
 
     // Desino aleatorio (Para cuando no haya Target)
     private Vector3 randomWaypoint;

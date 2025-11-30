@@ -152,6 +152,8 @@ public class ChickenController : MonoBehaviour
             //Activamos el flag de "Starving" 
             starvingFlag = true;
 
+            mSelfMovementToTarget.target = FoodsManager.Instance.GetClosestFood(transform);
+
             //Entramos en Animacion de Starving
             mSpritesController.EnableStarvingAnim();
         }
@@ -178,7 +180,6 @@ public class ChickenController : MonoBehaviour
         //Manejamos los Stats segun loos flags
         mChickenStats.ManageStats_HambreYPeso(eatingFlag, isBeingDragged);
         mChickenStats.ManageStats_HP(starvingFlag);
-        mChickenStats.ManageStats_felicidad(eatingFlag, isBeingDragged);
     }
 
     //------------------------------------------------------------------------------------------
@@ -479,33 +480,32 @@ public class ChickenController : MonoBehaviour
             //Si estams colisionando con otro Pollito...
             if (collision.gameObject.CompareTag("Chicken"))
             {
-                //Si los Stats del Pollo indican que esta felicidadado...
-                if (mChickenStats.felicidad > mChickenStats.felicidadParaPelear)
-                {
-                    //Controlamos la Animacion de Pelea
-                    //SpritesController.EnterFightAnim();
-                }
-                //En caso el nivel de felicidad no est� en el Nivel...
-                else
-                {
-                    //Obtenemos los Stats del pollo con el que hemos chocado
-                    ChickenStats otherChickenStats = collision.gameObject.GetComponent<ChickenStats>();
-                    
-                    //Revisamos si el felicidad del otro Pollo essta en el limite...
-                    if (otherChickenStats.felicidad >= otherChickenStats.felicidadParaPelear)
-                    {
-                        //De ser el caso...
 
-                        //Controlamos la Animacion de Pelea
-                        //mSpritesController.EnterFightAnim();
-                    }
-                    //En caso tampoco este felicidadado...
-                    else
-                    {
-                        //Hacemos que se asigne un nuevo TargetRandom
-                        GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
-                    }
+                //Controlamos la Animacion de Pelea
+                //mSpritesController.EnterFightAnim();
+
+                //Obtenemos los Stats del pollo con el que hemos chocado
+                //ChickenStats otherChickenStats = collision.gameObject.GetComponent<ChickenStats>();
+            }
+
+            //En caso tampoco este felicidadado...
+            else
+            {
+                //Si el objeto colsiionado esta a la izquierda
+                if (collision.transform.position.x < transform.position.x)
+                {
+                    //Hacemos que se asigne un nuevo TargetRandom hacia la derecha
+                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypointToRight(collision.transform.position.x);
                 }
+                //Si el objeto colsiionado esta a la derecha
+                else if (collision.transform.position.x > transform.position.x)
+                {
+                    //Hacemos que se asigne un nuevo TargetRandom hacia la izquierda
+                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypointToLeft(collision.transform.position.x);
+                }
+                
+            }
+                
             }
 
             //Si chocamos con un contenedor de Comida o Agua
@@ -585,7 +585,7 @@ public class ChickenController : MonoBehaviour
                 }
             }
         }
-    }
+    
 
     //------------------------------------------------------------------------------------------
 
@@ -607,9 +607,12 @@ public class ChickenController : MonoBehaviour
                     mSpritesController.DisableStarvingAnim();
                 }
 
-                //Si el Comedero esta vacio...
-                if (collision.gameObject.GetComponent<Food>().mFoodLevelSlider.value == 0)
+                //Si el Comedero esta vacio, o ya sacio su hambre...
+                if (collision.gameObject.GetComponent<Food>().mFoodLevelSlider.value == 0 || mChickenStats.hambre <= 15)
                 {
+                    //Quitamos el comedero como target
+                    mSelfMovementToTarget.target = null;
+
                     //Desactivamos Flag de "Esta comiendo"
                     eatingFlag = false;
 

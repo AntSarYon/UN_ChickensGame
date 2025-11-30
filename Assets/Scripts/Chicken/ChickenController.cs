@@ -52,15 +52,17 @@ public class ChickenController : MonoBehaviour
     // Temperatura - agrupar y dormir
     private bool tempSleeping = false;
     private bool groupingToSleep = false;
+    private bool inColdSleepState = false;  // Flag para rastrear si está en sueño por frío
     private Vector3 tempGatherPoint;
     [SerializeField] private float temperatureSleepThreshold = 25f;
+    [SerializeField] private float temperatureWakeThreshold = 25f;  // Puede ser igual a sleepThreshold
     [SerializeField] private float gatherPointOffset = 1.5f;
     [SerializeField] private float gatherArriveDistance = 0.8f;
 
     private AudioSource mAudioSource;
 
     // Clips de Audio del Pollito:
-    [Header("Clips de Audio")]
+    [Header("Clips de Audio")]  
     [SerializeField] private AudioClip clipDragged;
     [SerializeField] private AudioClip clipEscaped;
     [SerializeField] private AudioClip clipWings;
@@ -110,6 +112,17 @@ public class ChickenController : MonoBehaviour
         if (assignedYard != null)
         {
             assignedYard.OnTemperatureChanged += ValidateTemperature;
+
+            // Si el pollo nace con temperatura baja, debe dormir inmediatamente
+            if (assignedYard.temperature < temperatureSleepThreshold)
+            {
+                inColdSleepState = true;
+                tempSleeping = true;
+                sleepingFlag = true;
+                mSelfMovementToTarget.StopMoving();
+                mSpritesController.SetSleeping(true);
+                sleepDurationTimer = Random.Range(10f, 30f);
+            }
         }
 
     }
@@ -182,8 +195,23 @@ public class ChickenController : MonoBehaviour
             //Controlamos los Stats
             ManageStats();
 
+            // PRIORIDAD MÁXIMA: Si está en sueño por frío, forzar estado de dormir
+            if (inColdSleepState)
+            {
+                sleepingFlag = true;
+                tempSleeping = true;
+                isBeingDragged = false;
+                eatingFlag = false;
+                mSelfMovementToTarget.StopMoving();
+                mSpritesController.SetSleeping(true);
+
+                // Decrementar timer de sueño
+                sleepDurationTimer -= Time.deltaTime;
+                // (No despertar por timer mientras esté en sueño por frío - solo por temperatura)
+            }
+
             //Si no esta siendo Draggeado...
-            if (!isBeingDragged)
+            else if (!isBeingDragged)
             {
                 //Revisamos si tenemos hambre...
                 CheckIfStarving();
@@ -193,7 +221,7 @@ public class ChickenController : MonoBehaviour
             }
 
             //Si no esta peleand
-            else
+            else if (isBeingDragged)
             {
                 //Regresamos la Probabilidad a la normalidad
                 dragEscapeProb = dragEscapeDefaultProb;
@@ -209,7 +237,7 @@ public class ChickenController : MonoBehaviour
                     eatingFlag = false;
                 }
             }
-            else
+            else if (!inColdSleepState)
             {
                 //Si esta dormido, no moverse
                 if (sleepingFlag)
@@ -733,8 +761,8 @@ public class ChickenController : MonoBehaviour
         if (!sleepingFlag) return;
 
         sleepingFlag = false;
-        tempSleeping = false;
-        groupingToSleep = false;
+        // NOTA: no reseteamos tempSleeping ni groupingToSleep aquí
+        // Solo ValidateTemperature() controla eso cuando sale del estado de frío
         mSpritesController.SetSleeping(false);
 
         // Reiniciamos el timer para volver a intentar dormir en el futuro
@@ -746,6 +774,16 @@ public class ChickenController : MonoBehaviour
 
     public void RunAwayFromApplause(Vector3 applauseCircleCenter)
     {
+        // Si está durmiendo por frío, despertarlo primero
+        if (inColdSleepState)
+        {
+            inColdSleepState = false;
+            tempSleeping = false;
+            groupingToSleep = false;
+            sleepingFlag = false;
+            mSpritesController.SetSleeping(false);
+        }
+
         //Aumentamos la velocidad temporalmente para escapar
         mSelfMovementToTarget.MultiplySpeedTemporary(0.75f);
 
@@ -760,31 +798,33 @@ public class ChickenController : MonoBehaviour
     // FUNCION: Validar temperatura del corral y forzar comportamiento
     private void ValidateTemperature(float currentTemperature)
     {
-        if (currentTemperature < temperatureSleepThreshold)
+        // Si está por debajo del umbral de dormir Y no está en sueño por frío
+        if (currentTemperature < temperatureSleepThreshold && !inColdSleepState)
         {
-            // Temperatura baja: FORZAR DORMIR
-            if (!sleepingFlag && !tempSleeping)
-            {
-                // Cancelar acciones que impidan dormir
-                isBeingDragged = false;
-                eatingFlag = false;
-
-                // Iniciar sueño inmediato
-                tempSleeping = true;
-                sleepingFlag = true;
-                mSelfMovementToTarget.StopMoving();
-                mSpritesController.SetSleeping(true);
-                sleepDurationTimer = Random.Range(10f, 30f);
-            }
+            // Activar sueño por frío
+            inColdSleepState = true;
+            tempSleeping = true;
+            sleepingFlag = true;
+            
+            // Cancelar acciones que impidan dormir
+            isBeingDragged = false;
+            eatingFlag = false;
+            
+            // Detener movimiento y activar animación
+            mSelfMovementToTarget.StopMoving();
+            mSpritesController.SetSleeping(true);
+            sleepDurationTimer = Random.Range(10f, 30f);
         }
-        else
+        // Si está por encima del umbral de despertar Y está en sueño por frío
+        else if (currentTemperature >= temperatureWakeThreshold && inColdSleepState)
         {
-            // Temperatura normal: DESPERTAR y comportamiento normal
-            if (sleepingFlag || tempSleeping)
-            {
-                WakeFromSleep();
-                mSelfMovementToTarget.SetNewRandomWaypoint();
-            }
+            // Salir de sueño por frío
+            inColdSleepState = false;
+            tempSleeping = false;
+            groupingToSleep = false;
+            sleepingFlag = false;
+            mSpritesController.SetSleeping(false);
+            mSelfMovementToTarget.SetNewRandomWaypoint();
         }
     }
 }

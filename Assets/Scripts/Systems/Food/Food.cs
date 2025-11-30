@@ -258,7 +258,7 @@ public class Food : MonoBehaviour
     // FUNCION: Mostrar Informacion de ingredientes
     public void ShowIngredientsInfo()
     {
-        IngredientsPanel.SetActive(true);
+        //IngredientsPanel.SetActive(true);
     }
 
     //--------------------------------------------------------------------------------------
@@ -280,7 +280,7 @@ public class Food : MonoBehaviour
             other.GetComponentInParent<PickUpController>().targetObject = this.gameObject;
 
             // Mostramos el Toggle con ingredientes
-            ShowIngredientsInfo();
+            //ShowIngredientsInfo();
         }
     }
 

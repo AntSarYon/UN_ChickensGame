@@ -88,6 +88,8 @@ public class ChickenSpawner : MonoBehaviour
         newChickenMovementComp.maxZDistanceToTop = YardsManager.instance.currentYard.TopLimit;
     }
 
+    // --------------------------------------------------------
+
     private void OnGenerateNewChickenCobbDelegate()
     {
         //Instanciamos el Pollito

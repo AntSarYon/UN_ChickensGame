@@ -23,7 +23,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float applauseRadiusMultiplier = 1f;
     private float areaInterpolation;
     private float areaIncreaseSpeed;
+
+    //Flags
     private bool bClapped;
+    [HideInInspector] public bool bisCarryingFood;
 
     // Referencia al RigidBody
     private Rigidbody mRb;
@@ -33,7 +36,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator mAnimator;
 
     //Vector Input de Movimiento
-    private Vector3 movementInput;
+    [HideInInspector] public Vector3 movementInput;
 
     [Header("Clips de Audio")]
     [SerializeField] private AudioClip ApplauseClip;
@@ -49,8 +52,9 @@ public class PlayerController : MonoBehaviour
         //Actualizamos la escala del Area en base a la interpolacion
         applauseArea.localScale = minRadioScale;
 
-        //Flag de "Aplaudi�" empieza en false
+        //Flag de "Aplaude" y "Cargando comida" empieza en false
         bClapped = false;
+        bisCarryingFood = false;
 
         areaInterpolation = 0.00f;
         areaIncreaseSpeed = 3.00f;

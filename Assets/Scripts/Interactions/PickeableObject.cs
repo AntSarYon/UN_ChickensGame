@@ -33,11 +33,12 @@ public class PickeableObject : MonoBehaviour
         if (other.tag == "PlayerInteractionZone")
         {
             //Si el objeto target es este mismo...
-            if(other.GetComponentInParent<PickUpController>().targetObject == this.gameObject)
-
-            //Obtenemos el PickupController del Player (Padre del Triger)
-            //para indicar que ya no habrá ningun Objeto Asignado.
-            other.GetComponentInParent<PickUpController>().targetObject = null;
+            if (other.GetComponentInParent<PickUpController>().targetObject == this.gameObject)
+            {
+                //Obtenemos el PickupController del Player (Padre del Triger)
+                //para indicar que ya no habrá ningun Objeto Asignado.
+                other.GetComponentInParent<PickUpController>().targetObject = null;
+            }
         }
     }
 }

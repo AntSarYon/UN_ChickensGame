@@ -119,7 +119,7 @@ public class SelfMovementToTarget : MonoBehaviour
     }
 
     //------------------------------------------------------------------------------------------------------
-    //FUNCION: Revisa si se necesita un nuevo RandomWaypoint (ya lleg� al anterior)
+    //FUNCION: Revisa si se necesita un nuevo RandomWaypoint (ya lleg� al anterior)
 
     public void CheckIfNeedNewRandomWaypoint()
     {
@@ -185,6 +185,27 @@ public class SelfMovementToTarget : MonoBehaviour
     {
         //Devolvemos el multiplicador de velocidad a 1
         speedMultiplier = 1;
+    }
+
+    //-----------------------------------------------------------------------------------
+    // FUNCION - Escapar en una dirección específica (para cuando el jugador aplaude)
+    public void EscapeInDirection(Vector3 escapeDirection, float escapeDistance = 8f)
+    {
+        //Normalizamos la dirección
+        escapeDirection = escapeDirection.normalized;
+
+        //Calculamos el punto hacia donde escapar
+        Vector3 escapePoint = transform.position + escapeDirection * escapeDistance;
+
+        //Limitamos el punto a los límites del corral
+        escapePoint.x = Mathf.Clamp(escapePoint.x, maxXDistanceToLeft, maxXDistanceToRight);
+        escapePoint.z = Mathf.Clamp(escapePoint.z, maxZDistanceToBottom, maxZDistanceToTop);
+
+        //Seteamos ese punto como nuestro waypoint
+        randomWaypoint = escapePoint;
+
+        //Asignamos la dirección de movimiento hacia ese punto
+        moveDirection = (randomWaypoint - transform.position).normalized;
     }
 
     #endregion

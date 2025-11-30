@@ -20,6 +20,7 @@ public class ChickenController : MonoBehaviour
 
     [HideInInspector] public bool isEstimulated = false;
     [HideInInspector] public bool isDisgusted = false;
+    [HideInInspector] public bool sleepingFlag = false;
 
     [HideInInspector] public bool onHover = false;
     [HideInInspector] public bool isBeingDragged = false;
@@ -43,6 +44,10 @@ public class ChickenController : MonoBehaviour
     private SpritesController mSpritesController;
     private Draggable mDraggable;
     private SelfMovementToTarget mSelfMovementToTarget;
+
+    // Timers para estado de sue√±o aleatorio
+    private float sleepCheckTimer = 0f;
+    private float sleepDurationTimer = 0f;
 
     private AudioSource mAudioSource;
 
@@ -88,6 +93,10 @@ public class ChickenController : MonoBehaviour
 
         //Agregamos Funcion Delegado al Evento de Pollo vendido
         DayStatusManager.Instance.OnChickenSold += OnChickenSoldDelegate;
+
+        // Inicializamos timers para sue√±o aleatorio
+        sleepCheckTimer = Random.Range(3f, 3f);
+        sleepDurationTimer = 0f;
 
     }
 
@@ -180,8 +189,44 @@ public class ChickenController : MonoBehaviour
             }
             else
             {
-                //Seteamos una direccion de Movimiento
-                mSelfMovementToTarget.SetMovementDirection();
+                //Si esta dormido, no moverse
+                if (sleepingFlag)
+                {
+                    // Permanecer dormido hasta que el timer expire
+                    sleepDurationTimer -= Time.deltaTime;
+                    if (sleepDurationTimer <= 0f)
+                    {
+                        WakeFromSleep();
+                    }
+                }
+                else
+                {
+                    //Seteamos una direccion de Movimiento
+                    mSelfMovementToTarget.SetMovementDirection();
+
+                    //Intento aleatorio de dormirse cuando est√° idle
+                    if (!isBeingDragged && !eatingFlag && !starvingFlag)
+                    {
+                        sleepCheckTimer -= Time.deltaTime;
+                        if (sleepCheckTimer <= 0f)
+                        {
+                            // Probabilidad de dormirse (ej. 30%)
+                            if (Random.Range(0f, 1f) <= 0.30f)
+                            {
+                                // Entrar a modo dormido
+                                sleepingFlag = true;
+                                // Detener movimiento y animaci√≥n de dormir
+                                mSelfMovementToTarget.StopMoving();
+                                mSpritesController.SetSleeping(true);
+                                // Duraci√≥n del sue√±o aleatoria
+                                sleepDurationTimer = Random.Range(6f, 18f);
+                            }
+
+                            // Reiniciamos el chequeo
+                            sleepCheckTimer = Random.Range(3f, 3f);
+                        }
+                    }
+                }
             }
 
             //Si el HP del pollito llega  0
@@ -207,7 +252,7 @@ public class ChickenController : MonoBehaviour
         //Si el Pollito esta vivo...
         if (isAlive)
         {
-            //Si el Pollito est· comiendo, Bebiendo, Durmiendo, o Peleando
+            //Si el Pollito estÔøΩ comiendo, Bebiendo, Durmiendo, o Peleando
             if (eatingFlag)
             {
                 //Hacemos que deje de moverse (Velocidad a 0)
@@ -221,7 +266,7 @@ public class ChickenController : MonoBehaviour
                 //(aplica tanto randomWaypoint como Target)
                 mSelfMovementToTarget.MoveToTarget();
 
-                //Revisamos si es que necesita un nuevo RandomWaypoint (ya llegÛ al anterior)
+                //Revisamos si es que necesita un nuevo RandomWaypoint (ya llegÔøΩ al anterior)
                 mSelfMovementToTarget.CheckIfNeedNewRandomWaypoint();
             }
         }
@@ -382,7 +427,7 @@ public class ChickenController : MonoBehaviour
                     //Controlamos la Animacion de Pelea
                     //SpritesController.EnterFightAnim();
                 }
-                //En caso el nivel de felicidad no estÈ en el Nivel...
+                //En caso el nivel de felicidad no estÔøΩ en el Nivel...
                 else
                 {
                     //Obtenemos los Stats del pollo con el que hemos chocado
@@ -548,11 +593,11 @@ public class ChickenController : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-        //Si el Triger al que entramos es la zona de interacciÛn
+        //Si el Triger al que entramos es la zona de interacciÔøΩn
         if (collision.tag == "PlayerInteractionZone")
         {
             //Obtenemos el PickupController del PlayerBody (Padre del Triger)
-            //para asignarle que este ser· el Objeto a coger.
+            //para asignarle que este serÔøΩ el Objeto a coger.
             collision.GetComponentInParent<PickUpController>().targetObject = this.gameObject;
 
             //Controlamos la animacion de cuando se hace Hover
@@ -560,11 +605,14 @@ public class ChickenController : MonoBehaviour
 
         }
 
-        //Si el Triger al que entramos es la zona de interacciÛn
+        //Si el Triger al que entramos es la zona de interacci√≥n
         if (collision.tag == "ApplauseArea")
         {
             //Multiplicamos la velocidad por 1.5 segundos...
             mSelfMovementToTarget.MultiplySpeedTemporary(0.75f);
+
+            //Hacemos que se aleje del c√≠rculo de aplauso
+            RunAwayFromApplause(collision.transform.parent.position);
         }
 
         //Si el Pollito ha entrado en la zona de Venta...
@@ -595,14 +643,14 @@ public class ChickenController : MonoBehaviour
 
     private void OnTriggerExit(Collider collision)
     {
-        //Si el Triger del que salimos es la zona de interacciÛn
+        //Si el Triger del que salimos es la zona de interacciÔøΩn
         if (collision.tag == "PlayerInteractionZone")
         {
             //Si la ultima referencia que tenia la zona era la de este objeto...
             if (collision.GetComponentInParent<PickUpController>().targetObject == this.gameObject)
             {
                 //Obtenemos el PickupController del Player (Padre del Triger)
-                //para indicar que ya no habr· ningun Objeto Asignado.
+                //para indicar que ya no habrÔøΩ ningun Objeto Asignado.
                 collision.GetComponentInParent<PickUpController>().targetObject = null;
 
                 //Controlamos la animacion de cuando se hace Hover
@@ -648,5 +696,33 @@ public class ChickenController : MonoBehaviour
 
         //Desactivamos la UI del Pollito
         chickenUI.gameObject.SetActive(false);
+    }
+
+    //-----------------------------------------------------------------------------------
+    // FUNCION: Despertar del sue√±o
+    public void WakeFromSleep()
+    {
+        if (!sleepingFlag) return;
+
+        sleepingFlag = false;
+        mSpritesController.SetSleeping(false);
+
+        // Reiniciamos el timer para volver a intentar dormir en el futuro
+        sleepCheckTimer = Random.Range(12f, 26f);
+    }
+
+    //-----------------------------------------------------------------------------------
+    // FUNCION: Hacer que el pollo se aleje del c√≠rculo de aplauso
+
+    public void RunAwayFromApplause(Vector3 applauseCircleCenter)
+    {
+        //Aumentamos la velocidad temporalmente para escapar
+        mSelfMovementToTarget.MultiplySpeedTemporary(0.75f);
+
+        //Calculamos la direcci√≥n de escape (opuesta al centro del c√≠rculo de aplauso)
+        Vector3 runAwayDirection = (transform.position - applauseCircleCenter).normalized;
+
+        //Usamos el m√©todo de escape para que se mueva en esa direcci√≥n
+        mSelfMovementToTarget.EscapeInDirection(runAwayDirection, 8f);
     }
 }

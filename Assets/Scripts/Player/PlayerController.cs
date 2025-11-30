@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
         //Actualizamos la escala del Area en base a la interpolacion
         applauseArea.localScale = minRadioScale;
 
-        //Flag de "Aplaudió" empieza en false
+        //Flag de "Aplaudiï¿½" empieza en false
         bClapped = false;
 
         areaInterpolation = 0.00f;
@@ -120,7 +120,7 @@ public class PlayerController : MonoBehaviour
         // Hacemos que el Body siempre mire hacia donde se dirige el movimiento
         orientationBody.LookAt(transform.position + movementInput);
 
-        //Si el flag de "Aplaudió" esta activo...
+        //Si el flag de "Aplaudiï¿½" esta activo...
         if (bClapped)
         {
             //Incrementamos el valor de interpolacion
@@ -132,7 +132,7 @@ public class PlayerController : MonoBehaviour
             // Si la interpolacion llega a 0
             if (areaInterpolation >= 1)
             {
-                //Desactivamos el flag de "Aplaudió"
+                //Desactivamos el flag de "Aplaudiï¿½"
                 bClapped = false;
 
                 //La retornamos a 0
@@ -175,8 +175,30 @@ public class PlayerController : MonoBehaviour
         //Reproducimos el sonido de Aplauso
         mAudioSource.PlayOneShot(ApplauseClip, 1);
 
-        //Activamos flag de "Aplaudió"
+        //Activamos flag de "Aplaudiï¿½"
         bClapped = true;
+
+        // Despertar y hacer escapar a los pollos que estÃ©n dentro del radio del aplauso
+        float radius = Mathf.Max(maxRadioScale.x, maxRadioScale.z);
+        Collider[] hits = Physics.OverlapSphere(applauseArea.position, radius);
+        foreach (Collider hit in hits)
+        {
+            if (hit.CompareTag("Chicken"))
+            {
+                ChickenController ch = hit.GetComponent<ChickenController>();
+                if (ch != null)
+                {
+                    // Si estaba dormido, despertarlo
+                    if (ch.sleepingFlag)
+                    {
+                        ch.WakeFromSleep();
+                    }
+
+                    // Hacer que salga del cÃ­rculo
+                    ch.RunAwayFromApplause(applauseArea.position);
+                }
+            }
+        }
     }
     
 }

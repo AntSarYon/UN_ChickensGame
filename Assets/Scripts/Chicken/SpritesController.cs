@@ -161,6 +161,22 @@ public class SpritesController : MonoBehaviour
     }
 
     //-----------------------------------------------------------------------------------
+    // FUNCION: Forzar estado de dormir desde fuera (uso por ChickenController)
+    public void SetSleeping(bool sleep)
+    {
+        if (sleep)
+        {
+            mAnimator.SetTrigger("GoToSleep");
+            mAnimator.SetBool("Sleeping", true);
+        }
+        else
+        {
+            mAnimator.SetTrigger("WakeUp");
+            mAnimator.SetBool("Sleeping", false);
+        }
+    }
+
+    //-----------------------------------------------------------------------------------
 
     public void ManageWalkingAnim()
     {

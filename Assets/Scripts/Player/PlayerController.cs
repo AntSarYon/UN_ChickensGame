@@ -54,6 +54,10 @@ public class PlayerController : MonoBehaviour
     [Header("Clips de Audio")]
     [SerializeField] private AudioClip ApplauseClip;
 
+    [Header("Clap Effect")]
+    [SerializeField] private GameObject clapEffectGameObject;
+    private Animator clapAnimator;
+
     // ----------------------------------------------------
 
     void Awake()
@@ -97,6 +101,18 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("PlayerController: pUI auto-asignado desde la escena.");
             }
+        }
+
+        // Obtener referencia al Animator del GameObject de clap si está asignado
+        if (clapEffectGameObject != null)
+        {
+            clapAnimator = clapEffectGameObject.GetComponent<Animator>();
+            if (clapAnimator == null)
+            {
+                clapAnimator = clapEffectGameObject.GetComponentInChildren<Animator>();
+            }
+            // Desactivar inicialmente
+            clapEffectGameObject.SetActive(false);
         }
     }
 
@@ -261,6 +277,19 @@ public class PlayerController : MonoBehaviour
         //Activamos flag de "Aplaudi�"
         bClapped = true;
 
+        // Activar el efecto de clap
+        if (clapEffectGameObject != null)
+        {
+            clapEffectGameObject.SetActive(true);
+            Debug.Log("[PlayerController] Efecto de clap activado");
+            
+            // Desactivar después de que termine la animación
+            if (clapAnimator != null)
+            {
+                StartCoroutine(DeactivateClapAfterAnimation());
+            }
+        }
+
         // Consumir stamina por aplauso
         currentStamina -= staminaCostPerApplause;
         if (currentStamina < 0f) currentStamina = 0f;
@@ -295,6 +324,14 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+    }
+
+    private IEnumerator DeactivateClapAfterAnimation()
+    {
+        // Esperar a que la animación termine (aproximadamente 0.6 segundos)
+        yield return new WaitForSeconds(0.6f);
+        clapEffectGameObject.SetActive(false);
+        Debug.Log("[PlayerController] Efecto de clap desactivado");
     }
     
 }

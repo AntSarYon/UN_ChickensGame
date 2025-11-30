@@ -56,6 +56,7 @@ public class ChickenController : MonoBehaviour
     private Vector3 tempGatherPoint;
     [SerializeField] private float temperatureSleepThreshold = 25f;
     [SerializeField] private float temperatureWakeThreshold = 25f;  // Puede ser igual a sleepThreshold
+    [SerializeField] private float temperatureDeathThreshold = 40f;  // Temperatura a la que muere por calor
     [SerializeField] private float gatherPointOffset = 1.5f;
     [SerializeField] private float gatherArriveDistance = 0.8f;
 
@@ -798,6 +799,13 @@ public class ChickenController : MonoBehaviour
     // FUNCION: Validar temperatura del corral y forzar comportamiento
     private void ValidateTemperature(float currentTemperature)
     {
+        // MUERTE POR CALOR EXTREMO
+        if (currentTemperature > temperatureDeathThreshold && isAlive)
+        {
+            Die();
+            return;
+        }
+
         // Si está por debajo del umbral de dormir Y no está en sueño por frío
         if (currentTemperature < temperatureSleepThreshold && !inColdSleepState)
         {

@@ -60,12 +60,6 @@ public class MenuRulesController : MonoBehaviour
             sliderAumentofelicidad.value = GameRulesManager.instance.velocidadIncrementofelicidad;
             sliderAumentoPeso.value = GameRulesManager.instance.velocidadIncrementoPeso;
             sliderReduccionPeso.value = GameRulesManager.instance.velocidadReduccionPeso;
-
-            //Iniciamoms con Precios de Ingredienntes iguales
-            sliderHarina.value = GameRulesManager.instance.precioHarina;
-            sliderMaiz.value = GameRulesManager.instance.precioMaiz;
-            sliderSoya.value = GameRulesManager.instance.precioSoya;
-            sliderGusanos.value = GameRulesManager.instance.precioGusanos;
         }
         // casoc ontrario, los que estan por defecto
         else
@@ -77,12 +71,6 @@ public class MenuRulesController : MonoBehaviour
             sliderAumentofelicidad.value = 1;
             sliderAumentoPeso.value = 0.15f;
             sliderReduccionPeso.value = 0.1f;
-
-            //Iniciamoms con Precios de Ingredienntes iguales
-            sliderHarina.value = 10;
-            sliderMaiz.value = 10;
-            sliderSoya.value = 10;
-            sliderGusanos.value = 10;
         }
 
     }
@@ -119,11 +107,6 @@ public class MenuRulesController : MonoBehaviour
         GameRulesManager.instance.velocidadIncrementoPeso = sliderAumentoPeso.value;
         GameRulesManager.instance.velocidadReduccionPeso = sliderReduccionPeso.value;
         GameRulesManager.instance.foodDecreaseSpeed = sliderConsumoAlimento.value;
-
-        GameRulesManager.instance.precioHarina = (int) sliderHarina.value;
-        GameRulesManager.instance.precioMaiz = (int) sliderMaiz.value;
-        GameRulesManager.instance.precioSoya = (int) sliderSoya.value;
-        GameRulesManager.instance.precioGusanos = (int) sliderGusanos.value;
 
 
         //Activamos Flag de nuevos Parametros guardados

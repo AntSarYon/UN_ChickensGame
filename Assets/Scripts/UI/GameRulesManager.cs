@@ -31,12 +31,6 @@ public class GameRulesManager : MonoBehaviour
     //Flag de Parametros guardados
     [HideInInspector] public bool nuevosParametrosGuardados = false;
 
-    // Precios de Ingredientes
-    [Range(1, 50)] public int precioHarina = 10;
-    [Range(1, 50)] public int precioMaiz = 10;
-    [Range(1, 50)] public int precioSoya = 10;
-    [Range(1, 50)] public int precioGusanos = 10;
-
     //-----------------------------------------------------------
 
     void Awake()

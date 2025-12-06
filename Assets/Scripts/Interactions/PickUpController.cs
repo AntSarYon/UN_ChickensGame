@@ -36,8 +36,8 @@ public class PickUpController : MonoBehaviour
                 if (targetObject.GetComponent<Draggable>().isDraggable)
                 {
                     //Actualizamos y mostramos el mensaje de interaccion
-                    pController.pUI.SetInteractionMessage("Agarrar");
-                    pController.pUI.ShowInteractionMessage();
+                    UIController.Instance.SetInteractionMessage("Agarrar");
+                    UIController.Instance.ShowInteractionMessage();
 
                     //Si pulsamos la tecla E...
                     if (Input.GetKeyDown(KeyCode.E))
@@ -56,8 +56,8 @@ public class PickUpController : MonoBehaviour
                 if (targetObject.GetComponent<PickeableObject>().isPickeable)
                 {
                     //Actualizamos y mostramos el mensaje de interaccion
-                    pController.pUI.SetInteractionMessage("Agarrar");
-                    pController.pUI.ShowInteractionMessage();
+                    UIController.Instance.SetInteractionMessage("Agarrar");
+                    UIController.Instance.ShowInteractionMessage();
 
                     //Si pulsamos la tecla E...
                     if (Input.GetKeyDown(KeyCode.E))
@@ -94,7 +94,7 @@ public class PickUpController : MonoBehaviour
         else if (holdedObject != null)
         {
             //Actualizamos y mostramos el mensaje de interaccion
-            pController.pUI.SetInteractionMessage("Soltar");
+            UIController.Instance.SetInteractionMessage("Soltar");
 
             // Si el flag de "Cargando comida" está activo, y estamos frente a un comedero
             if (pController.bisCarryingFood)
@@ -103,12 +103,12 @@ public class PickUpController : MonoBehaviour
                 if (targetObject != null && targetObject.CompareTag("Food"))
                 {
                     //Actualizamos y mostramos el mensaje de interaccion
-                    pController.pUI.SetInteractionMessage("LLENAR");
+                    UIController.Instance.SetInteractionMessage("LLENAR");
                 }
             }
-            
+
             // Muestra mensaje de interaccion
-            pController.pUI.ShowInteractionMessage();
+            UIController.Instance.ShowInteractionMessage();
 
             //Si pulsamos la tecla E de nuevo...
             if (Input.GetKeyDown(KeyCode.E))
@@ -171,14 +171,14 @@ public class PickUpController : MonoBehaviour
                     holdedObject = null;
 
                     //Actualizamos y mostramos el mensaje de interaccion
-                    pController.pUI.HideInteractionMessage();
+                    UIController.Instance.HideInteractionMessage();
                 }
 
                 //Actualizamos y mostramos el mensaje de interaccion
-                pController.pUI.HideInteractionMessage();
+                UIController.Instance.HideInteractionMessage();
             }
         }
-        else pController.pUI.HideInteractionMessage();
+        else UIController.Instance.HideInteractionMessage();
         
 
         

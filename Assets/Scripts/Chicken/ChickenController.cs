@@ -28,9 +28,6 @@ public class ChickenController : MonoBehaviour
     [Header("Corral")]
     public Yard assignedYard;
 
-    //Flag - esta en zona de venta
-    private bool bInBillingZone;
-
     [Header("Probabilidad que el pollito escape")]
     [Range(0.00f,1.00f)] public float dragEscapeProb;
     private float dragEscapeDefaultProb;
@@ -461,13 +458,6 @@ public class ChickenController : MonoBehaviour
 
         //Desactivamos flag de "esta siendo agarrado"
         isBeingDragged = false;
-
-        //Si esta en Zona de Venta...
-        if (bInBillingZone)
-        {
-            //Decimos al BillingZone del nivel que Trate de vendernos
-            //BillingZoneController.instance.TryToSellChicken();
-        }
     }
 
     //------------------------------------------------------------------------------------------
@@ -523,33 +513,8 @@ public class ChickenController : MonoBehaviour
                         //Activamos Flag de "Esta comiendeo"
                         eatingFlag = true;
 
-                        //Obtenemos la lista de ingredientes de esta comida...
-                        List<Ingredient> foodIngredientes = collision.gameObject.GetComponent<Food>().ingredientsList;
-
-                        //Iniciamos flag de si le gusta la comida
-                        bool likefood = false;
-
-                        //Por cada ingrediente de este comedero
-                        foreach (Ingredient ing in foodIngredientes)
-                        {
-                            //Revisamos si elcomedero tiene un ingrediente
-                            if (type.likedIngredients.Contains(ing))
-                            {
-                                //Basta con que tenga 1, para marcar como like
-                                likefood = true;
-                            }
-                        }
-
-                        // Si le gusta la comida, mostramos el Like
-                        if (likefood)
-                        {
-                            chickenUI.ShowLike();
-
-                            // Activamos Fag de Estimulacion
-                            isEstimulated = true;
-                        }
                         // Caso contrario, mostramos el Dislike
-                        else chickenUI.ShowDislike();
+                        chickenUI.ShowDislike();
                     }
 
                     //En caso no tenga hambre...
@@ -680,29 +645,6 @@ public class ChickenController : MonoBehaviour
             RunAwayFromApplause(collision.transform.parent.position);
         }
 
-        //Si el Pollito ha entrado en la zona de Venta...
-        if (collision.gameObject.CompareTag("BillingZone"))
-        {
-            //Activamos flag de "en zona de venta"
-            bInBillingZone = true;
-        }
-
-        //Si el Pollito ha entrado en la zona de Venta...
-        if (collision.gameObject.CompareTag("Toy"))
-        {
-
-            //Si al (tipo) Pollito le gustan os juguetes...
-            if (type.likeToys)
-            {
-                // Activamos Fag de Estimulacion
-                isEstimulated = true;
-
-                //Mostramos el icono de Estimulacion
-                chickenUI.ShowEstimulation();
-
-            }
-        }
-
         if (collision.CompareTag("ChickenLimitZone"))
         {
             Destroy(this.gameObject);
@@ -725,25 +667,6 @@ public class ChickenController : MonoBehaviour
 
                 //Controlamos la animacion de cuando se hace Hover
                 mSpritesController.ExitHoverAnimation();
-            }
-        }
-
-        //Si el Pollito ha salido de la zona de Venta...
-        if (collision.gameObject.CompareTag("BillingZone"))
-        {
-            //Desactivamos flag de "en zona de venta"
-            bInBillingZone = false;
-        }
-
-        //Si el Pollito ha entrado en la zona de Venta...
-        if (collision.gameObject.CompareTag("Toy"))
-        {
-
-            //Si al (tipo) Pollito le gustaban los juguetes...
-            if (type.likeToys)
-            {
-                //Ocultamos el icono de Estimulacion
-                chickenUI.HideEstimulation();
             }
         }
     }

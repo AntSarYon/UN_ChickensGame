@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -52,6 +53,11 @@ public class GameClockController : MonoBehaviour
     [Header("Cuan rápido pasa el tiempo")]
     [Range(1,10)] [SerializeField] private float timeScale = 2.00f;
 
+    [Header("Materiales Skybox")]
+    [SerializeField] private Material morningSkybox;
+    [SerializeField] private Material afternoonSkybox;
+    [SerializeField] private Material eveningSkybox;
+
     public string ClockString { get => clockString; private set => clockString = value; }
 
     // -------------------------------------------------------------------------------------------------
@@ -85,6 +91,9 @@ public class GameClockController : MonoBehaviour
             morningDayLight.z,
             morningDayLight.w
             );
+
+        //Asignamos el Skybox de la manana
+        RenderSettings.skybox = morningSkybox;
     }
 
     //-------------------------------------------------------------------------------------------------
@@ -106,8 +115,12 @@ public class GameClockController : MonoBehaviour
                 //Seteamos la luz inicial como la de a tarde
                 initialDayLight = AfternoonDayLight;
 
+                //Asignamos el Skybox de la noche
+                RenderSettings.skybox = eveningSkybox;
+
                 //Asignams commo Luz Target la de Evening
                 targetDayLight = EveningDayLight;
+
 
                 //Definimos el tiempo en que el cambio debe ser completado...
                 targetChangeTime = 18 * 3600f;
@@ -118,6 +131,9 @@ public class GameClockController : MonoBehaviour
 
                 //Seteamos la luz inicial como la de la manana
                 initialDayLight = morningDayLight;
+
+                //Asignamos el Skybox de la tarde
+                RenderSettings.skybox = afternoonSkybox;
 
                 //Asignams commo Luz Target la de Evening
                 targetDayLight = AfternoonDayLight;

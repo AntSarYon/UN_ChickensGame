@@ -119,10 +119,28 @@ public class PlayerController : MonoBehaviour
     // ----------------------------------------------------
     void Update()
     {
+        //Controlamos los Inputs de movimiento
+        ManageMovementInput();
+
+        // Controlamos el sprinting y la stamina
+        ManageSprintingAndStamina();
+
+        //Controlamos la Orientacion
+        ManageBodyOrientation();
+
+        // Controlamos la accion de Aplaudir
+        ManageApplause();
+
+        // Controlamos la Annimacion de Movimiento
+        ManageMoveAnimation();
+    }
+
+    // -------------------------------------------------------------------------------
+
+    private void ManageMovementInput()
+    {
         //Input empieza en Zero
         movementInput = Vector3.zero;
-
-        
 
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
@@ -154,64 +172,23 @@ public class PlayerController : MonoBehaviour
 
             if (wantSprint && currentStamina > 0f)
             {
+                mAnimator.SetBool("Running", true);
                 isSprinting = true;
                 speed = origSpeed * sprintMultiplier;
             }
             else
             {
+                mAnimator.SetBool("Running", false);
                 isSprinting = false;
                 speed = origSpeed;
             }
         }
+    }
 
-        // Si se oprime la tecla C
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            //Aplaudimos
-            Applause();
-        }
+    // ---------------------------------------------------------------------------
 
-        mAnimator.SetFloat("X", movementInput.x);
-        mAnimator.SetFloat("Y", movementInput.z);
-
-        // Si el player se esta moviendo...
-        if (movementInput != Vector3.zero)
-        {
-            mAnimator.SetBool("Moving", true);
-        }
-        else
-        {
-            mAnimator.SetBool("Moving", false);
-        }
-
-        // Hacemos que el Body siempre mire hacia donde se dirige el movimiento
-        orientationBody.LookAt(transform.position + movementInput);
-
-        //Si el flag de "Aplaudi�" esta activo...
-        if (bClapped)
-        {
-            //Incrementamos el valor de interpolacion
-            areaInterpolation += Time.deltaTime * areaIncreaseSpeed;
-
-            //Actualizamos la escala del Area en base a la interpolacion
-            applauseArea.localScale = Vector3.Lerp(minRadioScale, maxRadioScale, areaInterpolation);
-
-            // Si la interpolacion llega a 0
-            if (areaInterpolation >= 1)
-            {
-                //Desactivamos el flag de "Aplaudi�"
-                bClapped = false;
-
-                //La retornamos a 0
-                areaInterpolation = 0;
-
-                //Restauramos el aplauso
-                Invoke(nameof(RestoreApplauseArea), 0.35f);
-
-                
-            }
-        }
-
+    private void ManageSprintingAndStamina()
+    {
         // Manejo de stamina: consumir si sprinting, recargar si no
         if (isSprinting)
         {
@@ -233,7 +210,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // Actualizar UI
+        // Actualizar UI de Stamina
         if (pUI != null)
         {
             float normalized = currentStamina / Mathf.Max(0.0001f, maxStamina);
@@ -241,11 +218,94 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log($"[PlayerController] Stamina: {currentStamina:F2} / {maxStamina:F2} -> normalized {normalized:F2} | isSprinting={isSprinting}");
             }
-            pUI.UpdateStamina(normalized);
+
+            //Lamamos a la UI para actualizar el valor de Stamina
+            UIController.Instance.UpdateStamina(normalized);
         }
     }
 
-    // ---------------------------------------------------
+    // -------------------------------------------------------------------------------
+
+    private void ManageBodyOrientation()
+    {
+        // Hacemos que el Body siempre mire hacia donde se dirige el movimiento
+        if (movementInput != Vector3.zero)
+            orientationBody.LookAt(transform.position + movementInput);
+        //Cuando no se este moviendo, seguira apuntando a la utima direccion inputada
+    }
+
+    // -------------------------------------------------------------------------------
+
+    private void ManageMoveAnimation()
+    {
+        // Asignamos los valores de X e Y en base a los inputs
+        mAnimator.SetFloat("X", movementInput.x);
+        mAnimator.SetFloat("Y", movementInput.z);
+
+        // Activamos Flag de Anim en base a movimiento del Player
+        if (movementInput != Vector3.zero)
+            mAnimator.SetBool("Moving", true);
+        else 
+            mAnimator.SetBool("Moving", false);
+
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            mAnimator.SetFloat("idleY", 1);
+            mAnimator.SetFloat("idleX", 0);
+        }
+        else if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.DownArrow))
+        {
+            mAnimator.SetFloat("idleY", -1);
+            mAnimator.SetFloat("idleX", 0);
+        }
+        if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.LeftArrow))
+        {
+            mAnimator.SetFloat("idleY", 0);
+            mAnimator.SetFloat("idleX", -1);
+        }
+        else if (Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.RightArrow))
+        {
+            mAnimator.SetFloat("idleY", 0);
+            mAnimator.SetFloat("idleX", 1);
+        }
+    }
+
+    // --------------------------------------------------------------------------------
+
+    private void ManageApplause()
+    {
+        // Si se oprime la tecla C
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            //Aplaudimos
+            Applause();
+        }
+
+        //Si el flag de "Aplaudi�" esta activo...
+        if (bClapped)
+        {
+            //Incrementamos el valor de interpolacion
+            areaInterpolation += Time.deltaTime * areaIncreaseSpeed;
+
+            //Actualizamos la escala del Area en base a la interpolacion
+            applauseArea.localScale = Vector3.Lerp(minRadioScale, maxRadioScale, areaInterpolation);
+
+            // Si la interpolacion llega a 0
+            if (areaInterpolation >= 1)
+            {
+                //Desactivamos el flag de "Aplaudi�"
+                bClapped = false;
+
+                //La retornamos a 0
+                areaInterpolation = 0;
+
+                //Restauramos el aplauso
+                Invoke(nameof(RestoreApplauseArea), 0.35f);
+            }
+        }
+    }
+
+    // -------------------------------------------------------------------------------
 
     private void RestoreApplauseArea()
     {

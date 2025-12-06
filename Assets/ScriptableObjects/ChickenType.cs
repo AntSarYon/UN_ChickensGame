@@ -13,22 +13,4 @@ public class ChickenType : ScriptableObject
     [Header("Nombre del tipo")]
     public string typeName;
 
-    [Header("Preferencias de comida")]
-    public List<Ingredient> likedIngredients;
-    public List<Ingredient> dislikedIngredients;
-
-    [Header("Likes temporales")]
-    public bool likeHarina;
-    public bool likeSoja;
-    public bool likeGusanos;
-    public bool likeMaiz;
-
-    [Header("Desc. Gustos")]
-    public string gustos;
-
-    [Header("Desc. Pasiva")]
-    public string pasiva;
-
-    [Header("Le gustan los juguetes?")]
-    public bool likeToys;
 }

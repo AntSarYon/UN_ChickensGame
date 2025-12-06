@@ -34,8 +34,6 @@ public class DayStatusManager : MonoBehaviour
     public UnityAction OnGenerateNewChickenRoss;
     public UnityAction OnGenerateNewChickenCobb;
 
-    public UnityAction<Ingredient, int> OnIngredientAdded;
-
     public UnityAction OnCashIncrease;
     public UnityAction OnCashReduce;
 
@@ -178,23 +176,6 @@ public class DayStatusManager : MonoBehaviour
 
         //Revisamos si el dinero llegó a 0 para GameOver
         CheckCashAndGameOver();
-    }
-
-    // -------------------------------------------
-    // Disparador de Evento: Ingrediente agregado
-    public void TriggerEvent_IngredientAdded(Ingredient ing, int ingValue)
-    {
-        //Disminuioms el Valor del Cash...
-        currentCash -= ingValue;
-
-        //Hacemos que el SoundsManager reproduzca sonido de Compra de Recurso
-        GameSoundsController.Instance.PlayResourceBoughtSound();
-
-        // Lllamamos a la UI de Cash para que actualice el monto
-        CashUIController.instance.PlayReduceCash();
-
-        // Invocamoms a los Delegados (si los hubiera)
-        OnIngredientAdded?.Invoke(ing, ingValue);
     }
 
     // -------------------------------------------

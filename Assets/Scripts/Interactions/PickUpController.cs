@@ -93,8 +93,11 @@ public class PickUpController : MonoBehaviour
         //Si hay un Objeto cogido
         else if (holdedObject != null)
         {
-            //Actualizamos y mostramos el mensaje de interaccion
-            UIController.Instance.SetInteractionMessage("Soltar");
+            if (pController.movementInput == Vector3.zero)
+                UIController.Instance.SetInteractionMessage("Soltar");
+            else
+                //Actualizamos y mostramos el mensaje de interaccion
+                UIController.Instance.SetInteractionMessage("Arrojar");
 
             // Si el flag de "Cargando comida" está activo, y estamos frente a un comedero
             if (pController.bisCarryingFood)
@@ -103,7 +106,7 @@ public class PickUpController : MonoBehaviour
                 if (targetObject != null && targetObject.CompareTag("Food"))
                 {
                     //Actualizamos y mostramos el mensaje de interaccion
-                    UIController.Instance.SetInteractionMessage("LLENAR");
+                    UIController.Instance.SetInteractionMessage("Llenar comedero");
                 }
             }
 

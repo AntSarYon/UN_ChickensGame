@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Food : MonoBehaviour
+public class Food : Interactable
 {
 
     [Header("Slider de comida")]
@@ -31,6 +31,8 @@ public class Food : MonoBehaviour
         //Obtenemos referencia a componentes
         mCollider = GetComponent<Collider2D>();
         mAnimator = GetComponent<Animator>();
+
+        interactionMessage = "Llenar";
     }
 
     //--------------------------------------------------------------------------------------
@@ -107,34 +109,41 @@ public class Food : MonoBehaviour
         mFoodLevelSlider.value = mFoodLevelSlider.maxValue;
     }
 
+    public void Denegate()
+    {
+        //Reproducimos Animacion
+        mAnimator.Play("denegate");
+    }
+
+    // ------------------------------------------------------------
+
+    public override void Interact(Transform holdingZone)
+    {
+        if (holdingZone.childCount > 0)
+        {
+            // Si la zona de Agarre tiene una FoodBag como hijo...
+            if (holdingZone.GetChild(0).CompareTag("FoodBag"))
+            {
+                // Obtenemos referencia al Objeto sujetado
+                FoodBag foodBag = holdingZone.GetChild(0).GetComponent<FoodBag>();
+
+                //Hacemos un Refill
+                Refill();
+
+                //Dropeamos la bolsa
+                foodBag.Drop();
+
+                // La desactivamos para que vuelva al Pool
+                foodBag.gameObject.SetActive(false);
+            }
+            else Denegate();
+        }
+        
+        // Si no tiene nada, o el objeto no es una bolsa de comida
+        else Denegate();
+        
+    }
+
     //--------------------------------------------------------------------------------------
 
-    private void OnTriggerEnter(Collider other)
-    {
-        //Si el triggerpertenece a la zona de interaccion del jugador...
-        if (other.CompareTag("PlayerInteractionZone"))
-        {
-            //Obtenemos el PickupController del PlayerBody (Padre del Triger)
-            //para asignarle que este será el Objeto a coger.
-            other.GetComponentInParent<PickUpController>().targetObject = this.gameObject;
-
-            // Mostramos el Toggle con ingredientes
-            //ShowIngredientsInfo();
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        //Si el Triger del que salimos es la zona de interacción
-        if (other.tag == "PlayerInteractionZone")
-        {
-            //Si la ultima referencia que tenia la zona era la de este objeto...
-            if (other.GetComponentInParent<PickUpController>().targetObject == this.gameObject)
-            {
-                //Obtenemos el PickupController del Player (Padre del Triger)
-                //para indicar que ya no habrá ningun Objeto Asignado.
-                other.GetComponentInParent<PickUpController>().targetObject = null;
-            }
-        }
-    }
 }

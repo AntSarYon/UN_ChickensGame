@@ -22,7 +22,6 @@ public class ChickenController : MonoBehaviour
     [HideInInspector] public bool sleepingFlag = false;
 
     [HideInInspector] public bool onHover = false;
-    [HideInInspector] public bool isBeingDragged = false;
     [HideInInspector] public bool bBeingThrow = false;
 
     [Header("Corral")]
@@ -38,8 +37,8 @@ public class ChickenController : MonoBehaviour
 
     // COMPONENTES
     private ChickenStats mChickenStats;
+    private PickeableObject mPickeable;
     private SpritesController mSpritesController;
-    private Draggable mDraggable;
     private SelfMovementToTarget mSelfMovementToTarget;
 
     // Timers para estado de sueño aleatorio
@@ -72,9 +71,9 @@ public class ChickenController : MonoBehaviour
     {
         // Referencia a Componentes
         mSpritesController = GetComponent<SpritesController>();
-        mDraggable = GetComponent<Draggable>();
         mChickenStats = GetComponent<ChickenStats>();
         mSelfMovementToTarget = GetComponent<SelfMovementToTarget>();
+        mPickeable = GetComponent<PickeableObject>();
 
         mAudioSource = GetComponent<AudioSource>();
 
@@ -85,7 +84,6 @@ public class ChickenController : MonoBehaviour
         //Iniciamos Flags
         isAlive = true;
         onHover = false;
-        isBeingDragged = false;
     }
 
     //-----------------------------------------------------------------------------
@@ -103,12 +101,12 @@ public class ChickenController : MonoBehaviour
         sleepDurationTimer = 0f;
 
         // Suscribir al evento de temperatura del corral asignado
-        if (assignedYard != null)
+        if (TemperatureManager.Instance != null)
         {
-            assignedYard.OnTemperatureChanged += ValidateTemperature;
+            TemperatureManager.Instance.OnTemperatureChanged += ValidateTemperature;
 
             // Si el pollo nace con temperatura baja, debe dormir inmediatamente
-            if (assignedYard.temperature < temperatureSleepThreshold)
+            if (TemperatureManager.Instance.temperature < temperatureSleepThreshold)
             {
                 inColdSleepState = true;
                 tempSleeping = true;
@@ -121,11 +119,13 @@ public class ChickenController : MonoBehaviour
 
     }
 
+    //------------------------------------------------------------------------
+
     private void OnDestroy()
     {
-        if (assignedYard != null)
+        if (TemperatureManager.Instance != null)
         {
-            assignedYard.OnTemperatureChanged -= ValidateTemperature;
+            TemperatureManager.Instance.OnTemperatureChanged -= ValidateTemperature;
         }
     }
 
@@ -175,7 +175,7 @@ public class ChickenController : MonoBehaviour
     public void ManageStats()
     {
         //Manejamos los Stats segun loos flags
-        mChickenStats.ManageStats_HambreYPeso(eatingFlag, isBeingDragged);
+        mChickenStats.ManageStats_HambreYPeso(eatingFlag, !GetComponent<PickeableObject>().isPickeable);
         mChickenStats.ManageStats_HP(starvingFlag);
     }
 
@@ -195,7 +195,7 @@ public class ChickenController : MonoBehaviour
             {
                 sleepingFlag = true;
                 tempSleeping = true;
-                isBeingDragged = false;
+                GetComponent<PickeableObject>().isPickeable = true;
                 eatingFlag = false;
                 mSelfMovementToTarget.StopMoving();
                 mSpritesController.SetSleeping(true);
@@ -206,7 +206,7 @@ public class ChickenController : MonoBehaviour
             }
 
             //Si no esta siendo Draggeado...
-            else if (!isBeingDragged)
+            else if (GetComponent<PickeableObject>().isPickeable)
             {
                 //Revisamos si tenemos hambre...
                 CheckIfStarving();
@@ -216,7 +216,7 @@ public class ChickenController : MonoBehaviour
             }
 
             //Si no esta peleand
-            else if (isBeingDragged)
+            else if (!GetComponent<PickeableObject>().isPickeable)
             {
                 //Regresamos la Probabilidad a la normalidad
                 dragEscapeProb = dragEscapeDefaultProb;
@@ -250,7 +250,7 @@ public class ChickenController : MonoBehaviour
                     mSelfMovementToTarget.SetMovementDirection();
 
                     //Intento aleatorio de dormirse cuando está idle
-                    if (!isBeingDragged && !eatingFlag && !starvingFlag)
+                    if (GetComponent<PickeableObject>().isPickeable && !eatingFlag && !starvingFlag)
                     {
                         sleepCheckTimer -= Time.deltaTime;
                         if (sleepCheckTimer <= 0f)
@@ -349,7 +349,7 @@ public class ChickenController : MonoBehaviour
         if (isAlive)
         {
             //Si No esta siendo arrastrado
-            if (!isBeingDragged)
+            if (GetComponent<PickeableObject>().isPickeable)
             {
                 //Mostramos la info del UI del pollito
                 //chickenUI.ShowChickenInfo();
@@ -381,84 +381,6 @@ public class ChickenController : MonoBehaviour
         
     }
 
-    //-----------------------------------------------------------------------------------
-    // Funcion - Al hacer Click sobre el Objeto (con collider)
-
-    private void OnMouseDown()
-    {
-        //Obtenemos un valor random
-        float randomProb = Random.Range(0.00f, 1.00f);
-
-        //Si la probabilidad random es menor al margen definido
-        if (randomProb <= dragEscapeProb)
-        {
-            //Escapa
-
-            //Reproducimos sonido de Alas
-            mAudioSource.PlayOneShot(clipWings, 0.50f);
-
-            //Reproducimos sonido de Escape
-            mAudioSource.PlayOneShot(clipEscaped, 0.60f);
-
-            //Multiplicamos la velocidad por 1.5 segundos...
-            mSelfMovementToTarget.MultiplySpeedTemporary(0.75f);
-
-        }
-        //Caso contrario
-        else
-        {
-            //Reproducimos sonido de Agarre
-            mAudioSource.PlayOneShot(clipDragged, 0.25f);
-
-            //Agarramos a la gallina
-            //mDraggable.Catch();
-
-            //Activamos Flag de "siendo arrastrado"
-            isBeingDragged = true;
-
-            //Controlamos la Animacion de Drag
-            mSpritesController.EnterDragAnimation();
-
-            
-        }
-    }
-
-    //-----------------------------------------------------------------------------------
-    // Funcion - Mientras se mantenga el Mouse oprimido y se detecta el arrastre...
-
-    private void OnMouseDrag()
-    {
-        //Si la UI del pollito esta activa...
-        if (chickenUI.gameObject.activeSelf)
-        {
-            //Ocultamos su informacion...
-            //chickenUI.HideChickenInfo();
-        }
-
-
-        //Si el flag de "Esta siendo Arrastrado" esta activo
-        if (isBeingDragged)
-        {
-            //Movemos la Posicion del pollo
-            //mDraggable.MovePosition();
-        }
-        
-    }
-
-    //-----------------------------------------------------------------------------------
-    // Funcion - Cuando soltamos ewl Click
-
-    private void OnMouseUp()
-    {
-        //Soltamos al pollito
-        //mDraggable.Drop();
-
-        //Hacemos que el Sprite vuelva a la Normalidad
-        mSpritesController.SetSpriteBackToNormal();
-
-        //Desactivamos flag de "esta siendo agarrado"
-        isBeingDragged = false;
-    }
 
     //------------------------------------------------------------------------------------------
 
@@ -624,7 +546,7 @@ public class ChickenController : MonoBehaviour
         {
             //Obtenemos el PickupController del PlayerBody (Padre del Triger)
             //para asignarle que este ser� el Objeto a coger.
-            collision.GetComponentInParent<PickUpController>().targetObject = this.gameObject;
+            collision.GetComponentInParent<InteractionController>().targetObject = this.gameObject;
 
             //Controlamos la animacion de cuando se hace Hover
             mSpritesController.EnterHoverAnimation();
@@ -659,11 +581,11 @@ public class ChickenController : MonoBehaviour
         if (collision.tag == "PlayerInteractionZone")
         {
             //Si la ultima referencia que tenia la zona era la de este objeto...
-            if (collision.GetComponentInParent<PickUpController>().targetObject == this.gameObject)
+            if (collision.GetComponentInParent<InteractionController>().targetObject == this.gameObject)
             {
                 //Obtenemos el PickupController del Player (Padre del Triger)
                 //para indicar que ya no habr� ningun Objeto Asignado.
-                collision.GetComponentInParent<PickUpController>().targetObject = null;
+                collision.GetComponentInParent<InteractionController>().targetObject = null;
 
                 //Controlamos la animacion de cuando se hace Hover
                 mSpritesController.ExitHoverAnimation();
@@ -749,9 +671,9 @@ public class ChickenController : MonoBehaviour
             inColdSleepState = true;
             tempSleeping = true;
             sleepingFlag = true;
-            
+
             // Cancelar acciones que impidan dormir
-            isBeingDragged = false;
+            GetComponent<PickeableObject>().isPickeable = true;
             eatingFlag = false;
             
             // Detener movimiento y activar animación

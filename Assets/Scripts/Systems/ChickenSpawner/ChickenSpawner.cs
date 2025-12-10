@@ -54,8 +54,6 @@ public class ChickenSpawner : MonoBehaviour
         // Si el timer llega a 0
         if (eliminationTimer <= 0f)
         {
-            //Eliminamos y reemplazamos los pollos
-            Debug.Log("currentChickenCountToRemove: "+ currentChickenCountToRemove);
             RemoveAndReplaceChickens();
 
             // Reiniciamos el timer
@@ -70,7 +68,7 @@ public class ChickenSpawner : MonoBehaviour
         //Instanciamos el Pollito
         GameObject newChicken = Instantiate(
             chickenRossPrefab,
-            YardsManager.instance.currentYard.PosToSpawn,
+            Yard.Instance.PosToSpawn,
             new Quaternion(0.216439605f, 0, 0, 0.976296067f)
             );
 
@@ -78,14 +76,14 @@ public class ChickenSpawner : MonoBehaviour
         newChicken.GetComponent<Animator>().Play("Spawn");
 
         //Asignamos al nuevo Pollito su respectivo corral
-        newChicken.GetComponent<ChickenController>().assignedYard = YardsManager.instance.currentYard;
+        newChicken.GetComponent<ChickenController>().assignedYard = Yard.Instance;
 
         //En base al corral, definimos su limite de movimiento
         SelfMovementToTarget newChickenMovementComp = newChicken.GetComponent<SelfMovementToTarget>();
-        newChickenMovementComp.maxXDistanceToLeft = YardsManager.instance.currentYard.LeftLimit;
-        newChickenMovementComp.maxXDistanceToRight = YardsManager.instance.currentYard.RightLimit;
-        newChickenMovementComp.maxZDistanceToBottom = YardsManager.instance.currentYard.BottomLimit;
-        newChickenMovementComp.maxZDistanceToTop = YardsManager.instance.currentYard.TopLimit;
+        newChickenMovementComp.maxXDistanceToLeft = Yard.Instance.LeftLimit;
+        newChickenMovementComp.maxXDistanceToRight = Yard.Instance.RightLimit;
+        newChickenMovementComp.maxZDistanceToBottom = Yard.Instance.BottomLimit;
+        newChickenMovementComp.maxZDistanceToTop = Yard.Instance.TopLimit;
     }
 
     // --------------------------------------------------------
@@ -95,7 +93,7 @@ public class ChickenSpawner : MonoBehaviour
         //Instanciamos el Pollito
         GameObject newChicken = Instantiate(
             chickenCobbPrefab,
-            YardsManager.instance.currentYard.PosToSpawn,
+            Yard.Instance.PosToSpawn,
             new Quaternion(0.216439605f, 0, 0, 0.976296067f)
             );
 
@@ -103,14 +101,14 @@ public class ChickenSpawner : MonoBehaviour
         newChicken.GetComponent<Animator>().Play("Spawn");
 
         //Asignamos al nuevo Pollito su respectivo corral
-        newChicken.GetComponent<ChickenController>().assignedYard = YardsManager.instance.currentYard;
+        newChicken.GetComponent<ChickenController>().assignedYard = Yard.Instance;
 
         //En base al corral, definimos su limite de movimiento
         SelfMovementToTarget newChickenMovementComp = newChicken.GetComponent<SelfMovementToTarget>();
-        newChickenMovementComp.maxXDistanceToLeft = YardsManager.instance.currentYard.LeftLimit;
-        newChickenMovementComp.maxXDistanceToRight = YardsManager.instance.currentYard.RightLimit;
-        newChickenMovementComp.maxZDistanceToBottom = YardsManager.instance.currentYard.BottomLimit;
-        newChickenMovementComp.maxZDistanceToTop = YardsManager.instance.currentYard.TopLimit;
+        newChickenMovementComp.maxXDistanceToLeft = Yard.Instance.LeftLimit;
+        newChickenMovementComp.maxXDistanceToRight = Yard.Instance.RightLimit;
+        newChickenMovementComp.maxZDistanceToBottom = Yard.Instance.BottomLimit;
+        newChickenMovementComp.maxZDistanceToTop = Yard.Instance.TopLimit;
     }
 
     // --------------------------------------------------------
@@ -128,7 +126,7 @@ public class ChickenSpawner : MonoBehaviour
         List<ChickenController> chickensInCurrentYard = new List<ChickenController>();
         foreach (ChickenController chicken in allChickens)
         {
-            if (chicken.assignedYard == YardsManager.instance.currentYard && chicken.isAlive)
+            if (chicken.assignedYard == Yard.Instance && chicken.isAlive)
             {
                 chickensInCurrentYard.Add(chicken);
             }

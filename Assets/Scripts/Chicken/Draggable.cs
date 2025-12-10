@@ -32,7 +32,7 @@ public class Draggable : MonoBehaviour
         isDraggable = false;
 
         //Activamos Flag de "siendo arrastrado" en el Controller principal
-        GetComponent<ChickenController>().isBeingDragged = true;
+        //GetComponent<ChickenController>().isPicked = true;
 
         //Lo posicionamos en el mismo lugar que la zona de interacción
         transform.position = parent.position;
@@ -71,7 +71,7 @@ public class Draggable : MonoBehaviour
         isDraggable = true;
 
         //Desactivamos Flag de "siendo arrastrado" en el Controller principal
-        GetComponent<ChickenController>().isBeingDragged = false;
+        //GetComponent<ChickenController>().isPicked = false;
 
         // Devolvemos la animacion a la normalidad
         GetComponent<SpritesController>().SetSpriteBackToNormal();

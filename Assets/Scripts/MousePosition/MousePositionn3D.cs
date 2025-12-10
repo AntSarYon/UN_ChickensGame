@@ -35,7 +35,7 @@ public class MousePositionn3D : MonoBehaviour
         else
         {
             //Devolvemos el punto de Spawn del Corral en turno
-            return YardsManager.instance.currentYard.PosToSpawn;
+            return Yard.Instance.PosToSpawn;
         }
     }
 }

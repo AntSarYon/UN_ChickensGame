@@ -42,8 +42,6 @@ public class CameraController : MonoBehaviour
 
         // Evento de Pollo Vendido
         DayStatusManager.Instance.OnChickenSold += OnChickenSoldDelegate;
-        // Evento de Cambio de Corral
-        YardsManager.instance.OnCurrentYardChanged += OnCurrentYardChangedDelegate;
 
         // Variables de depslazamiento
         originalPos = transform.position;

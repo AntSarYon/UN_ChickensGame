@@ -191,18 +191,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25b788a87adeda440874dce7fd8eb0f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  statsPanel: {fileID: 0}
-  txtNombre: {fileID: 0}
-  txtTipo: {fileID: 0}
-  statsHambreBar: {fileID: 0}
-  statsFelicidadBar: {fileID: 0}
-  statsPesoBar: {fileID: 0}
-  icoHarina: {fileID: 0}
-  icoSoja: {fileID: 0}
-  icoGusanos: {fileID: 0}
-  icoMaiz: {fileID: 0}
-  txtGustos: {fileID: 0}
-  txtPasiva: {fileID: 0}
   imgReactionBallon: {fileID: 6981258467845705530}
   imgReaction: {fileID: 3325424254700234201}
   spLike: {fileID: 21300000, guid: 364ebfe39b1258b4484dbf85f921673c, type: 3}
@@ -296,7 +284,7 @@ GameObject:
   - component: {fileID: 6990458768246470451}
   - component: {fileID: 4606697083277715376}
   - component: {fileID: 9019518993903109573}
-  - component: {fileID: 1705104641088734077}
+  - component: {fileID: 1438809801694096029}
   - component: {fileID: 6726949213617028032}
   - component: {fileID: 7003818370608747971}
   - component: {fileID: 5280706629828003361}
@@ -342,18 +330,18 @@ MonoBehaviour:
   type: {fileID: 11400000, guid: 252ff699d0bb6ad4cac1cc4516952b6b, type: 2}
   eatingFlag: 0
   starvingFlag: 0
-  happinessFlag: 0
   isAlive: 1
   isEstimulated: 0
   isDisgusted: 0
   sleepingFlag: 0
   onHover: 0
-  isBeingDragged: 0
+  bBeingThrow: 0
   assignedYard: {fileID: 0}
   dragEscapeProb: 0
   chickenUI: {fileID: 7698499639972273184}
   temperatureSleepThreshold: 25
   temperatureWakeThreshold: 25
+  temperatureDeathThreshold: 40
   gatherPointOffset: 1.5
   gatherArriveDistance: 0.8
   clipDragged: {fileID: 8300000, guid: e4cbc3d12676ce345a7581c043431c1b, type: 3}
@@ -377,10 +365,6 @@ MonoBehaviour:
   hambre: 100
   velocidadIncrementoHambre: 2
   velocidadReduccionHambre: 4
-  felicidad: 100
-  velocidadIncrementofelicidad: 1
-  velocidadReduccionfelicidad: 3
-  felicidadParaPelear: 60
   peso: 100
   velocidadIncrementoPeso: 0.15
   velocidadReduccionPeso: 0.1
@@ -436,7 +420,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1705104641088734077
+--- !u!114 &1438809801694096029
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -445,10 +429,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8122089820921549327}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e715da8820020c40969e333a6a73524, type: 3}
+  m_Script: {fileID: 11500000, guid: 126738757c97e86409150ddf1d8324ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDraggable: 0
+  interactionMessage: 
+  isPickeable: 0
 --- !u!114 &6726949213617028032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,6 +447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1.25
+  target: {fileID: 0}
   minRange: 1.25
   maxXDistanceToRight: -17
   maxXDistanceToLeft: -33

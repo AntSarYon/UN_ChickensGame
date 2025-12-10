@@ -186,8 +186,6 @@ public class GameClockController : MonoBehaviour
         //Calculamos el nivel de oscuridad actual empleando interpolacion segun el tiempo transcurrido
         currentDayLight = Vector4.Lerp(initialDayLight, targetDayLight, interpolation);
 
-        Debug.Log(currentDayLight);
-
         //Actualizams el color de la Luz...
         DayLight.color = currentDayLight;
 

@@ -11,8 +11,6 @@ public class TemperatureOverlay : MonoBehaviour
     [SerializeField] private float maxTemp = 40f;
     [SerializeField] private float overlayMaxAlpha = 0.3f; // Transparencia máxima del overlay
 
-    private Yard assignedYard;
-
     void Start()
     {
         // Si no hay Image asignada, crear una automáticamente
@@ -34,23 +32,20 @@ public class TemperatureOverlay : MonoBehaviour
                 overlayImage.raycastTarget = false;
             }
         }
-
-        // Buscar el Yard en la escena
-        assignedYard = FindObjectOfType<Yard>();
         
-        if (assignedYard != null)
+        if (TemperatureManager.Instance != null)
         {
-            assignedYard.OnTemperatureChanged += UpdateOverlay;
+            TemperatureManager.Instance.OnTemperatureChanged += UpdateOverlay;
             // Actualizar inicialmente
-            UpdateOverlay(assignedYard.temperature);
+            UpdateOverlay(TemperatureManager.Instance.temperature);
         }
     }
 
     private void OnDestroy()
     {
-        if (assignedYard != null)
+        if (TemperatureManager.Instance != null)
         {
-            assignedYard.OnTemperatureChanged -= UpdateOverlay;
+            TemperatureManager.Instance.OnTemperatureChanged -= UpdateOverlay;
         }
     }
 

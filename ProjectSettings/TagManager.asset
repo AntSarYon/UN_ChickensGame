@@ -6,8 +6,6 @@ TagManager:
   tags:
   - Chicken
   - Food
-  - Water
-  - BillingZone
   - MinimapCamera
   - Floor
   - Toy
@@ -16,6 +14,9 @@ TagManager:
   - FoodPool
   - FoodBag
   - ChickenLimitZone
+  - Truck
+  - Water
+  - Calefactor
   layers:
   - Default
   - TransparentFX

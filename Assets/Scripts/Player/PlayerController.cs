@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     //Flags
     private bool bClapped;
     [HideInInspector] public bool bisCarryingFood;
+    [HideInInspector] public bool bisCarryingChicken;
 
     // Stamina / Sprint
     [Header("Stamina")]
@@ -72,6 +73,7 @@ public class PlayerController : MonoBehaviour
         //Flag de "Aplaude" y "Cargando comida" empieza en false
         bClapped = false;
         bisCarryingFood = false;
+        bisCarryingChicken = false;
 
         areaInterpolation = 0.00f;
         areaIncreaseSpeed = 3.00f;

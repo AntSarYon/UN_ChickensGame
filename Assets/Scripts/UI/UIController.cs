@@ -39,8 +39,6 @@ public class UIController : MonoBehaviour
 
     [Header("Indicador de Temperatura")]
     [SerializeField] private GameObject temperatureIndicator;
-    
-
 
     #endregion
 
@@ -58,7 +56,7 @@ public class UIController : MonoBehaviour
     void Start()
     {
         //Obtenemos referencia al Corral actual
-        currentTargetYard = YardsManager.instance.currentYard;
+        currentTargetYard = Yard.Instance;
         txtYardTitle.text = $"Comida en Corral: {currentTargetYard.yardName}";
 
         // Agregamos Listener de Agregar nuevo pollito
@@ -73,21 +71,6 @@ public class UIController : MonoBehaviour
 
         //Ocultamos el mensaje de iteraccion
         HideInteractionMessage();
-
-        YardsManager.instance.OnCurrentYardChanged += OnCurrentYardChangedDelegate;
-    }
-
-    // ---------------------------------------------------------------------------------
-
-    private void OnCurrentYardChangedDelegate(Yard newCurrentYard)
-    {
-        // Actualizamos referencia al Corral actual
-        currentTargetYard = newCurrentYard;
-
-        txtYardTitle.text = $"Comida en Corral: {currentTargetYard.yardName}";
-
-        // Actualizamos el valor maximo dle slider
-        FoodSlider.maxValue = currentTargetYard.totalFoodMaxValue;
     }
 
     // ----------------------------------------------------------------------------------

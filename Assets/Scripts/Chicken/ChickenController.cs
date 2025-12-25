@@ -310,6 +310,9 @@ public class ChickenController : MonoBehaviour
                 bIsSleeping = false;
                 bInColdSleepState = false;
                 bInTempSleeping = false;
+
+                // Desactivamos animaciones de Dormir
+                //mSpritesController.SetSleeping(false);
             }
 
             //Independientemente de lo que este haciendo...
@@ -343,8 +346,12 @@ public class ChickenController : MonoBehaviour
                 // Activamos el flag de "Sobre el suelo"
                 bOnFloor = true;
 
-                // Activamos Flag de Caminando - se asume que lo han soltado
-                bIsWalking = true;
+                //Si no esta dormido a causa del frio...
+                if (!bIsSleeping)
+                {
+                    //Activa su flag de caminar
+                    bIsWalking = true;
+                }
             }
 
             //Si estams colisionando con otro Pollito...

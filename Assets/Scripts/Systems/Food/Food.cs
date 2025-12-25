@@ -58,7 +58,7 @@ public class Food : Interactable
             foreach(GameObject chick in chickensList)
             {
                 // Si su flag de "Comiendo" esta activa
-                if (chick.GetComponent<ChickenController>().eatingFlag)
+                if (chick.GetComponent<ChickenController>().bIsEating)
                 {
                     // Se incrementa el contador de pollitos comiendo
                     eatingChicks++;

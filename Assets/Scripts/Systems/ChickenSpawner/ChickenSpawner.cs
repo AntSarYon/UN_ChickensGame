@@ -126,7 +126,7 @@ public class ChickenSpawner : MonoBehaviour
         List<ChickenController> chickensInCurrentYard = new List<ChickenController>();
         foreach (ChickenController chicken in allChickens)
         {
-            if (chicken.assignedYard == Yard.Instance && chicken.isAlive)
+            if (chicken.assignedYard == Yard.Instance && chicken.bIsAlive)
             {
                 chickensInCurrentYard.Add(chicken);
             }

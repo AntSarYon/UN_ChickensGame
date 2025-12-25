@@ -25,10 +25,21 @@ public class ChickenStats : MonoBehaviour
     private float multiplicadorIncrementoPesoSegunfelicidad = 1;
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadReduccionPeso = 0.10f;
 
+    private ChickenController chickController;
+
+    //-----------------------------------------------------------------------
+
+    void Awake()
+    {
+        // Obtenemos referencia al Chicken Controller (principal)
+        chickController = GetComponent<ChickenController>();
+    }
+
     //-----------------------------------------------------------------------
 
     void Start()
     {
+
         //Traemos los parametros segun se haya ingresado en el Menu Inicial
         velocidadIncrementoHambre = GameRulesManager.instance.velocidadIncrementoHambre;
         velocidadReduccionHambre = GameRulesManager.instance.velocidadReduccionHambre;
@@ -54,25 +65,11 @@ public class ChickenStats : MonoBehaviour
             //Reducimos el Stat de Hambre progresivamente
             hambre -= velocidadReduccionHambre * Time.deltaTime;
             hambre = Mathf.Clamp(hambre, 0.00f, 100.00f);
-
-            //Si esta Estimulado...
-            if (GetComponent<ChickenController>().isEstimulated)
-            {
-                peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunfelicidad * 2;
-            }
-            else if (GetComponent<ChickenController>().isDisgusted) 
-            {
-                //peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunfelicidad;
-            }
-            //Si no hay ningun efecto...
-            else
-            {
-                peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunfelicidad;
-            }
-                
-
+            
+            peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunfelicidad;
             peso = Mathf.Clamp(peso, 1.00f, 7.00f);
         }
+
         //Si el Flag de "Comiendo"; esta desactivado
         else
         {

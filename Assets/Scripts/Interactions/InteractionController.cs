@@ -17,7 +17,7 @@ public class InteractionController : MonoBehaviour
 
     // -----------------------------------------------------------------------
 
-    void Awake()
+    void Start()
     {
         //Obtenemos referencia a la UI que tiene el padre
         pController = GetComponentInParent<PlayerController>();
@@ -28,7 +28,7 @@ public class InteractionController : MonoBehaviour
     void Update()
     {
 
-        //Si hay un objeto habilitado para coger, y no tenemos ningún objeto cogido
+        //Si hay un objeto habilitado para interactuar, y no tenemos ningún objeto cogido
         if (targetObject != null && holdedObject == null)
         {
             // Si el objeto es interactuable
@@ -37,7 +37,7 @@ public class InteractionController : MonoBehaviour
                 //Si pulsamos la tecla E...
                 if (Input.GetKeyDown(KeyCode.E))
                 {
-                    //Activamos la interaccion del Objeto Target
+                    //Activamos la interaccion del Objeto Target, enviando info sobre la zona de holding
                     targetObject.GetComponent<Interactable>().Interact(holdingZone);
 
                     //Si el Objeto ademas es Pickeable...
@@ -76,7 +76,7 @@ public class InteractionController : MonoBehaviour
                         }
                     }
                 }
-                //En caso si haya un objeto al frente, y sea Pickeable...
+                //En caso el objeto al frente sea Pickeable...
                 else
                 {
                     // Gestionamos la accion de Soltar el Objeto
@@ -92,42 +92,58 @@ public class InteractionController : MonoBehaviour
         }
     }
 
+    // ------------------------------------------------------------------------------------------
+
     private void ManageObjectRelease()
     {
-
         // Si el payer esta quieto
         if (pController.movementInput == Vector3.zero)
         {
+            //Hacemos que a UI muestre el mensaje de SOLTAR 
             UIController.Instance.SetInteractionMessage("Soltar");
 
+            // Si se prime E
             if (Input.GetKeyDown(KeyCode.E))
             {
-                //Soltamos el Objeto mediante la funcioon de Drop
-                holdedObject.GetComponent<PickeableObject>().Drop();
+                DropHoldedObject();
 
-                //Liberamos cualquier referencia dle Objeto.
-                holdedObject = null;
-
-                UIController.Instance.HideInteractionMessage();
             }
         }
         //Si el player se esta moviendo
         else
         {
+            //Hacemos que a UI muestre el mensaje de ARROJAR 
             UIController.Instance.SetInteractionMessage("Arrojar");
 
             if (Input.GetKeyDown(KeyCode.E))
             {
-
-                holdedObject.GetComponent<PickeableObject>().Throw(pController.movementInput);
-
-                //Liberamos cualquier referencia dle Objeto.
-                holdedObject = null;
-
-                UIController.Instance.HideInteractionMessage();
+                ThrowHoldedObject();   
             }
         }
 
+    }
+
+    // --------------------------------------------------------------
+    private void DropHoldedObject()
+    {
+        //Soltamos el Objeto mediante la funcioon de Drop
+        holdedObject.GetComponent<PickeableObject>().Drop();
+
+        //Liberamos cualquier referencia del Objeto.
+        holdedObject = null;
+
+        // Ocultamos el mensaje de Interaccion
+        UIController.Instance.HideInteractionMessage();
+    }
+
+    private void ThrowHoldedObject()
+    {
+        holdedObject.GetComponent<PickeableObject>().Throw(pController.movementInput);
+
+        //Liberamos cualquier referencia dle Objeto.
+        holdedObject = null;
+
+        UIController.Instance.HideInteractionMessage();
     }
 
     // -------------------------------------------------------
@@ -157,7 +173,5 @@ public class InteractionController : MonoBehaviour
         pController.bisCarryingChicken = false;
 
     }
-
-    // --------------------------------------------
 }
 

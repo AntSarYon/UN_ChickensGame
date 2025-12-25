@@ -38,7 +38,7 @@ public class UIController : MonoBehaviour
     private string interactionText;
 
     [Header("Indicador de Temperatura")]
-    [SerializeField] private GameObject temperatureIndicator;
+    [SerializeField] private GameObject temperatureUI;
 
     #endregion
 

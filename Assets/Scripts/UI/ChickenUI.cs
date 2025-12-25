@@ -6,32 +6,77 @@ using UnityEngine.UI;
 
 public class ChickenUI : MonoBehaviour
 {
-    #region Props
 
-    [Header("Globo de Reaccion (por comida)")]
+    [Header("Globo de Reaccion")]
     [SerializeField] private GameObject imgReactionBallon;
     [SerializeField] private Image imgReaction;
+
+    [Header("Iconos de reaccion")]
     [SerializeField] private Sprite spLike;
     [SerializeField] private Sprite spDisllike;
+    [SerializeField] private Sprite spHungry;
+    [SerializeField] private Sprite spAngry;
+    [SerializeField] private Sprite spFighting;
 
     [Header("Icono de estimulacion")]
     [SerializeField] private GameObject imgEstimulated;
 
-    //Referencia a Stats del pollo
-    private ChickenStats chickenStats;
+    [Header("Icono de Suenio")]
+    [SerializeField] private GameObject imgSleeping;
 
-    #endregion
+    //Referencia a Stats del pollo
+    private ChickenController chkController;
+    private ChickenStats chickenStats;
 
     //------------------------------------------------------------------------------------
 
     void Start()
     {
-        //Obtenemos los Stats del Pollito Owner de esta UI
+        //Obtenemos referencia a scripts del Pollito Owner de UI
         chickenStats = GetComponentInParent<ChickenStats>();
+        chkController = GetComponentInParent<ChickenController>();
 
         //Iniciamos con todos los Elementos de la UI Desactivados
         HideReaction();
         HideEstimulation();
+    }
+
+    //------------------------------------------------------------------------------------
+
+    void Update()
+    {
+        // Si el pollito esta durmiendo
+        if (chkController.bIsSleeping)
+        {
+            // Ocultamos cualquier globo de reaccion
+            HideReaction();
+            return;
+        }
+
+        // Si esta despierto...
+        //Dependiendo del Flag activo, mostraremos un globo de reaccion
+        if (chkController.bIsFighting)
+        {
+            ShowFighting();
+        }
+        else if (chkController.bIsAngry)
+        {
+            ShowAngry();
+        }
+        else if (chkController.bIsStarving)
+        {
+            ShowHungry();
+        }
+        else if (chkController.bIsEating)
+        {
+            ShowLike();
+        }
+        //En cualquier otro caso, ocultamos el globo de reaccion
+        else
+        {
+            HideReaction();
+        }
+
     }
 
 
@@ -55,8 +100,37 @@ public class ChickenUI : MonoBehaviour
         //Mostramos el Globo de Reaccion
         imgReactionBallon.SetActive(true);
     }
-    
-    public void HideReaction() 
+
+    public void ShowHungry()
+    {
+        //Asignamos ell Sprite de Like
+        imgReaction.sprite = spHungry;
+
+        //Mostramos el Globo de Reaccion
+        imgReactionBallon.SetActive(true);
+    }
+
+    public void ShowAngry()
+    {
+        //Asignamos el Sprite de Dislike
+        imgReaction.sprite = spAngry;
+
+        //Mostramos el Globo de Reaccion
+        imgReactionBallon.SetActive(true);
+    }
+
+    public void ShowFighting()
+    {
+        //Asignamos el Sprite de Dislike
+        imgReaction.sprite = spFighting;
+
+        //Mostramos el Globo de Reaccion
+        imgReactionBallon.SetActive(true);
+    }
+
+    // ---------------------------------------------------------------------
+
+    public void HideReaction()
     {
         //Mostramos el Globo de Reaccion
         imgReactionBallon.SetActive(false);

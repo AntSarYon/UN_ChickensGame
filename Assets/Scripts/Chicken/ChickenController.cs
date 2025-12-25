@@ -12,25 +12,23 @@ public class ChickenController : MonoBehaviour
     public ChickenType type;
 
     [Header("Flags de Estados")]
-    [HideInInspector] public bool eatingFlag = false;
-    [HideInInspector] public bool starvingFlag = false;
+    [HideInInspector] public bool bIsAlive = true;
+    [HideInInspector] public bool bIsWalking = false;
+    [HideInInspector] public bool bIsEating = false;
+    [HideInInspector] public bool bIsStarving = false;
+    [HideInInspector] public bool bIsSleeping = false;
+    [HideInInspector] public bool bIsAngry = false;
+    [HideInInspector] public bool bIsFighting = false;
+    [HideInInspector] public bool bOnFloor = true;
 
-    [HideInInspector] public bool isAlive = true;
+    [HideInInspector] public bool bTargeted = false;
+    [HideInInspector] public bool bThrown = false;
 
-    [HideInInspector] public bool isEstimulated = false;
-    [HideInInspector] public bool isDisgusted = false;
-    [HideInInspector] public bool sleepingFlag = false;
-
-    [HideInInspector] public bool onHover = false;
-    [HideInInspector] public bool bBeingThrow = false;
+    [HideInInspector] public bool bInTempSleeping = false; // Flag de Dormido temporalmente
+    [HideInInspector] public bool bInColdSleepState = false;  // Dormido por frio
 
     [Header("Corral")]
     public Yard assignedYard;
-
-    [Header("Probabilidad que el pollito escape")]
-    [Range(0.00f,1.00f)] public float dragEscapeProb;
-    private float dragEscapeDefaultProb;
-    private float dragEscapeMinProb = 0;
 
     [Header("Chicken UI")]
     [SerializeField] private ChickenUI chickenUI;
@@ -45,24 +43,24 @@ public class ChickenController : MonoBehaviour
     private float sleepCheckTimer = 0f;
     private float sleepDurationTimer = 0f;
 
-    // Temperatura - agrupar y dormir
-    private bool tempSleeping = false;
-    private bool groupingToSleep = false;
-    private bool inColdSleepState = false;  // Flag para rastrear si está en sueño por frío
-    private Vector3 tempGatherPoint;
+    // Probabilidad de caer en sueno aleatoriamente
+    private float tempSleepProb = 0.30f;
+
     [SerializeField] private float temperatureSleepThreshold = 25f;
     [SerializeField] private float temperatureWakeThreshold = 25f;  // Puede ser igual a sleepThreshold
     [SerializeField] private float temperatureDeathThreshold = 40f;  // Temperatura a la que muere por calor
-    [SerializeField] private float gatherPointOffset = 1.5f;
-    [SerializeField] private float gatherArriveDistance = 0.8f;
 
     private AudioSource mAudioSource;
 
     // Clips de Audio del Pollito:
-    [Header("Clips de Audio")]  
+    [Header("Clips de Audio")]
     [SerializeField] private AudioClip clipDragged;
     [SerializeField] private AudioClip clipEscaped;
     [SerializeField] private AudioClip clipWings;
+    [SerializeField] private AudioClip clipHit;
+
+    // Corutinas
+    private Coroutine cor_CheckIfStarving;
 
 
     //-----------------------------------------------------------------------------
@@ -77,46 +75,89 @@ public class ChickenController : MonoBehaviour
 
         mAudioSource = GetComponent<AudioSource>();
 
-        //Almacenamos la probabilidad seteada de escape
-        dragEscapeDefaultProb = dragEscapeProb;
-        dragEscapeMinProb = 0;
-
         //Iniciamos Flags
-        isAlive = true;
-        onHover = false;
+        bIsAlive = true;
+        bIsWalking = true;
+
+        bTargeted = false;
+        bIsAngry = false;
+        bIsFighting = false;
+
+        
     }
 
     //-----------------------------------------------------------------------------
 
     void Start()
     {
-        //Definimos un nuevo destino aleatorio para el pollito
-        mSelfMovementToTarget.SetNewRandomWaypoint();
-
-        //Agregamos Funcion Delegado al Evento de Pollo vendido
-        DayStatusManager.Instance.OnChickenSold += OnChickenSoldDelegate;
-
-        // Inicializamos timers para sueño aleatorio
-        sleepCheckTimer = Random.Range(3f, 3f);
-        sleepDurationTimer = 0f;
-
-        // Suscribir al evento de temperatura del corral asignado
         if (TemperatureManager.Instance != null)
         {
-            TemperatureManager.Instance.OnTemperatureChanged += ValidateTemperature;
+            // Suscribir al evento de temperatura
+            TemperatureManager.Instance.OnTemperatureChanged += OnTemperatureChangedDelegate;
 
             // Si el pollo nace con temperatura baja, debe dormir inmediatamente
             if (TemperatureManager.Instance.temperature < temperatureSleepThreshold)
             {
-                inColdSleepState = true;
-                tempSleeping = true;
-                sleepingFlag = true;
-                mSelfMovementToTarget.StopMoving();
-                mSpritesController.SetSleeping(true);
-                sleepDurationTimer = Random.Range(10f, 30f);
+                // Mandamos a dormir a pollit por Frio
+                SleepForCold();
             }
         }
 
+        // Inicializamos timers para sueño
+        sleepCheckTimer = Random.Range(5f, 8f); // Tiempo entre sueños aleatorios
+        sleepDurationTimer = 0f; // Timer duracion de sueño
+
+        //ARRANCAMOS CORUTINA DE REVISION DE HAMBRE
+        cor_CheckIfStarving = StartCoroutine(CheckIfStarving(0.5f));
+
+    }
+
+    // ------------------------------------------------------------------
+
+    // FUNCION: Dormir por frio
+    private void SleepForCold()
+    {
+        // Activaoms Flags para indicar esta durmiendo por frio
+        bIsSleeping = true;
+        bInColdSleepState = true;
+        bInTempSleeping = false;
+
+        //Desactivamos otros Flags
+        bIsEating = false;
+        bIsWalking = false;
+
+        //Hacemos que el Pollito deje de moverse
+        mSelfMovementToTarget.StopMoving();
+
+        //Activamos la annimacion de dormido
+        mSpritesController.SetSleeping(true);
+
+        Debug.Log("Me dormi porque hace frio");
+    }
+
+    // -------------------------------------------------------------------
+    // FUNCION: Dormir temporalmente
+    private void SleepTemporally()
+    {
+        // Activaoms Flags para indicar esta durmiendo por frio
+        bIsSleeping = true;
+        bInColdSleepState = false;
+        bInTempSleeping = true;
+
+        //Desactivamos otros Flags
+        bIsEating = false;
+        bIsWalking = false;
+
+        //Hacemos que el Pollito deje de moverse
+        mSelfMovementToTarget.StopMoving();
+
+        //Activamos la annimacion de dormido
+        mSpritesController.SetSleeping(true);
+
+        //Iniciamos el contador para el tiempo de suenio temporal
+        sleepDurationTimer = Random.Range(6f, 18f);
+
+        Debug.Log("Me dormi temporalmente");
     }
 
     //------------------------------------------------------------------------
@@ -125,47 +166,32 @@ public class ChickenController : MonoBehaviour
     {
         if (TemperatureManager.Instance != null)
         {
-            TemperatureManager.Instance.OnTemperatureChanged -= ValidateTemperature;
+            TemperatureManager.Instance.OnTemperatureChanged -= OnTemperatureChangedDelegate;
         }
-    }
-
-    //-----------------------------------------------------------------------------
-
-    private void OnChickenSoldDelegate(float chickenPrice)
-    {
-        //Hacemos que las gallinas se muevan mas rapido por 2 segundos
-        //como consecuencia de ver morir a su amigo
-        mSelfMovementToTarget.MultiplySpeedTemporary(2);
     }
 
     //------------------------------------------------------------------------------------------
-    // FUNCION: REVISAR SI TIENE HAMBRE
-
-    public void CheckIfStarving()
+    // CORUTINA: REVISAR SI TIENE HAMBRE
+    private IEnumerator CheckIfStarving(float checkInterval)
     {
-        //Si el Stat de Hambre esta muy elevado...
-        if (mChickenStats.hambre >= 95)
+        //Repetiremos indefinidamente...
+        while (true)
         {
-            //Activamos el flag de "Starving" 
-            starvingFlag = true;
-
-            mSelfMovementToTarget.target = FoodsManager.Instance.GetClosestFood(transform);
-
-            //Entramos en Animacion de Starving
-            mSpritesController.EnableStarvingAnim();
-        }
-        else
-        {
-            //Desactivamos el flag de "Starving" 
-            starvingFlag = false;
-
-            //Si el Pollito no tiene l mouse encima...
-            if (!onHover)
+            //Si el Stat de Hambre esta muy elevado...
+            if (mChickenStats.hambre >= 90)
             {
-                //Hacemos que su color vuelva a la normalidad...
-                mSpritesController.DisableStarvingAnim();
+                //Activamos el flag de "Starving" 
+                bIsStarving = true;
             }
-            
+            // En caso NO TENGA TANTA HAMBRE
+            else
+            {
+                //Desactivamos el flag de "Starving" 
+                bIsStarving = false;
+            }
+
+            // Cada intervalo
+            yield return new WaitForSeconds(checkInterval);
         }
     }
 
@@ -175,8 +201,8 @@ public class ChickenController : MonoBehaviour
     public void ManageStats()
     {
         //Manejamos los Stats segun loos flags
-        mChickenStats.ManageStats_HambreYPeso(eatingFlag, !GetComponent<PickeableObject>().isPickeable);
-        mChickenStats.ManageStats_HP(starvingFlag);
+        mChickenStats.ManageStats_HambreYPeso(bIsEating, !mPickeable.isPickeable);
+        mChickenStats.ManageStats_HP(bIsStarving);
     }
 
     //------------------------------------------------------------------------------------------
@@ -185,210 +211,142 @@ public class ChickenController : MonoBehaviour
     void Update()
     {
         //Si el pollito sigue vivo...
-        if (isAlive)
+        if (bIsAlive)
         {
-            //Controlamos los Stats
-            ManageStats();
-
-            // PRIORIDAD MÁXIMA: Si está en sueño por frío, forzar estado de dormir
-            if (inColdSleepState)
+            //Si el pollito NO ESTA SIEDO CARGADO
+            if (mPickeable.isPickeable)
             {
-                sleepingFlag = true;
-                tempSleeping = true;
-                GetComponent<PickeableObject>().isPickeable = true;
-                eatingFlag = false;
-                mSelfMovementToTarget.StopMoving();
-                mSpritesController.SetSleeping(true);
+                //Controlamos sus estadisticas
+                ManageStats();
 
-                // Decrementar timer de sueño
-                sleepDurationTimer -= Time.deltaTime;
-                // (No despertar por timer mientras esté en sueño por frío - solo por temperatura)
-            }
-
-            //Si no esta siendo Draggeado...
-            else if (GetComponent<PickeableObject>().isPickeable)
-            {
-                //Revisamos si tenemos hambre...
-                CheckIfStarving();
-
-                //Controlamos la Animacion de Caminata
-                mSpritesController.ManageWalkingAnim();
-            }
-
-            //Si no esta peleand
-            else if (!GetComponent<PickeableObject>().isPickeable)
-            {
-                //Regresamos la Probabilidad a la normalidad
-                dragEscapeProb = dragEscapeDefaultProb;
-            }
-
-            //Si el Pollito esta haciendo alguna de estas acciones...
-            if (eatingFlag)
-            {
-                //Si el Stat de hambre esta por debajo de 40
-                if (mChickenStats.hambre < 40)
+                // Si esta dormido
+                if (bIsSleeping)
                 {
-                    //Desactivamos los Flags de Comiendo y Bebiendo
-                    eatingFlag = false;
-                }
-            }
-            else if (!inColdSleepState)
-            {
-                //Si esta dormido, no moverse
-                if (sleepingFlag)
-                {
-                    // Permanecer dormido hasta que el timer expire
-                    sleepDurationTimer -= Time.deltaTime;
-                    if (sleepDurationTimer <= 0f)
+                    // Si esta en una siesta temporal
+                    if (bInTempSleeping)
                     {
-                        WakeFromSleep();
-                    }
-                }
-                else
-                {
-                    //Seteamos una direccion de Movimiento
-                    mSelfMovementToTarget.SetMovementDirection();
+                        Debug.Log("Durmiendo por frio");
+                        // Decrementamos timer de sueño
+                        sleepDurationTimer -= Time.deltaTime;
 
-                    //Intento aleatorio de dormirse cuando está idle
-                    if (GetComponent<PickeableObject>().isPickeable && !eatingFlag && !starvingFlag)
-                    {
-                        sleepCheckTimer -= Time.deltaTime;
-                        if (sleepCheckTimer <= 0f)
+                        // Permanecer dormido hasta que el timer expire
+                        if (sleepDurationTimer <= 0f)
                         {
-                            // Probabilidad de dormirse (ej. 30%)
-                            if (Random.Range(0f, 1f) <= 0.30f)
-                            {
-                                // Entrar a modo dormido
-                                sleepingFlag = true;
-                                // Detener movimiento y animación de dormir
-                                mSelfMovementToTarget.StopMoving();
-                                mSpritesController.SetSleeping(true);
-                                // Duración del sueño aleatoria
-                                sleepDurationTimer = Random.Range(6f, 18f);
-                            }
-
-                            // Reiniciamos el chequeo
-                            sleepCheckTimer = Random.Range(3f, 3f);
+                            WakeUp();
                         }
                     }
+
+                    // No despertar por timer mientras esté en sueño por temperatura fría
+                }
+                //Si no esta dormido
+                else
+                {
+                    //Si esta comiedo...
+                    if (bIsEating)
+                    {
+                        Debug.Log("Estoy comiendo");
+
+                        //Si el Stat de hambre baja de 15
+                        if (mChickenStats.hambre < 15)
+                        {
+                            //Desactivamos el Flag de Comiendo
+                            bIsEating = false;
+                        }
+                    }
+                    //Si esta caminando
+                    else if (bIsWalking)
+                    {
+                        // Si el pollito no tiene hambre
+                        if (!bIsStarving)
+                        {
+                            Debug.Log("Estooy caminando arbitrariamente");
+                            //Reducimos el Timer para su siesta espontanea
+                            sleepCheckTimer -= Time.deltaTime;
+
+                            // Si el timer llega a 0
+                            if (sleepCheckTimer <= 0f)
+                            {
+                                // Obtenemos Probabilidad de dormirse (ej. 30%)
+                                if (Random.Range(0f, 1f) <= tempSleepProb)
+                                {
+                                    // De cumplirse, se duerme
+                                    SleepTemporally();
+                                }
+
+                                // Reiniciamos el timer de chequeo
+                                sleepCheckTimer = Random.Range(5f, 8f);
+                            }
+                        }
+
+                        //Si el pollito SI tiene hambre...
+                        else if (bIsStarving)
+                        {
+                            Debug.Log("Estoy buscando comida");
+
+                            // No inducimos al pollito a dormirse
+
+                            // Asignamos el comedero mas cercano como Target de movimiento
+                            mSelfMovementToTarget.target = FoodsManager.Instance.GetClosestFood(transform);
+                        }
+                    }
+
                 }
             }
+            //En caso si este siendo cargado
+            else 
+            {
+                Debug.Log("Me estann cargando");
+
+                //Apagamos todos los otros Flags
+                bIsWalking = false;
+                bOnFloor = false;
+
+                bIsAngry = false;
+                bIsFighting = false;
+
+                bIsEating = false;
+                bIsStarving = false;
+
+                bIsSleeping = false;
+                bInColdSleepState = false;
+                bInTempSleeping = false;
+            }
+
+            //Independientemente de lo que este haciendo...
+
 
             //Si el HP del pollito llega  0
             if (mChickenStats.hp == 0)
             {
                 // Desactivamos Flag de "esta vivo"
-                isAlive = false;
-
-                //Su probabilidad de escape del Drag es minima (0)
-                dragEscapeProb = dragEscapeMinProb;
+                bIsAlive = false;
 
                 //Reproducimos las Acciones de Muerte.
                 Die();
+
+                Debug.Log("Me mori");
             }
         }
 
     }
-
-    //------------------------------------------------------------------------------------------
-
-    private void FixedUpdate()
-    {
-        //Si el Pollito esta vivo...
-        if (isAlive)
-        {
-            //Si no esta siendo
-            if (!bBeingThrow)
-            {
-                //Si el Pollito está durmiendo, NO moverse
-                if (sleepingFlag || tempSleeping)
-                {
-                    //Hacemos que deje de moverse (Velocidad a 0)
-                    mSelfMovementToTarget.StopMoving();
-
-                }
-                //Si el Pollito está comiendo, Bebiendo, o Peleando
-                else if (eatingFlag)
-                {
-                    //Hacemos que deje de moverse (Velocidad a 0)
-                    mSelfMovementToTarget.StopMoving();
-                }
-
-                //En caso no este haciendo alguna accion en Particular...
-                else
-                {
-                    //Hacemos que el Pollito de Mueva hacia su Target de Movimiento
-                    //(aplica tanto randomWaypoint como Target)
-                    mSelfMovementToTarget.MoveToTarget();
-
-                    //Revisamos si es que necesita un nuevo RandomWaypoint (ya llegó al anterior)
-                    mSelfMovementToTarget.CheckIfNeedNewRandomWaypoint();
-                }
-            }
-        }
-
-        //Si el Pollito esta muerto...
-        else
-        {
-            //Hacemos que deje de moverse (Velocidad a 0)
-            mSelfMovementToTarget.StopMoving();
-        }
-    }
-
-    //------------------------------------------------------------------------------
-
-    private void OnMouseOver()
-    {
-        //Activamos Flag de Hover
-        onHover = true;
-
-        //Controlamos la animacion de cuando se hace Hover
-        mSpritesController.EnterHoverAnimation();
-
-        //Si el Pollito esta vivo...
-        if (isAlive)
-        {
-            //Si No esta siendo arrastrado
-            if (GetComponent<PickeableObject>().isPickeable)
-            {
-                //Mostramos la info del UI del pollito
-                //chickenUI.ShowChickenInfo();
-            }
-        }
-        
-    }
-
-    //------------------------------------------------------------------------------------------
-
-    private void OnMouseExit()
-    {
-        //Desactivamos Flag de Hover
-        onHover = false;
-
-        //Controlamos la animacion de cuando se hace Hover
-        mSpritesController.ExitHoverAnimation();
-
-        //Si el Pollito esta vivo...
-        if (isAlive)
-        {
-            //Si la UI esta activa...
-            if (chickenUI.gameObject.activeSelf)
-            {
-                //Ocultamos la info del UI
-                //chickenUI.HideChickenInfo();
-            }
-        }
-        
-    }
-
 
     //------------------------------------------------------------------------------------------
 
     private void OnCollisionEnter(Collision collision)
     {
         //Si el pollito esta vivo...
-        if (isAlive)
+        if (bIsAlive)
         {
+            //Si hemos impactado el suelo...
+            if (collision.gameObject.CompareTag("Floor"))
+            {
+                // Activamos el flag de "Sobre el suelo"
+                bOnFloor = true;
+
+                // Activamos Flag de Caminando - se asume que lo han soltado
+                bIsWalking = true;
+            }
+
             //Si estams colisionando con otro Pollito...
             if (collision.gameObject.CompareTag("Chicken"))
             {
@@ -415,69 +373,76 @@ public class ChickenController : MonoBehaviour
                     //Hacemos que se asigne un nuevo TargetRandom hacia la izquierda
                     GetComponent<SelfMovementToTarget>().SetNewRandomWaypointToLeft(collision.transform.position.x);
                 }
-                
-            }
-                
+
             }
 
-            //Si chocamos con un contenedor de Comida o Agua
-            else if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
+        }
+
+        //Si chocamos con un contenedor de Comida o Agua
+        else if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
+        {
+            //Hacemos que el Pollito MIRE en direccion a la colision.
+            mSpritesController.LookAtTarget(collision.transform.position);
+
+            //Si esta chocando con comida...
+            if (collision.gameObject.CompareTag("Food"))
             {
-                //Hacemos que el Pollito MIRE en direccion a la colision.
-                mSpritesController.LookAtTarget(collision.transform.position);
-
-                //Si esta chocando con comida...
-                if (collision.gameObject.CompareTag("Food"))
+                //Si tiene hambre...
+                if (mChickenStats.hambre > 40)
                 {
-                    //Si tiene hambre...
-                    if (mChickenStats.hambre > 40)
-                    {
-                        //Activamos Flag de "Esta comiendeo"
-                        eatingFlag = true;
+                    //Activamos Flag de "Esta comiendeo"
+                    bIsEating = true;
 
-                        // Caso contrario, mostramos el Dislike
-                        chickenUI.ShowDislike();
-                    }
-
-                    //En caso no tenga hambre...
-                    else
-                    {
-                        //Seteamos un nuevo target de movimiento random
-                        GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
-
-                        //Desactivamos Flag de "Esta comiendeo"
-                        eatingFlag = false;
-                    }
+                    // Caso contrario, mostramos el Dislike
+                    chickenUI.ShowDislike();
                 }
 
-                //Si esta chocando con Agua...
-                else if (collision.gameObject.CompareTag("Water"))
+                //En caso no tenga hambre...
+                else
                 {
-                    //AJUSTAR ESTO!!!
+                    //Seteamos un nuevo target de movimiento random
+                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
 
-                    //Si tiene hambre...
-                    if (mChickenStats.hambre > 40)
-                    {
-                        //Activamos Flag de "Esta peleando"
-                        eatingFlag = true;
-                    }
-                    else
-                    {
-                        //Seteamos un nuevo target de movimiento random
-                        GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
+                    //Desactivamos Flag de "Esta comiendeo"
+                    bIsEating = false;
+                }
+            }
 
-                        //Desactivamos Flag de "Esta comiendeo"
-                        eatingFlag = false;
-                    }
+            //Si esta chocando con Agua...
+            else if (collision.gameObject.CompareTag("Water"))
+            {
+                //AJUSTAR ESTO!!!
+
+                //Si tiene hambre...
+                if (mChickenStats.hambre > 40)
+                {
+                    //Activamos Flag de "Esta peleando"
+                    bIsEating = true;
+                }
+                else
+                {
+                    //Seteamos un nuevo target de movimiento random
+                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
+
+                    //Desactivamos Flag de "Esta comiendeo"
+                    bIsEating = false;
                 }
             }
         }
-    
+    }
+
 
     //------------------------------------------------------------------------------------------
 
     private void OnCollisionStay(Collision collision)
     {
+        //Si estamos en contacto con el suelo...
+        if (collision.gameObject.CompareTag("Floor"))
+        {
+            //Mantenemos activo el flag de "Sobre el suelo"
+            bOnFloor = true;
+        }
+
         //Si estamos manteniendo el contacto con un recurso  de Comida o Agua...
         if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
         {
@@ -491,7 +456,7 @@ public class ChickenController : MonoBehaviour
                 if (mChickenStats.hambre < 95)
                 {
                     //Salimos de la Animacion de Starving
-                    mSpritesController.DisableStarvingAnim();
+
                 }
 
                 //Si el Comedero esta vacio, o ya sacio su hambre...
@@ -501,10 +466,7 @@ public class ChickenController : MonoBehaviour
                     mSelfMovementToTarget.target = null;
 
                     //Desactivamos Flag de "Esta comiendo"
-                    eatingFlag = false;
-
-                    // Desactivamos Fag de Estimulacion
-                    isEstimulated = false;
+                    bIsEating = false;
                 }
             }
         }
@@ -514,22 +476,26 @@ public class ChickenController : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        if (isAlive)
+        if (bIsAlive)
         {
+            //Si dejamos de tener contacto con el suelo...
+            if (collision.gameObject.CompareTag("Floor"))
+            {
+                // Desactivamos el flag de "Sobre el suelo"
+                bOnFloor = false;
+            }
+
             //Si ha dejado de chocar con otro pollito
             if (collision.gameObject.CompareTag("Chicken"))
             {
                 //Salimos de la Animacion de Pelea
-                mSpritesController.ExitFightAnim();
+
             }
             //Si el objeto con el que colisionamos es otro Pollito
             else if (collision.gameObject.CompareTag("Food"))
             {
                 //Desactivamos Flag de "Esta comiendo"
-                eatingFlag = false;
-
-                // Desactivamos Fag de Estimulacion
-                isEstimulated = false;
+                bIsEating = false;
 
                 //Desactivamos el Globo de reaccion
                 chickenUI.HideReaction();
@@ -541,65 +507,41 @@ public class ChickenController : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-        //Si el Triger al que entramos es la zona de interacci�n
-        if (collision.tag == "PlayerInteractionZone")
+        //Si el Triger al que entramos es la zona de COMIDA
+        if (collision.CompareTag("Food"))
         {
-            //Obtenemos el PickupController del PlayerBody (Padre del Triger)
-            //para asignarle que este ser� el Objeto a coger.
-            collision.GetComponentInParent<InteractionController>().targetObject = this.gameObject;
+            // Activamos Flag de "Esta comiendo"
+            bIsEating = true;
 
-            //Controlamos la animacion de cuando se hace Hover
-            mSpritesController.EnterHoverAnimation();
-
+            //Desactivamos flag de "Caminanndo"
+            bIsWalking = false;
         }
 
-        //Si el Triger al que entramos es la zona de interacción
+        //Si el Triger al que entramos es la zona de APLAUSO
         if (collision.tag == "ApplauseArea")
         {
-            //Multiplicamos la velocidad por 1.5 segundos...
+            //Despertarnos
+            WakeUp();
+
+            //Multiplicamos la velocidad por 0.75 segundos...
             mSelfMovementToTarget.MultiplySpeedTemporary(0.75f);
 
-            // Si el área de aplauso está activa, despertarnos (esto cubre casos donde
-            // el overlap desde PlayerController no alcanzó al chicken por diferencias de collider)
-            WakeUpForApplause();
-
-            //Hacemos que se aleje del círculo de aplauso
+            //Hacemos que se aleje del centro del aplauso
             RunAwayFromApplause(collision.transform.parent.position);
         }
 
+        //Si se llega
         if (collision.CompareTag("ChickenLimitZone"))
         {
             Destroy(this.gameObject);
         }
     }
 
-    //------------------------------------------------------------------------------------------
-
-    private void OnTriggerExit(Collider collision)
-    {
-        //Si el Triger del que salimos es la zona de interacci�n
-        if (collision.tag == "PlayerInteractionZone")
-        {
-            //Si la ultima referencia que tenia la zona era la de este objeto...
-            if (collision.GetComponentInParent<InteractionController>().targetObject == this.gameObject)
-            {
-                //Obtenemos el PickupController del Player (Padre del Triger)
-                //para indicar que ya no habr� ningun Objeto Asignado.
-                collision.GetComponentInParent<InteractionController>().targetObject = null;
-
-                //Controlamos la animacion de cuando se hace Hover
-                mSpritesController.ExitHoverAnimation();
-            }
-        }
-    }
 
     //-----------------------------------------------------------------------------------
 
     public void Die()
     {
-        //Seteamos que la probabilidad de ecape este al 0%
-        dragEscapeProb = dragEscapeMinProb;
-
         //Llamamos al Evento de Pollito muerto
         DayStatusManager.Instance.TriggerEvent_OnChickenDeath();
 
@@ -614,37 +556,15 @@ public class ChickenController : MonoBehaviour
     }
 
     //-----------------------------------------------------------------------------------
-    // FUNCION: Despertar del sueño
-    public void WakeFromSleep()
-    {
-        if (!sleepingFlag) return;
-
-        sleepingFlag = false;
-        // NOTA: no reseteamos tempSleeping ni groupingToSleep aquí
-        // Solo ValidateTemperature() controla eso cuando sale del estado de frío
-        mSpritesController.SetSleeping(false);
-
-        // Reiniciamos el timer para volver a intentar dormir en el futuro
-        sleepCheckTimer = Random.Range(12f, 26f);
-    }
-
-    //-----------------------------------------------------------------------------------
     // FUNCION: Hacer que el pollo se aleje del círculo de aplauso
 
     public void RunAwayFromApplause(Vector3 applauseCircleCenter)
     {
-        // Si está durmiendo por frío, despertarlo primero
-        if (inColdSleepState)
+        // Si está durmiendo despertarlo primero
+        if (bIsSleeping)
         {
-            inColdSleepState = false;
-            tempSleeping = false;
-            groupingToSleep = false;
-            sleepingFlag = false;
-            mSpritesController.SetSleeping(false);
+            WakeUp();
         }
-
-        //Aumentamos la velocidad temporalmente para escapar
-        mSelfMovementToTarget.MultiplySpeedTemporary(0.75f);
 
         //Calculamos la dirección de escape (opuesta al centro del círculo de aplauso)
         Vector3 runAwayDirection = (transform.position - applauseCircleCenter).normalized;
@@ -655,61 +575,58 @@ public class ChickenController : MonoBehaviour
 
     //-----------------------------------------------------------------------------------
     // FUNCION: Validar temperatura del corral y forzar comportamiento
-    private void ValidateTemperature(float currentTemperature)
+    private void OnTemperatureChangedDelegate(float currentTemperature)
     {
-        // MUERTE POR CALOR EXTREMO
-        if (currentTemperature > temperatureDeathThreshold && isAlive)
+        //Siempre y cuando el Pollo este vivo
+        if (bIsAlive)
         {
-            Die();
-            return;
+            // MUERTE POR CALOR EXTREMO
+            if (currentTemperature > temperatureDeathThreshold && bIsAlive)
+            {
+                Die();
+                return;
+            }
+
+            // Si está por debajo del umbral de dormir Y no está en sueño por frío
+            if (currentTemperature < temperatureSleepThreshold && !bInColdSleepState)
+            {
+                // En caso aun no este durmiendo
+                if (!bIsSleeping)
+                {
+                    //Lo mandamos a dormir por frio
+                    SleepForCold();
+                }
+                
+            }
+            // Si está por encima del umbral de despertar Y está en sueño por frío
+            else if (currentTemperature >= temperatureWakeThreshold && bInColdSleepState)
+            {
+                // Salir de sueño
+                WakeUp();
+
+                //Configuramos nuevo punto de movimiento
+                mSelfMovementToTarget.SetNewRandomWaypoint();
+            }
         }
 
-        // Si está por debajo del umbral de dormir Y no está en sueño por frío
-        if (currentTemperature < temperatureSleepThreshold && !inColdSleepState)
-        {
-            // Activar sueño por frío
-            inColdSleepState = true;
-            tempSleeping = true;
-            sleepingFlag = true;
-
-            // Cancelar acciones que impidan dormir
-            GetComponent<PickeableObject>().isPickeable = true;
-            eatingFlag = false;
-            
-            // Detener movimiento y activar animación
-            mSelfMovementToTarget.StopMoving();
-            mSpritesController.SetSleeping(true);
-            sleepDurationTimer = Random.Range(10f, 30f);
-        }
-        // Si está por encima del umbral de despertar Y está en sueño por frío
-        else if (currentTemperature >= temperatureWakeThreshold && inColdSleepState)
-        {
-            // Salir de sueño por frío
-            inColdSleepState = false;
-            tempSleeping = false;
-            groupingToSleep = false;
-            // Despertar definitivamente y resetear timer de sueño
-            sleepingFlag = false;
-            mSpritesController.SetSleeping(false);
-            sleepCheckTimer = Random.Range(12f, 26f);
-            mSelfMovementToTarget.SetNewRandomWaypoint();
-        }
     }
 
-    //-----------------------------------------------------------------------------------
-    // FUNCION: Forzar despertar (usado por aplausos)
-    public void WakeUpForApplause()
-    {
-        // Limpiar estados de sueño por temperatura
-        inColdSleepState = false;
-        tempSleeping = false;
-        groupingToSleep = false;
+    // ----------------------------------------------------------
 
-        // Asegurar que el pollo está despierto visualmente y en lógica
-        sleepingFlag = false;
+    public void WakeUp()
+    {
+        // Despertar definitivamente y resetear timer de sueño
+        bInColdSleepState = false;
+        bInTempSleeping = false;
+        bIsSleeping = false;
+
         mSpritesController.SetSleeping(false);
 
-        // Evitar que se vuelvan a dormir inmediatamente
         sleepCheckTimer = Random.Range(12f, 26f);
+
+        //Activamos flag de "caminando"
+        bIsWalking = true;
+
+        Debug.Log("Me Desperté");
     }
 }

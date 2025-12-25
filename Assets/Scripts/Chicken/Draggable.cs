@@ -47,7 +47,7 @@ public class Draggable : MonoBehaviour
         mRb.isKinematic = true;
 
         // Entramos a animacion de Drag
-        GetComponent<SpritesController>().EnterDragAnimation();
+        GetComponent<SpritesController>().SetTargetedColor();
 
         //Capturamos la posicion Offset del Mouse restandole a la posicon del objeto la posicion del mouse, obteniendo la diferencia
         //mousePositionOffset = gameObject.transform.position - MousePositionn3D.Instance.GetMouseWorldPosition();
@@ -74,7 +74,7 @@ public class Draggable : MonoBehaviour
         //GetComponent<ChickenController>().isPicked = false;
 
         // Devolvemos la animacion a la normalidad
-        GetComponent<SpritesController>().SetSpriteBackToNormal();
+        GetComponent<SpritesController>().SetDefaultColor();
         
 
         //Desemparentamos el objeto con la Zona de Interacción

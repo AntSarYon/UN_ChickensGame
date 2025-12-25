@@ -35,7 +35,7 @@ public class SelfMovementToTarget : MonoBehaviour
     //Componente RigidBody
     private Rigidbody mRb;
     private ChickenStats mChickenStats;
-    private ChickenController mChickenController;
+    private ChickenController chickController;
 
     #endregion
 
@@ -48,6 +48,9 @@ public class SelfMovementToTarget : MonoBehaviour
     {
         //Obtencion de componentes
         mRb = GetComponent<Rigidbody>();
+
+        // Obtenemos referencia al Chicken Controller (principal)
+        chickController = GetComponent<ChickenController>();
 
         //Inicializamos el multiplicador de velocidad en 1
         speedMultiplier = 1;
@@ -70,6 +73,32 @@ public class SelfMovementToTarget : MonoBehaviour
             maxZDistanceToTop = currentYard.TopLimit;
         }
 
+        //Definimos un nuevo destino aleatorio para el pollito
+        SetNewRandomWaypoint();
+
+    }
+
+    // --------------------------------------------------------------------------------------
+
+    void FixedUpdate()
+    {
+        //Si el Pollito esta vivo
+        if (chickController.bIsAlive)
+        {
+            //Si el Flag de Caminando, esta activo
+            if (chickController.bIsWalking)
+            {
+                //Seteamos la direccion de Movimiento
+                SetMovementDirection();
+
+                //Hacemos que el Pollito se Mueva hacia su Target de Movimiento (randomWaypoint o Target)
+                MoveToTarget();
+
+                //Revisamos si es que necesita un nuevo RandomWaypoint (ya llegó al anterior)
+                CheckIfNeedNewRandomWaypoint();
+            }
+        }
+        
     }
 
     //-----------------------------------------------------------------------------------
@@ -95,7 +124,7 @@ public class SelfMovementToTarget : MonoBehaviour
 
     public void StopMoving()
     {
-        //AZsignamos 0 velocidad
+        //Asignamos 0 velocidad
         mRb.velocity = new Vector3(
             0,
             mRb.velocity.y,
@@ -148,6 +177,7 @@ public class SelfMovementToTarget : MonoBehaviour
         randomWaypoint = new Vector3(newRandomX, 0.5f, newRandomZ);
     }
 
+    // FUNCION - Definir nuevo destino aleatorio (HACIA LA DERECHA)
     public void SetNewRandomWaypointToRight(float leftXLimit)
     {
         //Obtenemos nuevas coordenadas Random, considirando la limitante de X
@@ -158,6 +188,7 @@ public class SelfMovementToTarget : MonoBehaviour
         randomWaypoint = new Vector3(newRandomX, 0.5f, newRandomZ);
     }
 
+    // FUNCION - Definir nuevo destino aleatorio (HACIA LA IZQUIERDA)
     public void SetNewRandomWaypointToLeft(float rightLimitX)
     {
         //Obtenemos nuevas coordenadas Random, considirando la limitante de X
@@ -176,12 +207,12 @@ public class SelfMovementToTarget : MonoBehaviour
         speedMultiplier = 3.25f;
 
         //Devolveremos la velocidad a la normalidad tras haber pasado X segundos.
-        Invoke(nameof(SetSpeedMultiplierBackToNormal), timeForRun);
+        Invoke(nameof(SetDefaultSpeedMultiplier), timeForRun);
     }
 
     //-----------------------------------------------------------------------------------
     // FUNCION - Devolver el multiplicador de velocidad a 1 
-    public void SetSpeedMultiplierBackToNormal()
+    public void SetDefaultSpeedMultiplier()
     {
         //Devolvemos el multiplicador de velocidad a 1
         speedMultiplier = 1;
@@ -206,19 +237,9 @@ public class SelfMovementToTarget : MonoBehaviour
 
         //Asignamos la dirección de movimiento hacia ese punto
         moveDirection = (randomWaypoint - transform.position).normalized;
-    }
 
-    //-----------------------------------------------------------------------------------
-    // FUNCION - Mover hacia un punto específico (usada para agruparse por temperatura)
-    public void MoveToPoint(Vector3 point)
-    {
-        // Clamp point a límites del corral
-        Vector3 clamped = point;
-        clamped.x = Mathf.Clamp(clamped.x, maxXDistanceToLeft, maxXDistanceToRight);
-        clamped.z = Mathf.Clamp(clamped.z, maxZDistanceToBottom, maxZDistanceToTop);
-
-        randomWaypoint = clamped;
-        moveDirection = (randomWaypoint - transform.position).normalized;
+        //Aumentamos la velocidad temporalmente para escapar
+        MultiplySpeedTemporary(0.75f);
     }
 
     #endregion

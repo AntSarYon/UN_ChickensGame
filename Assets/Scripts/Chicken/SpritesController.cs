@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SpritesController : MonoBehaviour
@@ -9,24 +10,11 @@ public class SpritesController : MonoBehaviour
 
     //Colores para cuando se interactua con el pollo
     private Color defaultColor;
-    private Color draggedColor = Color.gray;
-    private Color fightingColor = Color.red;
-    private Color starvingColor = Color.red;
-
-    //Vector con la escala original del pollito
-    private Vector3 originalScale;
-    private Vector3 draggedScale = new Vector3(1.35f, 1.35f, 1.35f);
+    private Color targetedColor = Color.gray;
 
     //UI del pollito
     [SerializeField] private ChickenUI chickenUI;
 
-    // Flag Modo starving
-    private bool bStarvingModeOn;
-
-    private float starvingInterpolation = 0;
-    private float starvingSpeed = 2;
-    // Flag de "Debe volverse volviendose rojo"
-    private bool mustTurnRed = false;
 
     #endregion
 
@@ -37,7 +25,7 @@ public class SpritesController : MonoBehaviour
     private SpriteRenderer mSrenderer;
     private Rigidbody mRigidbody;
     private Animator mAnimator;
-    private ChickenStats mChickenStats;
+    private ChickenController chickController;
 
     #endregion
 
@@ -52,13 +40,9 @@ public class SpritesController : MonoBehaviour
         mSrenderer = GetComponent<SpriteRenderer>();
         mRigidbody = GetComponent<Rigidbody>();
         mAnimator = GetComponent<Animator>();
-        mChickenStats = GetComponent<ChickenStats>();
 
-        // El flag de "modo starving" empieza en false
-        bStarvingModeOn = false;
-        starvingInterpolation = 0;
-        starvingSpeed = 2;
-        mustTurnRed = false;
+        // Obtenemos referencia al Chicken Controller (principal)
+        chickController = GetComponent<ChickenController>();
     }
 
     //-----------------------------------------------------------------------------------
@@ -69,101 +53,24 @@ public class SpritesController : MonoBehaviour
         defaultColor = mSrenderer.color;
 
         //Asignacion de color Gris para cuando esta siendo sujetado
-        draggedColor = Color.gray;
-
-        //Almacenamos la escala original del pollito
-        originalScale = transform.localScale;
+        targetedColor = Color.gray;
 
     }
+
+    // -------------------------------------------------------------
 
     void Update()
     {
-        // Controlamos (si se requiere) la animacion de starving
-        ControlStarvingAnim();
-                
-    }
-
-    //----------------------------------------------------------------------------------------
-    // FUNCION: Controlar la Animacion de Starving
-
-    private void ControlStarvingAnim()
-    {
-        //Si el "Modo Starving" esta activo...
-        if (bStarvingModeOn)
-        {
-            //Si el flag de "Debe cambiar a Rojo" esta activo
-            if (mustTurnRed)
-            {
-                // Si la interpolacion aun es menor a 1 (no llega a rojo)
-                if (starvingInterpolation < 1)
-                {
-                    //Incrementamos el valor de interpolacion
-                    starvingInterpolation += Time.deltaTime * starvingSpeed;
-                }
-                //En caso ya haya llegado a Rojo...
-                else
-                {
-                    //Desactivamos Flag de "Debe hacerse rojo"
-                    mustTurnRed = false;
-                }
-            }
-            // En caso el flag este desactivado
-            else
-            {
-                // Si el valor de interpolacion aun es mayor que 0
-                if (starvingInterpolation > 0)
-                {
-                    // Reducimos el valor de interpolacion
-                    starvingInterpolation -= Time.deltaTime * starvingSpeed;
-                }
-                // En caso ya este en 0
-                else
-                {
-                    // Activamos Flag de "Debe hacerse rojo"
-                    mustTurnRed = true;
-                }
-            }
-
-            //Actualizamos el Color seg{un corresponda
-            mSrenderer.color = Color.Lerp(defaultColor, starvingColor, starvingInterpolation);
-        }
-
-        //En caso No estar en "Modo Starving"
-        else
-        {
-            //El valor de interpolacion vuelve a 0
-            starvingInterpolation = 0;
-
-            //Activamos Flag de "Debe converitrse en Rojo" para cuando se requiera nuevamente
-            mustTurnRed = true;
-        }
-    }
-
-    //----------------------------------------------------------------------------------------
-    // FUNCION DELEGADA: Dependiendo de la Orden de dormir; se activa o desactiva la Animacion
-
-    private void OnSleepOrderClickedDelegate(bool sleepOrder)
-    {
-        if (sleepOrder)
-        {
-            mAnimator.SetTrigger("GoToSleep");
-            mAnimator.SetBool("Sleeping", true);
-        }
-
-        //Si se ha recibido al orden de dormir...
-        else if (!sleepOrder)
-        {
-            //Actualizamos el SleepingFlag en base a si la orden esta activa o no
-            mAnimator.SetTrigger("WakeUp");
-            mAnimator.SetBool("Sleeping", false);
-        }
-        
+        //Controlamos la animacion de Caminar
+        ManageWalkingAnim();
     }
 
     //-----------------------------------------------------------------------------------
-    // FUNCION: Forzar estado de dormir desde fuera (uso por ChickenController)
+    // FUNCION: Conntrolar animacion de dormir
+
     public void SetSleeping(bool sleep)
     {
+        //Dependiendo del parametro ingresado, activamos / desactivamos la animacion de Sleep
         if (sleep)
         {
             mAnimator.SetTrigger("GoToSleep");
@@ -175,14 +82,12 @@ public class SpritesController : MonoBehaviour
             mAnimator.SetBool("Sleeping", false);
         }
     }
-
-
     //-----------------------------------------------------------------------------------
 
     public void ManageWalkingAnim()
     {
-        //Si el Pollito tiene Velocidad en su RB
-        if (GetComponent<PickeableObject>().isPickeable && mRigidbody.velocity != Vector3.zero)
+        //Si el Flag de "caminando" esta activo
+        if (chickController.bIsWalking)
         {
             //Activams flag de animacion 'Is Walking'
             mAnimator.SetBool("IsWalking", true);
@@ -199,26 +104,12 @@ public class SpritesController : MonoBehaviour
             }
         }
 
-        //En caso de que la Velocidad si sea igual a 0...
+        //Si el Flag de "caminando" esta Desactivado
         else
         {
             //Desactivamos flag de animacion 'Is Walking'
             mAnimator.SetBool("IsWalking", false);
         }
-    }
-
-    //-----------------------------------------------------------------------------------
-
-    public void EnableStarvingAnim()
-    {
-        // Activamos el flag de Modo Starving
-        bStarvingModeOn = true;
-    }
-
-    public void DisableStarvingAnim()
-    {
-        // Desactivamos el flag de Modo Starving
-        bStarvingModeOn = false;
     }
 
     //-----------------------------------------------------------------------------------
@@ -259,75 +150,53 @@ public class SpritesController : MonoBehaviour
 
     public void PlayDeath()
     {
-        // Desactivamos la Animacion de "Starving"
-        DisableStarvingAnim();
-
         //Regresamos su Color a la normalidad
-        mSrenderer.color = defaultColor;
+        SetDefaultColor();
 
         //Activamos trigger de Muerte
         mAnimator.SetTrigger("Die");
     }
 
     //-----------------------------------------------------------------------------------
-    // Funcion - Controlar Animacion de Dragged 
+    // Funcion - Controlar Animacion de Targeted
 
-    public void EnterHoverAnimation()
+    public void SetTargetedColor()
     {
-        //Cambiamos su color al de Dragged...
-        mSrenderer.color = draggedColor;
+        //Asignamos el color de agarre;
+        mSrenderer.color = targetedColor;
     }
 
-    public void ExitHoverAnimation()
+    //-----------------------------------------------------------------------------------
+
+    public void SetDefaultColor()
     {
         //Asignamos el color de por defecto;
         mSrenderer.color = defaultColor;
     }
 
-
-    //-----------------------------------------------------------------------------------
-    // Funcion - Cuando oprimimos el Click
-
-    public void EnterDragAnimation()
+    // -------------------------------------------------------------------------------------
+    private void OnTriggerEnter(Collider collision)
     {
-        //Asignamos el color de agarre;
-        mSrenderer.color = draggedColor;
-
-        //Le asignamos la escala de Agarre
-        transform.localScale = draggedScale;
+        //Si el Triger al que entramos es la zona de interacci�n
+        if (collision.tag == "PlayerInteractionZone")
+        {
+            //Controlamos la animacion de cuando se hace Hover
+            SetTargetedColor();
+        }
     }
 
-    //-----------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------
 
-    public void SetSpriteBackToNormal()
+    private void OnTriggerExit(Collider collision)
     {
-        //Asignamos el color de por defecto;
-        mSrenderer.color = defaultColor;
 
-        //Le devolvemos la escala orignal
-        transform.localScale = originalScale;
-    }
+        //Si el Triger del que salimos es la zona de interacci�n
+        if (collision.tag == "PlayerInteractionZone")
+        {
+            //Controlamos la animacion de cuando se hace Hover
+            SetDefaultColor();
 
-    //-----------------------------------------------------------------------------------
-
-    public void EnterFightAnim()
-    {
-        //Asignamos el color de agarre;
-        mSrenderer.color = fightingColor;
-
-        //Mostramos la UI de la pelea
-        //chickenUI.ShowFightInfo();
-    }
-
-    //-----------------------------------------------------------------------------------
-
-    public void ExitFightAnim()
-    {
-        //Asignamos el color de agarre;
-        mSrenderer.color = defaultColor;
-
-        //Ocultamos la UI de la pelea
-        //chickenUI.HideFightInfo();
+        }
     }
 
     #endregion

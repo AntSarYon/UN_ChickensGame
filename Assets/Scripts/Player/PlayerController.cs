@@ -15,6 +15,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform orientationBody;
     [SerializeField] private SpriteRenderer spriteBody;
 
+    [Header("Clap Effect")]
+    [SerializeField] private GameObject clapEffectGameObject;
+    private Animator clapAnimator;
+
     [Header("Area de influencia")]
     [SerializeField] private Transform applauseArea;
     [SerializeField] private Vector3 maxRadioScale = new Vector3(4.45f, 0.0085f, 4.45f);
@@ -46,7 +50,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody mRb;
     private AudioSource mAudioSource;
 
-    [Header("Animator")]
+    [Header("Animator de Sprite")]
     [SerializeField] private Animator mAnimator;
 
     //Vector Input de Movimiento
@@ -54,10 +58,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Clips de Audio")]
     [SerializeField] private AudioClip ApplauseClip;
-
-    [Header("Clap Effect")]
-    [SerializeField] private GameObject clapEffectGameObject;
-    private Animator clapAnimator;
+    
 
     // ----------------------------------------------------
 
@@ -85,25 +86,9 @@ public class PlayerController : MonoBehaviour
     {
         // Almacenamos la velocidad original
         origSpeed = speed;
-        currentStamina = maxStamina;
-        // Si no se asignó `pUI` en el Inspector, intentamos localizarlo en hijos o en la escena
-        if (pUI == null)
-        {
-            pUI = GetComponentInChildren<PlayerUI>();
-            if (pUI == null)
-            {
-                pUI = FindObjectOfType<PlayerUI>();
-            }
 
-            if (pUI == null)
-            {
-                Debug.LogWarning("PlayerController: pUI no asignado y no se encontró un PlayerUI en la escena.");
-            }
-            else
-            {
-                Debug.Log("PlayerController: pUI auto-asignado desde la escena.");
-            }
-        }
+        //Inicializamos la stamina al maximo
+        currentStamina = maxStamina;
 
         // Obtener referencia al Animator del GameObject de clap si está asignado
         if (clapEffectGameObject != null)
@@ -378,7 +363,7 @@ public class PlayerController : MonoBehaviour
                     if (sqrDist <= radius * radius)
                     {
                         // Forzar despertar (maneja tanto sueño aleatorio como por temperatura)
-                        ch.WakeUpForApplause();
+                        ch.WakeUp();
 
                         // Hacer que salga del círculo
                         ch.RunAwayFromApplause(applauseArea.position);

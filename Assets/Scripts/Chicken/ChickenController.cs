@@ -312,7 +312,7 @@ public class ChickenController : MonoBehaviour
                 bInTempSleeping = false;
 
                 // Desactivamos animaciones de Dormir
-                //mSpritesController.SetSleeping(false);
+                mSpritesController.SetSleeping(false);
             }
 
             //Independientemente de lo que este haciendo...
@@ -346,8 +346,8 @@ public class ChickenController : MonoBehaviour
                 // Activamos el flag de "Sobre el suelo"
                 bOnFloor = true;
 
-                //Si no esta dormido a causa del frio...
-                if (!bIsSleeping)
+                //Si no esta dormido a causa del frio, y no esta comiendo
+                if (!bIsSleeping && !bIsEating)
                 {
                     //Activa su flag de caminar
                     bIsWalking = true;
@@ -485,12 +485,12 @@ public class ChickenController : MonoBehaviour
     {
         if (bIsAlive)
         {
-            //Si dejamos de tener contacto con el suelo...
+            /*//Si dejamos de tener contacto con el suelo...
             if (collision.gameObject.CompareTag("Floor"))
             {
                 // Desactivamos el flag de "Sobre el suelo"
                 bOnFloor = false;
-            }
+            }*/
 
             //Si ha dejado de chocar con otro pollito
             if (collision.gameObject.CompareTag("Chicken"))
@@ -514,7 +514,7 @@ public class ChickenController : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-        //Si el Triger al que entramos es la zona de COMIDA
+        /*//Si el Triger al que entramos es la zona de COMIDA
         if (collision.CompareTag("Food"))
         {
             // Activamos Flag de "Esta comiendo"
@@ -522,7 +522,8 @@ public class ChickenController : MonoBehaviour
 
             //Desactivamos flag de "Caminanndo"
             bIsWalking = false;
-        }
+
+        }*/
 
         //Si el Triger al que entramos es la zona de APLAUSO
         if (collision.tag == "ApplauseArea")

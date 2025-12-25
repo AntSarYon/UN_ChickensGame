@@ -30,8 +30,8 @@ public class FoodsManager : MonoBehaviour
             Vector3 auxFoodPosition = arrFoods[i].transform.position;
             float auxDistance = Vector3.Distance(chickenPosition.position, auxFoodPosition);
 
-            //Si la distancia de este comedero es menor a la ya seteada...
-            if (auxDistance < closestDistance)
+            //Si la distancia de este comedero es menor a la ya seteada, y no tiene sus slots llenos
+            if ((auxDistance < closestDistance) && !arrFoods[i].bFullSlots)
             {
                 //Asignamos ese comedero
                 closestFood = arrFoods[i];

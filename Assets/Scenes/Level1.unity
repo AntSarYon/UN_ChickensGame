@@ -2791,6 +2791,10 @@ PrefabInstance:
       propertyPath: yard
       value: 
       objectReference: {fileID: 1375929623}
+    - target: {fileID: 3055816948352126810, guid: 2f2be28f225b56145925754c4d37555f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3153057258714522885, guid: 2f2be28f225b56145925754c4d37555f, type: 3}
       propertyPath: m_Camera
       value: 
@@ -11308,7 +11312,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 988805130771532364, guid: 2f2be28f225b56145925754c4d37555f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.7838676
+      value: 2.783868
       objectReference: {fileID: 0}
     - target: {fileID: 988805130771532364, guid: 2f2be28f225b56145925754c4d37555f, type: 3}
       propertyPath: m_LocalRotation.w

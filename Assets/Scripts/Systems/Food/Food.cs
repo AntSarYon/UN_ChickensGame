@@ -20,13 +20,10 @@ public class Food : Interactable
     //Lista de GameObjects (Pollos) que estan chocando con la Comida
     private List<GameObject> chickensList = new List<GameObject>();
 
-    [Header("Slots para Pollito")]
-    [SerializeField] private List<Transform> slotsList = new List<Transform>();
-
-    public bool bFullSlots;
+    [Header("Gestor de Slots")]
+    [SerializeField] private FoodSlots slotsManager;
 
     //Referencia a Componentes
-    private Collider2D mCollider;
     private Animator mAnimator;
 
     //--------------------------------------------------------------------------------------
@@ -34,13 +31,11 @@ public class Food : Interactable
     void Awake()
     {
         //Obtenemos referencia a componentes
-        mCollider = GetComponent<Collider2D>();
         mAnimator = GetComponent<Animator>();
 
         interactionMessage = "Llenar";
 
-        // Flag, Slots llenos
-        bFullSlots = false;
+        
     }
 
     //--------------------------------------------------------------------------------------
@@ -75,59 +70,6 @@ public class Food : Interactable
 
             //Reducimos el valor del Slider, en base a cuantos pollitos estan comiendo, y a la velocidad definida
             //mFoodLevelSlider.value -= eatingChicks * Time.deltaTime * foodDecreaseSpeed;
-        }
-    }
-
-    //--------------------------------------------------------------------------------------
-
-    private new void OnTriggerEnter(Collider other)
-    {
-        //Si el polito entra en la zona...
-        if (other.CompareTag("Chicken"))
-        {
-            //Si aun hay menos de 5 pollitos en el comedero
-            if (chickensList.Count < 5)
-            {
-                //Lo Agregamos a la Lista
-                chickensList.Add(other.gameObject);
-
-                //Activamos su flag de "Comiendo"
-                other.GetComponent<ChickenController>().bIsWalking = false;
-                other.GetComponent<ChickenController>().bIsEating = true;
-
-                //Obtenemos el indice de Slot que le corresponde a este pollito 
-                int slotIndex = chickensList.Count - 1;
-
-                // Posicionamos a pollito en el Slot
-                other.transform.position = slotsList[slotIndex].position;
-
-                Debug.Log("Se ha agregado el Pollito al Slot");
-
-                //Si se ha llegado al limite de pollos (5) activaoms flag de FULL
-                if(chickensList.Count == 5) bFullSlots = true;
-            }
-            else
-            {
-                //Mantenemos desactivado su flag de "Comiendo"
-                other.GetComponent<ChickenController>().bIsEating = false;
-            }
-
-        }
-    }
-
-    //--------------------------------------------------------------------------------------
-
-    private void OnCollisionExit(Collision collision)
-    {
-        //Si el objeto con el que deja de colisionar es un Pollo...
-        if (collision.gameObject.CompareTag("Chicken"))
-        {
-            //Si el pollo estaba en la lista...
-            if (chickensList.Contains(collision.gameObject))
-            {
-                //Lo quitamos de la Lista
-                chickensList.Remove(collision.gameObject);
-            }
         }
     }
 
@@ -177,6 +119,20 @@ public class Food : Interactable
 
     }
 
+    // -------------------------------------------------------------------
+
+    public bool HasFreeSlots()
+    {
+        // Nos basamos en si los Slots estan Full (retorna negacion)
+        return !slotsManager.bFullSlots;
+    }
+
     //--------------------------------------------------------------------------------------
+
+    public void ReleaseChicken(ChickenController chicken)
+    {
+        //Llamamos a la funcion de Liberacion del Gestor de Sots
+        slotsManager.ReleaseChicken(chicken);
+    }
 
 }

@@ -167,6 +167,9 @@ public class ChickenSpawner : MonoBehaviour
         // Eliminar los pollos seleccionados
         foreach (ChickenController ch in chickensToRemove)
         {
+            //Hacemos que el polito abandonde su cmedero (si tiene)
+            ch.Try_AbandonFood();
+
             Destroy(ch.gameObject);
         }
 

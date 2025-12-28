@@ -34,6 +34,8 @@ public class InteractionController : MonoBehaviour
             // Si el objeto es interactuable
             if (targetObject.GetComponent<Interactable>())
             {
+                Debug.Log("Objeto en frente");
+
                 //Si pulsamos la tecla E...
                 if (Input.GetKeyDown(KeyCode.E))
                 {

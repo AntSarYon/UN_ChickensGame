@@ -26,19 +26,26 @@ public class FoodsManager : MonoBehaviour
         //Por cada comedero existente...
         for (int i = 0; i < arrFoods.Length; i++)
         {
-            //Obtencion la distancia del comedero actual al pollito
-            Vector3 auxFoodPosition = arrFoods[i].transform.position;
-            float auxDistance = Vector3.Distance(chickenPosition.position, auxFoodPosition);
-
-            //Si la distancia de este comedero es menor a la ya seteada, y no tiene sus slots llenos
-            if ((auxDistance < closestDistance) && !arrFoods[i].bFullSlots)
+            // Si el comedero Aun tiene Slots
+            if (arrFoods[i].HasFreeSlots())
             {
-                //Asignamos ese comedero
-                closestFood = arrFoods[i];
-                closestDistance = auxDistance;
+                //Obtencion la distancia del comedero actual al pollito
+                Vector3 auxFoodPosition = arrFoods[i].transform.position;
+                float auxDistance = Vector3.Distance(chickenPosition.position, auxFoodPosition);
+
+                //Si la distancia de este comedero es menor a la ya seteada, y no tiene sus slots llenos
+                if ((auxDistance < closestDistance))
+                {
+                    //Asignamos ese comedero
+                    closestFood = arrFoods[i];
+                    closestDistance = auxDistance;
+                }
             }
+
+            //Si el comedero no tiene slots libre, ni siquiera entra en consideracion
         }
 
+        //Retorna el Transform del Comedero mas cercano
         return closestFood.transform;
     }
 

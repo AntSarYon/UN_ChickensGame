@@ -14,7 +14,6 @@ public class ChickenController : MonoBehaviour
     [Header("Flags de Estados")]
     [HideInInspector] public bool bIsAlive = true;
     [HideInInspector] public bool bIsWalking = false;
-    [HideInInspector] public bool bIsEating = false;
     [HideInInspector] public bool bIsStarving = false;
     [HideInInspector] public bool bIsSleeping = false;
     [HideInInspector] public bool bIsAngry = false;
@@ -26,6 +25,10 @@ public class ChickenController : MonoBehaviour
 
     [HideInInspector] public bool bInTempSleeping = false; // Flag de Dormido temporalmente
     [HideInInspector] public bool bInColdSleepState = false;  // Dormido por frio
+
+    [HideInInspector] public bool bIsEating = false;
+    // Referencia a Cmedero del que esta comienndo
+    [HideInInspector] public Food assignedFood;
 
     [Header("Corral")]
     public Yard assignedYard;
@@ -83,6 +86,8 @@ public class ChickenController : MonoBehaviour
         bIsAngry = false;
         bIsFighting = false;
 
+        //Empieza con la referencia a comedero vacia
+        assignedFood = null;
         
     }
 
@@ -636,5 +641,39 @@ public class ChickenController : MonoBehaviour
         bIsWalking = true;
 
         Debug.Log("Me Desperté");
+    }
+
+    // --------------------------------------------
+
+    public void Try_AssignFood(Food targetFood, Transform slot)
+    {
+        // Si no se esta asignado a ningun comedero...
+        if (assignedFood == null)
+        {
+            // Modificamos los flags de estado de pollito
+            bIsWalking = false;
+            bIsEating = true;
+
+            //Nos asignamos al comedero recibido como parametro
+            assignedFood = targetFood;
+
+            //Modificamos la posicion del Pollito para que este en el Slot
+            transform.position = new Vector3(
+                slot.position.x,
+                transform.position.y,
+                slot.position.z
+                );
+        }
+    }
+
+    public void Try_AbandonFood()
+    {
+        // Si se esta consuimendo comida de un comedero...
+        if (assignedFood != null)
+        {
+            //Hacemos que el comedero del que estamos consumiendo nos libere
+            assignedFood.ReleaseChicken(this);
+        }
+        
     }
 }

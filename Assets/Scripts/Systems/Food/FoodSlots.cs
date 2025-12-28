@@ -174,6 +174,8 @@ public class FoodSlots : MonoBehaviour
                 // Le asignamos el ChickenControlller
                 dicSlotsChicks[slot] = chicken;
 
+                GameSoundsController.Instance.PlayBubbleSound();
+
                 //Hacemos que el Poolito almacene referencia a este comedero
                 chicken.Try_AssignFood(parentFood, slot);
 

@@ -87,6 +87,12 @@ public class GameSoundsController : MonoBehaviour
         mAudioSource.PlayOneShot(arrChickenSpawnSounds[screamIndex], 0.65f);
     }
 
+    public void PlayBubbleSound()
+    {
+        //Reproducimos sonido de Burbuja
+        mAudioSource.PlayOneShot(bubbleSound, 0.45f);
+    }
+
     public void PlayYardChangeSound()
     {
         //Reproducimos sonido de Venta de Pollo

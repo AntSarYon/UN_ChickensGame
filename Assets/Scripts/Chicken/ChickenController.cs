@@ -137,7 +137,7 @@ public class ChickenController : MonoBehaviour
         //Activamos la annimacion de dormido
         mSpritesController.SetSleeping(true);
 
-        Debug.Log("Me dormi porque hace frio");
+        ////Debug.log("Me dormi porque hace frio");
     }
 
     // -------------------------------------------------------------------
@@ -162,7 +162,7 @@ public class ChickenController : MonoBehaviour
         //Iniciamos el contador para el tiempo de suenio temporal
         sleepDurationTimer = Random.Range(6f, 18f);
 
-        Debug.Log("Me dormi temporalmente");
+        //Debug.log("Me dormi temporalmente");
     }
 
     //------------------------------------------------------------------------
@@ -230,7 +230,7 @@ public class ChickenController : MonoBehaviour
                     // Si esta en una siesta temporal
                     if (bInTempSleeping)
                     {
-                        Debug.Log("Durmiendo por frio");
+                        //Debug.log("Durmiendo por frio");
                         // Decrementamos timer de sueño
                         sleepDurationTimer -= Time.deltaTime;
 
@@ -249,7 +249,7 @@ public class ChickenController : MonoBehaviour
                     //Si esta comiedo...
                     if (bIsEating)
                     {
-                        Debug.Log("Estoy comiendo");
+                        //Debug.log("Estoy comiendo");
 
                         //Si el Stat de hambre baja de 15
                         if (mChickenStats.hambre < 15)
@@ -264,7 +264,7 @@ public class ChickenController : MonoBehaviour
                         // Si el pollito no tiene hambre
                         if (!bIsStarving)
                         {
-                            Debug.Log("Estooy caminando arbitrariamente");
+                            //Debug.log("Estooy caminando arbitrariamente");
                             //Reducimos el Timer para su siesta espontanea
                             sleepCheckTimer -= Time.deltaTime;
 
@@ -286,7 +286,7 @@ public class ChickenController : MonoBehaviour
                         //Si el pollito SI tiene hambre...
                         else if (bIsStarving)
                         {
-                            Debug.Log("Estoy buscando comida");
+                            //Debug.log("Estoy buscando comida");
 
                             // No inducimos al pollito a dormirse
 
@@ -300,7 +300,7 @@ public class ChickenController : MonoBehaviour
             //En caso si este siendo cargado
             else 
             {
-                Debug.Log("Me estann cargando");
+                //Debug.log("Me estann cargando");
 
                 //Apagamos todos los otros Flags
                 bIsWalking = false;
@@ -332,7 +332,7 @@ public class ChickenController : MonoBehaviour
                 //Reproducimos las Acciones de Muerte.
                 Die();
 
-                Debug.Log("Me mori");
+                //Debug.log("Me mori");
             }
         }
 
@@ -640,7 +640,7 @@ public class ChickenController : MonoBehaviour
         //Activamos flag de "caminando"
         bIsWalking = true;
 
-        Debug.Log("Me Desperté");
+        //Debug.log("Me Desperté");
     }
 
     // --------------------------------------------

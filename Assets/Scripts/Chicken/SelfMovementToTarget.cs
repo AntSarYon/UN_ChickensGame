@@ -199,6 +199,23 @@ public class SelfMovementToTarget : MonoBehaviour
         randomWaypoint = new Vector3(newRandomX, 0.5f, newRandomZ);
     }
 
+    // --------------------------------------------------
+    // FUNCION - Definir nuevo destino en direccion contraria a un obstaculo
+    public void SetNewRandomWaypointInOpositeDirection(Vector3 blockingPosition)
+    {
+        // Si el obstaculo esta hacia la derecha...
+        if (blockingPosition.x > transform.position.x)
+        {
+            SetNewRandomWaypointToLeft(blockingPosition.x);
+        }
+        // Si el obstaculo esta hacia la Izquierda...
+        else if (blockingPosition.x < transform.position.x)
+        {
+
+            SetNewRandomWaypointToRight(blockingPosition.x);
+        }
+    }
+
     //-----------------------------------------------------------------------------------
     // FUNCION - Modificamos la velocidad de movimiento temporalmente
     public void MultiplySpeedTemporary(float timeForRun)

@@ -10,15 +10,6 @@ public class ChickenSpawner : MonoBehaviour
     [SerializeField] private GameObject chickenCobbPrefab;
 
     [Header("Sistema de Eliminación Periódica de Pollos")]
-    [SerializeField] private float eliminationIntervalSeconds = 15f;
-    [SerializeField] private int initialChickenCountToRemove = 2;
-
-    [Header("Incremento de pollos llevados")]
-    [SerializeField] private int chickensToRemoveIncrement = 1; // Puedes setearlo desde el inspector
-    private int currentChickenCountToRemove;
-    private float eliminationTimer = 0f;
-
-    [Header("Reglas de Recolección")]
 
     [Tooltip("Cantidad mínima de pollos que debe tener el corral al momento de llevarse a todos (si hay menos => Game Over)")]
     [SerializeField] private int minChickensRequired = 3;
@@ -32,33 +23,6 @@ public class ChickenSpawner : MonoBehaviour
     {
         DayStatusManager.Instance.OnGenerateNewChickenRoss += OnGenerateNewChickenRossDelegate;
         DayStatusManager.Instance.OnGenerateNewChickenCobb += OnGenerateNewChickenCobbDelegate;
-        eliminationTimer = eliminationIntervalSeconds;
-
-        // Inicializa con el valor base de pollos por remover
-        currentChickenCountToRemove = initialChickenCountToRemove; 
-    }
-
-    // --------------------------------------------------------
-
-    void Update()
-    {
-        // Actualizamos el timer de eliminación
-        eliminationTimer -= Time.deltaTime;
-
-        if (eliminationTimer <= 5 && !TruckController.Instance.bIsArriving)
-        {
-            //Dispara animacion de Camion llegando
-            TruckController.Instance.PlayArrive();
-        }
-
-        // Si el timer llega a 0
-        if (eliminationTimer <= 0f)
-        {
-            RemoveAndReplaceChickens();
-
-            // Reiniciamos el timer
-            eliminationTimer = eliminationIntervalSeconds; 
-        }
     }
 
     // --------------------------------------------------------
@@ -112,81 +76,4 @@ public class ChickenSpawner : MonoBehaviour
     }
 
     // --------------------------------------------------------
-
-    /// <summary>
-    /// Lleva (elimina) aleatoriamente una cantidad de pollos del corral actual y trae nuevos del mismo tipo.
-    /// Si al momento de llevarlos hay menos de `minChickensRequired` -> Game Over.
-    /// </summary>
-    private void RemoveAndReplaceChickens()
-    {
-        // Encontramos todos los pollos
-        ChickenController[] allChickens = FindObjectsOfType<ChickenController>();
-
-        // Filtramos los pollos que están en el corral actual y están vivos
-        List<ChickenController> chickensInCurrentYard = new List<ChickenController>();
-        foreach (ChickenController chicken in allChickens)
-        {
-            if (chicken.assignedYard == Yard.Instance && chicken.bIsAlive)
-            {
-                chickensInCurrentYard.Add(chicken);
-            }
-        }
-
-        // Si hay menos pollos VIVOS que el mínimo requerido -> Trigger Game Over
-        if (chickensInCurrentYard.Count < minChickensRequired)
-        {
-            DayStatusManager.Instance.bGameOver = true;
-            DayStatusManager.Instance.TriggerEvent_GameOver();
-            return;
-        }
-
-        // Ajustar la cantidad a eliminar (si hay menos pollos)
-        int toRemove = Mathf.Min(currentChickenCountToRemove, chickensInCurrentYard.Count);
-
-        // Seleccionar aleatoriamente los pollos a eliminar
-        List<ChickenController> chickensToRemove = new List<ChickenController>();
-        System.Random rng = new System.Random();
-        while (chickensToRemove.Count < toRemove)
-        {
-            int idx = rng.Next(chickensInCurrentYard.Count);
-            var selected = chickensInCurrentYard[idx];
-            if (!chickensToRemove.Contains(selected))
-                chickensToRemove.Add(selected);
-        }
-
-        // Contar cuántos de cada tipo se eliminan
-        int rossCount = 0;
-        int cobbCount = 0;
-
-        foreach (ChickenController ch in chickensToRemove)
-        {
-            if (ch.type != null && ch.type.typeName == "Ross") rossCount++;
-            else cobbCount++;
-        }
-
-        // Eliminar los pollos seleccionados
-        foreach (ChickenController ch in chickensToRemove)
-        {
-            //Hacemos que el polito abandonde su cmedero (si tiene)
-            ch.Try_AbandonFood();
-
-            Destroy(ch.gameObject);
-        }
-
-        // Caamion se va
-        TruckController.Instance.PlayRun();
-
-        // Reemplazar automáticamente los eliminados por nuevos del mismo tipo
-        for (int i = 0; i < rossCount; i++)
-        {
-            OnGenerateNewChickenRossDelegate();
-        }
-        for (int i = 0; i < cobbCount; i++)
-        {
-            OnGenerateNewChickenCobbDelegate();
-        }
-
-        // Aumentar la cantidad de pollos a llevar la próxima vez
-        currentChickenCountToRemove += chickensToRemoveIncrement;
-    }
 }

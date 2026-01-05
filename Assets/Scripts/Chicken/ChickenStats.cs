@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ChickenStats : MonoBehaviour
 {
+    [Header("UI")]
+    [SerializeField] private ChickenUI chkUI;
 
     //Salud del Pollito
     [HideInInspector] public float hp = 100;
@@ -25,6 +27,11 @@ public class ChickenStats : MonoBehaviour
     private float multiplicadorIncrementoPesoSegunfelicidad = 1;
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadReduccionPeso = 0.10f;
 
+    //Saciedad del Pollito (CUANDO COME)
+    [HideInInspector] public float saciedad = 0;
+    [Header("Velocidad Cambio de Stats: Saciedad")]
+    [Range(0.00f, 10.00f)][SerializeField] private float velocidadIncrementoSaciedad = 7f;
+
     private ChickenController chickController;
 
     //-----------------------------------------------------------------------
@@ -39,6 +46,8 @@ public class ChickenStats : MonoBehaviour
 
     void Start()
     {
+        //Obtenemos referencia a la UI del pollit
+        chkUI = chickController.chickenUI;
 
         //Traemos los parametros segun se haya ingresado en el Menu Inicial
         velocidadIncrementoHambre = GameRulesManager.instance.velocidadIncrementoHambre;
@@ -48,10 +57,13 @@ public class ChickenStats : MonoBehaviour
         velocidadReduccionPeso = GameRulesManager.instance.velocidadReduccionPeso;
         multiplicadorIncrementoPesoSegunfelicidad = 1;
 
+        velocidadIncrementoSaciedad = GameRulesManager.instance.velocidadIncrementoSaciedad;
+
         //Seteamos los stats iniciales del pollo
         hp = 100;
         hambre = Random.Range(35.00f, 80.00f);
         peso = 1; // El Peso empieza en 1 siempre // Random.Range(1.00f, 7.00f);
+        saciedad = 0;
 
     }
 
@@ -104,6 +116,27 @@ public class ChickenStats : MonoBehaviour
             hp -= velocidadReduccionHP * Time.deltaTime;
             hp = Mathf.Clamp(hp, 0.00f, 100.00f);
         }
+    }
+
+    public void ManageStats_Saciedad(bool eatingFlag)
+    {
+        //Si el flag de "Comiendo" esta activo
+        if (eatingFlag)
+        {
+            //Incrementamos la saciedad Progresivamente
+            saciedad += velocidadIncrementoSaciedad * Time.deltaTime;
+            saciedad = Mathf.Clamp(saciedad, 0.00f, 100.00f);
+
+            //Actualizamos el valor del Slider en la UI
+            chkUI.SetHugryBarValue(saciedad);
+        }
+    }
+
+    // ------------------------------------------------------------------
+
+    public void RestartSaciedad()
+    {
+        saciedad = 0;
     }
 
 }

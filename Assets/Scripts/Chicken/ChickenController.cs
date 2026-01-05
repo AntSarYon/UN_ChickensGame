@@ -34,7 +34,7 @@ public class ChickenController : MonoBehaviour
     public Yard assignedYard;
 
     [Header("Chicken UI")]
-    [SerializeField] private ChickenUI chickenUI;
+    public ChickenUI chickenUI;
 
     // COMPONENTES
     private ChickenStats mChickenStats;
@@ -49,8 +49,8 @@ public class ChickenController : MonoBehaviour
     // Probabilidad de caer en sueno aleatoriamente
     private float tempSleepProb = 0.30f;
 
-    [SerializeField] private float temperatureSleepThreshold = 25f;
-    [SerializeField] private float temperatureWakeThreshold = 25f;  // Puede ser igual a sleepThreshold
+    [SerializeField] private float temperatureSleepThreshold = 15f;
+    [SerializeField] private float temperatureWakeThreshold = 15f;  // Puede ser igual a sleepThreshold
     [SerializeField] private float temperatureDeathThreshold = 40f;  // Temperatura a la que muere por calor
 
     private AudioSource mAudioSource;
@@ -64,7 +64,6 @@ public class ChickenController : MonoBehaviour
 
     // Corutinas
     private Coroutine cor_CheckIfStarving;
-
 
     //-----------------------------------------------------------------------------
 
@@ -88,7 +87,7 @@ public class ChickenController : MonoBehaviour
 
         //Empieza con la referencia a comedero vacia
         assignedFood = null;
-        
+
     }
 
     //-----------------------------------------------------------------------------
@@ -205,9 +204,15 @@ public class ChickenController : MonoBehaviour
 
     public void ManageStats()
     {
+
         //Manejamos los Stats segun loos flags
+        mChickenStats.ManageStats_Saciedad(bIsEating);
+
         mChickenStats.ManageStats_HambreYPeso(bIsEating, !mPickeable.isPickeable);
+
         mChickenStats.ManageStats_HP(bIsStarving);
+
+
     }
 
     //------------------------------------------------------------------------------------------
@@ -251,8 +256,8 @@ public class ChickenController : MonoBehaviour
                     {
                         //Debug.log("Estoy comiendo");
 
-                        //Si el Stat de hambre baja de 15
-                        if (mChickenStats.hambre < 15)
+                        //Si el comedero queda vacio, o el Stat de hambre baja de 15
+                        if (assignedFood.mFoodLevelSlider.value == 0 || mChickenStats.hambre < 15)
                         {
                             //Desactivamos el Flag de Comiendo
                             bIsEating = false;
@@ -298,7 +303,7 @@ public class ChickenController : MonoBehaviour
                 }
             }
             //En caso si este siendo cargado
-            else 
+            else
             {
                 //Debug.log("Me estann cargando");
 
@@ -362,83 +367,28 @@ public class ChickenController : MonoBehaviour
             //Si estams colisionando con otro Pollito...
             if (collision.gameObject.CompareTag("Chicken"))
             {
-
-                //Controlamos la Animacion de Pelea
-                //mSpritesController.EnterFightAnim();
-
                 //Obtenemos los Stats del pollo con el que hemos chocado
                 //ChickenStats otherChickenStats = collision.gameObject.GetComponent<ChickenStats>();
+
+                // Condicion de PELEA
+                if (false)
+                {
+                    //Controlamos la Animacion de Pelea
+                    //mSpritesController.EnterFightAnim();
+                }
+                else
+                {
+                    //Hacemos que el pollito se mueva en direccion contraria del otro pollito 
+                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypointInOpositeDirection(collision.transform.position);
+                }
             }
 
             //En caso tampoco este felicidadado...
             else
             {
-                //Si el objeto colsiionado esta a la izquierda
-                if (collision.transform.position.x < transform.position.x)
-                {
-                    //Hacemos que se asigne un nuevo TargetRandom hacia la derecha
-                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypointToRight(collision.transform.position.x);
-                }
-                //Si el objeto colsiionado esta a la derecha
-                else if (collision.transform.position.x > transform.position.x)
-                {
-                    //Hacemos que se asigne un nuevo TargetRandom hacia la izquierda
-                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypointToLeft(collision.transform.position.x);
-                }
+                //Hacemos que el pollito se mueva en direccion contraria del otro pollito 
+                GetComponent<SelfMovementToTarget>().SetNewRandomWaypointInOpositeDirection(collision.transform.position);
 
-            }
-
-        }
-
-        //Si chocamos con un contenedor de Comida o Agua
-        else if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
-        {
-            //Hacemos que el Pollito MIRE en direccion a la colision.
-            mSpritesController.LookAtTarget(collision.transform.position);
-
-            //Si esta chocando con comida...
-            if (collision.gameObject.CompareTag("Food"))
-            {
-                //Si tiene hambre...
-                if (mChickenStats.hambre > 40)
-                {
-                    //Activamos Flag de "Esta comiendeo"
-                    bIsEating = true;
-
-                    // Caso contrario, mostramos el Dislike
-                    chickenUI.ShowDislike();
-                }
-
-                //En caso no tenga hambre...
-                else
-                {
-                    //Seteamos un nuevo target de movimiento random
-                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
-
-                    //Desactivamos Flag de "Esta comiendeo"
-                    bIsEating = false;
-                }
-            }
-
-            //Si esta chocando con Agua...
-            else if (collision.gameObject.CompareTag("Water"))
-            {
-                //AJUSTAR ESTO!!!
-
-                //Si tiene hambre...
-                if (mChickenStats.hambre > 40)
-                {
-                    //Activamos Flag de "Esta peleando"
-                    bIsEating = true;
-                }
-                else
-                {
-                    //Seteamos un nuevo target de movimiento random
-                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
-
-                    //Desactivamos Flag de "Esta comiendeo"
-                    bIsEating = false;
-                }
             }
         }
     }
@@ -454,34 +404,6 @@ public class ChickenController : MonoBehaviour
             //Mantenemos activo el flag de "Sobre el suelo"
             bOnFloor = true;
         }
-
-        //Si estamos manteniendo el contacto con un recurso  de Comida o Agua...
-        if (collision.gameObject.CompareTag("Food") || collision.gameObject.CompareTag("Water"))
-        {
-            //Hacemos que el Pollito MIRE en direccion a la colision.
-            mSpritesController.LookAtTarget(collision.transform.position);
-
-            //Si esta chocando con comida...
-            if (collision.gameObject.CompareTag("Food"))
-            {
-                //Si su Hambre baja debajo de 95...
-                if (mChickenStats.hambre < 95)
-                {
-                    //Salimos de la Animacion de Starving
-
-                }
-
-                //Si el Comedero esta vacio, o ya sacio su hambre...
-                if (collision.gameObject.GetComponent<Food>().mFoodLevelSlider.value == 0 || mChickenStats.hambre <= 15)
-                {
-                    //Quitamos el comedero como target
-                    mSelfMovementToTarget.target = null;
-
-                    //Desactivamos Flag de "Esta comiendo"
-                    bIsEating = false;
-                }
-            }
-        }
     }
 
     //------------------------------------------------------------------------------------------
@@ -490,27 +412,11 @@ public class ChickenController : MonoBehaviour
     {
         if (bIsAlive)
         {
-            /*//Si dejamos de tener contacto con el suelo...
-            if (collision.gameObject.CompareTag("Floor"))
-            {
-                // Desactivamos el flag de "Sobre el suelo"
-                bOnFloor = false;
-            }*/
-
             //Si ha dejado de chocar con otro pollito
             if (collision.gameObject.CompareTag("Chicken"))
             {
                 //Salimos de la Animacion de Pelea
 
-            }
-            //Si el objeto con el que colisionamos es otro Pollito
-            else if (collision.gameObject.CompareTag("Food"))
-            {
-                //Desactivamos Flag de "Esta comiendo"
-                bIsEating = false;
-
-                //Desactivamos el Globo de reaccion
-                chickenUI.HideReaction();
             }
         }
     }
@@ -519,17 +425,6 @@ public class ChickenController : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-        /*//Si el Triger al que entramos es la zona de COMIDA
-        if (collision.CompareTag("Food"))
-        {
-            // Activamos Flag de "Esta comiendo"
-            bIsEating = true;
-
-            //Desactivamos flag de "Caminanndo"
-            bIsWalking = false;
-
-        }*/
-
         //Si el Triger al que entramos es la zona de APLAUSO
         if (collision.tag == "ApplauseArea")
         {
@@ -609,7 +504,7 @@ public class ChickenController : MonoBehaviour
                     //Lo mandamos a dormir por frio
                     SleepForCold();
                 }
-                
+
             }
             // Si está por encima del umbral de despertar Y está en sueño por frío
             else if (currentTemperature >= temperatureWakeThreshold && bInColdSleepState)
@@ -650,6 +545,9 @@ public class ChickenController : MonoBehaviour
         // Si no se esta asignado a ningun comedero...
         if (assignedFood == null)
         {
+            // Reiniciamos el stat de Saciedad a 0
+            mChickenStats.RestartSaciedad();
+
             // Modificamos los flags de estado de pollito
             bIsWalking = false;
             bIsEating = true;
@@ -674,6 +572,17 @@ public class ChickenController : MonoBehaviour
             //Hacemos que el comedero del que estamos consumiendo nos libere
             assignedFood.ReleaseChicken(this);
         }
-        
+
+    }
+
+    // ----------------------------------------------------------------
+
+    public void Sell()
+    {
+        //Primero nos aseguramos que no este vinculado a ningun comedero
+        Try_AbandonFood();
+
+        //Luego Destruimos le objeto
+        Destroy(this.gameObject);
     }
 }

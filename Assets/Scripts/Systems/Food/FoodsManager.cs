@@ -26,8 +26,8 @@ public class FoodsManager : MonoBehaviour
         //Por cada comedero existente...
         for (int i = 0; i < arrFoods.Length; i++)
         {
-            // Si el comedero Aun tiene Slots
-            if (arrFoods[i].HasFreeSlots())
+            // Si el comedero aun tiene comida, y aun tiene Slots ibres...
+            if (arrFoods[i].hasFood && arrFoods[i].HasFreeSlots())
             {
                 //Obtencion la distancia del comedero actual al pollito
                 Vector3 auxFoodPosition = arrFoods[i].transform.position;

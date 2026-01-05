@@ -102,6 +102,9 @@ public class DayStatusManager : MonoBehaviour
         //Asignamos el nuevo monto
         currentCash = newCash;
 
+        // Reproducimos soindo de Pollito vendido
+        GameSoundsController.Instance.PlayChickenSoldSound();
+
         // Lllamamos a la UI de Cash para que actualice el monto
         CashUIController.instance.PlayIncreaseCash();
 

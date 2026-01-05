@@ -20,6 +20,10 @@ public class GameSoundsController : MonoBehaviour
     [SerializeField] private AudioClip showFoodPanelSound;
     [SerializeField] private AudioClip hideFoodPanelSound;
 
+    [SerializeField] private AudioClip ThrowSound;
+    [SerializeField] private AudioClip ErrorSound;
+    [SerializeField] private AudioClip HitSound;
+
     [SerializeField] private AudioClip toyPlacementSound;
 
     //-----------------------------------------------------------------
@@ -120,4 +124,24 @@ public class GameSoundsController : MonoBehaviour
         //Reproducimos sonido de Venta de Pollo
         mAudioSource.PlayOneShot(toyPlacementSound, 0.65f);
     }
+
+    public void PlayErrorSound()
+    {
+        //Reproducimos sonido de Venta de Pollo
+        mAudioSource.PlayOneShot(ErrorSound, 0.65f);
+    }
+
+    public void PlayThrowSound()
+    {
+        //Reproducimos sonido de Venta de Pollo
+        mAudioSource.PlayOneShot(ThrowSound, 0.65f);
+    }
+
+    public void PlayHitSound()
+    {
+        //Reproducimos sonido de Venta de Pollo
+        mAudioSource.PlayOneShot(HitSound, 0.65f);
+    }
+
+
 }

@@ -25,6 +25,12 @@ public class GameRulesManager : MonoBehaviour
     [Range(0.00f, 10.00f)] public float velocidadIncrementoPeso = 0.15f;
     [Range(0.00f, 10.00f)] public float velocidadReduccionPeso = 0.10f;
 
+
+    //Saciedad del Pollito
+    [HideInInspector] public float saciedad = 100;
+    [Header("Velocidad Cambio de Stats: Saciedad")]
+    [Range(0.00f, 10.00f)] public float velocidadIncrementoSaciedad = 7;  
+
     //Velocidad con la que disminuye la comida
     [Range(1, 5)] public float foodDecreaseSpeed = 3;
 

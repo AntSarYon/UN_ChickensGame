@@ -51,43 +51,6 @@ public class FoodSlots : MonoBehaviour
         }
     }
 
-    // -------------------------------------------------------------------------------------------
-    // CORUTINA: Revisar si a los Pollitos dentro de la Zona activaron su Flag tras haber entrado
-
-    private IEnumerator CheckCloseChickensStatus()
-    {
-        while (true)
-        {
-            // Por cada Pollito cerca al comedero (en lista)
-            foreach (ChickenController chk in closeChickkensList)
-            {
-                // Si su flag de "Hambre" esta activo - Y no esta asignado a un Slot
-                if (chk.bIsStarving && !dicSlotsChicks.ContainsValue(chk))
-                {
-                    // Si hay Slots libres (Flag de Full desactivado)
-                    if (!bFullSlots)
-                    {
-                        // Asignamos el Pollito al Slot libre...
-                        AssignChickenToFreeSlot(chk);
-                    }
-
-                    //En caso no haya ningun Slot de comida vacio
-                    else
-                    {
-                        // Hacemos que el Pollito tome un nuevo rumbo
-                        chk.bIsEating = false;
-                        chk.bIsWalking = true;
-
-                        chk.GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
-                    }
-                }
-            }
-
-            // Volveremos a revisar tras pasado 0.5 segundos
-            yield return new WaitForSeconds(0.5f);
-        }
-    }
-
     // -------------------------------------------------------------------------
 
     private void OnTriggerEnter(Collider other)
@@ -106,26 +69,6 @@ public class FoodSlots : MonoBehaviour
             {
                 //Arrancamos la Corutina de Revision de Pollitos en zona
                 cor_checkChickens = StartCoroutine(CheckCloseChickensStatus());
-            }
-
-            //Si el Pollito tiene hambre
-            if (chicken.bIsStarving)
-            {
-                //Si los Slots NO estan llenos
-                if (!bFullSlots)
-                {
-                    AssignChickenToFreeSlot(chicken);
-                }
-
-                //En caso no haya ningun Slot de comida vacio
-                else
-                {
-                    // Hacemos que el Pollito tome un nuevo rumbo
-                    chicken.bIsEating = false;
-                    chicken.bIsWalking = true;
-
-                    chicken.GetComponent<SelfMovementToTarget>().SetNewRandomWaypoint();
-                }
             }
 
         }
@@ -161,6 +104,65 @@ public class FoodSlots : MonoBehaviour
         }
     }
 
+    // -------------------------------------------------------------------------------------------
+    // CORUTINA: Revisar si a los Pollitos dentro de la Zona activaron su Flag tras haber entrado
+
+    private IEnumerator CheckCloseChickensStatus()
+    {
+        while (true)
+        {
+            //Si el comedero aun tiene comida
+            if (parentFood.hasFood)
+            {
+                //Obtenemos la lista de pollitos cercanos actualizada
+                List<ChickenController> updatedList = closeChickkensList;
+
+                // Por cada Pollito cerca al comedero (en lista)
+                foreach (ChickenController chk in updatedList)
+                {
+                    // Si su flag de "Hambre" esta activo, NO ESTA DURMIENDO, Y no esta asignado a un Slot
+                    if (chk.bIsStarving && !chk.bIsSleeping && !dicSlotsChicks.ContainsValue(chk))
+                    {
+                        // Si hay Slots libres (Flag de Full desactivado)
+                        if (!bFullSlots)
+                        {
+                            // Asignamos el Pollito al Slot libre...
+                            AssignChickenToFreeSlot(chk);
+
+                            // Registramos el pollito que ha empezado a comer
+                            parentFood.RegisterEatingChicken(chk);
+                        }
+
+                        //En caso no haya ningun Slot de comida vacio
+                        else
+                        {
+                            //Mantenemos su flag de "Comiendo" desactivado
+                            chk.bIsEating = false;
+
+                            // Hacemos que el Pollito tome un nuevo rumbo, en direccion contraria a este comedero
+                            if (chk && chk.GetComponent<SelfMovementToTarget>())
+                            {
+                                chk.GetComponent<SelfMovementToTarget>().SetNewRandomWaypointInOpositeDirection(parentFood.transform.position);
+                            }
+                        }
+                    }
+                    // Si el pollito esta asignado a un Slot pero no esta comiendo (Se quedo dormido, o ya se lleno)
+                    else if (dicSlotsChicks.ContainsValue(chk) && chk.bIsSleeping)// !chk.bIsEating)
+                    {
+                        // Quitamos al Pollito de la lista de los que comen
+                        parentFood.RemoveEatingChicken(chk);
+
+                        // Hacemos que el pollito abandone la comida (y libere el Slot)
+                        chk.Try_AbandonFood();
+                    }
+                }
+            }
+
+            // Volveremos a revisar tras pasado 0.5 segundos
+            yield return new WaitForSeconds(0.25f);
+        }
+    }    
+
     // -----------------------------------------------------------------
 
     private void AssignChickenToFreeSlot(ChickenController chicken)
@@ -176,13 +178,14 @@ public class FoodSlots : MonoBehaviour
 
                 GameSoundsController.Instance.PlayBubbleSound();
 
-                //Hacemos que el Poolito almacene referencia a este comedero
+                //Hacemos que el Poolito almacene referencia a este comedero y slot
                 chicken.Try_AssignFood(parentFood, slot);
 
-                // Reducimos la cantidad de Slots libres
+                // Aumentamos la cantidad de Slots en uso
                 takenSlots++;
 
-                Debug.Log("Se ha agregado el Pollito al Slot");
+                //Actualizamos el contador visual
+                parentFood.UpdateSlotsUICounter();
 
                 // Si el contador de Slots libres lleg[o a 0
                 if (takenSlots == 5)
@@ -203,39 +206,37 @@ public class FoodSlots : MonoBehaviour
         //Si el pollito a liberar SI ESTA como valor en el diccionario
         if (dicSlotsChicks.ContainsValue(chickenToFree))
         {
-            // Por cada registro del diccionario
-            foreach (var item in dicSlotsChicks)
+            Transform auxSlot = null;
+
+            // Por cada elemento del diccionario
+            foreach(KeyValuePair<Transform, ChickenController> kvp in dicSlotsChicks)
             {
                 // Si el pollito es valor...
-                if (item.Value == chickenToFree)
+                if (kvp.Value == (chickenToFree))
                 {
-                    //Actualizamos a referencia de Valor a Null
-                    dicSlotsChicks[item.Key] = null;
-
-                    // Reducimos el contador de Slots ocupados
-                    takenSlots--;
-
-                    // Desactivamos el Flag de Comedero Full
-                    bFullSlots = false;
-                }
+                    // almacenamos su llave
+                    auxSlot = kvp.Key;
+                    break;
+                }                
             }
-        }
 
-        //Vaidamos si el pollito esta en la lista de Pollitos cercanos
-        if (closeChickkensList.Contains(chickenToFree))
-        {
-            //Removemos la referencia de ese polllito de a lista
-            closeChickkensList.Remove(chickenToFree);
-        }
-
-        //Si a lista queda en 0 (Sin politos cerca)
-        if (closeChickkensList.Count == 0)
-        {
-            //Si la Corutina de revision esta corriendo...
-            if (cor_checkChickens != null)
+            //Si se allmaceno una referencia a llave...
+            if (auxSlot != null)
             {
-                //La Detenemos
-                StopCoroutine(cor_checkChickens);
+                // Remomvemos su elemento del Diccionario
+                dicSlotsChicks.Remove(auxSlot);
+
+                // Y volvemos a agregarlo, pero con Valor Nulo
+                dicSlotsChicks.Add(auxSlot, null);
+
+                // Reducimos el contador de Slots ocupados
+                takenSlots--;
+
+                //Actualizamos el contador visual
+                parentFood.UpdateSlotsUICounter();
+
+                // Desactivamos el Flag de Comedero Full
+                bFullSlots = false;
             }
         }
     }

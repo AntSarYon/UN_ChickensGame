@@ -24,6 +24,9 @@ public class ChickenUI : MonoBehaviour
     [Header("Icono de Suenio")]
     [SerializeField] private GameObject imgSleeping;
 
+    [Header("Slider de Comida")]
+    [SerializeField] private Slider hungrySlider;
+
     //Referencia a Stats del pollo
     private ChickenController chkController;
     private ChickenStats chickenStats;
@@ -39,6 +42,7 @@ public class ChickenUI : MonoBehaviour
         //Iniciamos con todos los Elementos de la UI Desactivados
         HideReaction();
         HideEstimulation();
+        HideHungryBar();
     }
 
     //------------------------------------------------------------------------------------
@@ -48,13 +52,21 @@ public class ChickenUI : MonoBehaviour
         // Si el pollito esta durmiendo
         if (chkController.bIsSleeping)
         {
-            // Ocultamos cualquier globo de reaccion
+            // Ocultamos cualquier globo de reaccion, asi como la barra de comida
             HideReaction();
+            HideHungryBar();
             return;
         }
 
         // Si esta despierto...
         //Dependiendo del Flag activo, mostraremos un globo de reaccion
+        if (chkController.bIsEating)
+        {
+            HideReaction();
+            ShowHungryBar();
+            return;
+        }
+
         if (chkController.bIsFighting)
         {
             ShowFighting();
@@ -66,10 +78,6 @@ public class ChickenUI : MonoBehaviour
         else if (chkController.bIsStarving)
         {
             ShowHungry();
-        }
-        else if (chkController.bIsEating)
-        {
-            ShowLike();
         }
         //En cualquier otro caso, ocultamos el globo de reaccion
         else
@@ -147,6 +155,24 @@ public class ChickenUI : MonoBehaviour
     public void HideEstimulation()
     {
         imgEstimulated.SetActive(false);
+    }
+
+    // ---------------------------------------------------------------------
+
+    public void ShowHungryBar()
+    {
+        //Mostramos la Barra de Hambre
+        hungrySlider.gameObject.SetActive(true);
+    }
+
+    public void SetHugryBarValue(float val)
+    {
+        hungrySlider.value = (int) val;
+    }
+
+    public void HideHungryBar()
+    {
+        hungrySlider.gameObject.SetActive(false);
     }
 
 }

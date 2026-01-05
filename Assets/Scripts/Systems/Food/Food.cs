@@ -7,6 +7,10 @@ using UnityEngine.UI;
 
 public class Food : Interactable
 {
+    [Header("Slots")]
+    [SerializeField] private FoodSlots slotsManager;
+    public TextMeshProUGUI txtSlotsCounter1;
+    public TextMeshProUGUI txtSlotsCounter2;
 
     [Header("Slider de comida")]
     public Slider mFoodLevelSlider;
@@ -18,10 +22,10 @@ public class Food : Interactable
     [Range(1, 5)][SerializeField] private float foodDecreaseSpeed;
 
     //Lista de GameObjects (Pollos) que estan chocando con la Comida
-    private List<GameObject> chickensList = new List<GameObject>();
+    private List<ChickenController> eatingChickensList = new List<ChickenController>();
 
-    [Header("Gestor de Slots")]
-    [SerializeField] private FoodSlots slotsManager;
+    public bool hasFood;
+    
 
     //Referencia a Componentes
     private Animator mAnimator;
@@ -35,7 +39,7 @@ public class Food : Interactable
 
         interactionMessage = "Llenar";
 
-        
+        hasFood = true;
     }
 
     //--------------------------------------------------------------------------------------
@@ -44,37 +48,50 @@ public class Food : Interactable
     {
         //Traemos los parametros del RulesManager
         foodDecreaseSpeed = GameRulesManager.instance.foodDecreaseSpeed;
+
+        //Actualizamos el contador de Slots
+        UpdateSlotsUICounter();
     }
 
     //--------------------------------------------------------------------------------------
 
     void Update()
     {
-        //Si hay al menos 1 pollo consumiendo comida
-        if (chickensList.Count > 0)
+        //Manejamos el consumo de alimento
+        ManageFoodConsumption();
+    }
+
+    // ---------------------------------------------------------------
+    // FUNCION: Manejar el consumo de Alimento segun slots ocupados
+    public void ManageFoodConsumption()
+    {
+        //Si hay al menos 1 pollito comiendo, y aun hay comida
+        if (eatingChickensList.Count > 0 && hasFood)
         {
-            /*// Inicializamos contador de Pollitos que SI ESTAN COMIENDO
-            // (Puede haber pollitos que estan chocando, pero que no estan comiendo)
-            int eatingChicks = 0;
+            //Reducimos el valor del Slider, en base a cuantos slots estan siendo usados por pollitos, y la velocidad definida
+            mFoodLevelSlider.value -= eatingChickensList.Count * Time.deltaTime * foodDecreaseSpeed;
 
-            //Por cada pollito que este chocando
-            foreach (GameObject chick in chickensList)
+            if (mFoodLevelSlider.value <= 0)
             {
-                // Si su flag de "Comiendo" esta activa
-                if (chick.GetComponent<ChickenController>().bIsEating)
-                {
-                    // Se incrementa el contador de pollitos comiendo
-                    eatingChicks++;
-                }
-            }*/
+                //Desactivamos flag de "tiene comida"
+                hasFood = false;
 
-            //Reducimos el valor del Slider, en base a cuantos pollitos estan comiendo, y a la velocidad definida
-            //mFoodLevelSlider.value -= eatingChicks * Time.deltaTime * foodDecreaseSpeed;
+                // Liberamos a todos los pollitos que hayan estado comiendo
+                foreach (ChickenController chicken in eatingChickensList)
+                {
+                    //Lo removemos de la lista de pollitos consumiedo
+                    RemoveEatingChicken(chicken);
+
+                    // Liberamos al Pollito del Slot
+                    chicken.Try_AbandonFood();
+                }
+
+            }
         }
     }
 
     // ------------------------------------------------------------
-
+    // FUNCION: Rellenar Comedero
     public void Refill()
     {
         //Reproducimos Animacion
@@ -82,7 +99,13 @@ public class Food : Interactable
 
         //Llevamnos el valor del Slider al Maximo
         mFoodLevelSlider.value = mFoodLevelSlider.maxValue;
+
+        //Activamos flag de "tiene comida"
+        hasFood = true;
     }
+
+    // ------------------------------------------------------------
+    // FUNCION: Denegar Interaccion
 
     public void Denegate()
     {
@@ -119,6 +142,15 @@ public class Food : Interactable
 
     }
 
+    // -------------------------------------------------------------------s
+
+    public void UpdateSlotsUICounter()
+    {
+        //Actualizamos el contador de Slots
+        txtSlotsCounter1.text = $"{slotsManager.takenSlots}/{5}";
+        txtSlotsCounter2.text = $"{slotsManager.takenSlots}/{5}";
+    }
+
     // -------------------------------------------------------------------
 
     public bool HasFreeSlots()
@@ -127,12 +159,24 @@ public class Food : Interactable
         return !slotsManager.bFullSlots;
     }
 
-    //--------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------
 
     public void ReleaseChicken(ChickenController chicken)
     {
         //Llamamos a la funcion de Liberacion del Gestor de Sots
         slotsManager.ReleaseChicken(chicken);
+    }
+
+    // --------------------------------------------------------------------------------------
+
+    public void RegisterEatingChicken(ChickenController chicken)
+    {
+        eatingChickensList.Add(chicken);
+    }
+
+    public void RemoveEatingChicken(ChickenController chicken)
+    {
+        eatingChickensList.Remove(chicken);
     }
 
 }

@@ -71,8 +71,11 @@ public class PickeableObject : Interactable
         //Soltamos el Objeto
         Drop();
 
+        //Reproducimos soindo de lanzamiento
+        GameSoundsController.Instance.PlayThrowSound();
+
         //Le aplicamos fuerza en la direccion recibida
-        mRb.AddForce(throwDirection * 50, ForceMode.Impulse);
+        mRb.AddForce(throwDirection * 75, ForceMode.Impulse);
     }
 
     // -----------------------------------------------------

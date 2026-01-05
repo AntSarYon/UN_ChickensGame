@@ -24,6 +24,7 @@ public class UI_MenuController : MonoBehaviour
 
         btnPlayNewCmpaign.onClick.AddListener(StartNewGame);
         btnPlayContinueCampaign.onClick.AddListener(ContinueGame);
+
         CloseParametersPanel();
     }
 

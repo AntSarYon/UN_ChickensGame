@@ -109,24 +109,29 @@ public class GameClockController : MonoBehaviour
             // Si el tiempo ranscurrido llega al total establecido por el dia; se reiniciará
             elapsedTime %= timeInADay;
 
-            // Si ya son pasadas las 5pm...
-            if (elapsedTime >= 17 * 3600f)
+            // Si ya son pasadas las 6pm...
+            if (elapsedTime >= 18 * 3600f)
             {
-                //Seteamos la luz inicial como la de a tarde
-                initialDayLight = AfternoonDayLight;
+                //Si el camion ya tiene su flag de "LLlegando" activo...
+                if (TruckController.Instance.bIsArriving)
+                {
+                    //Dispara animacion de Camion partiendo
+                    TruckController.Instance.PlayRun();
+                }
+            }
 
-                //Asignamos el Skybox de la noche
-                RenderSettings.skybox = eveningSkybox;
-
-                //Asignams commo Luz Target la de Evening
-                targetDayLight = EveningDayLight;
-
-
-                //Definimos el tiempo en que el cambio debe ser completado...
-                targetChangeTime = 18 * 3600f;
+            // Si ya son pasadas las 5pm...
+            else if (elapsedTime >= 17 * 3600f)
+            {
+                //Si el camion aun no esta llegando
+                if (!TruckController.Instance.bIsArriving)
+                {
+                    //Dispara animacion de Camion llegando
+                    TruckController.Instance.PlayArrive();
+                }
             }
             // Si ya son pasadas las 3pm...
-            else if (elapsedTime >= 15 * 3600f)
+            else if (elapsedTime >= 16 * 3600f)
             {
 
                 //Seteamos la luz inicial como la de la manana

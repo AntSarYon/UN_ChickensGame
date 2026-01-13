@@ -28,7 +28,7 @@ public class ChickenController : MonoBehaviour
 
     [HideInInspector] public bool bIsEating = false;
     // Referencia a Cmedero del que esta comienndo
-    [HideInInspector] public Food assignedFood;
+    [HideInInspector] public Slot assignedFoodSlot;
 
     [Header("Corral")]
     public Yard assignedYard;
@@ -86,7 +86,7 @@ public class ChickenController : MonoBehaviour
         bIsFighting = false;
 
         //Empieza con la referencia a comedero vacia
-        assignedFood = null;
+        assignedFoodSlot = null;
 
     }
 
@@ -257,7 +257,7 @@ public class ChickenController : MonoBehaviour
                         //Debug.log("Estoy comiendo");
 
                         //Si el comedero queda vacio, o el Stat de hambre baja de 15
-                        if (assignedFood.mFoodLevelSlider.value == 0 || mChickenStats.hambre < 15)
+                        if (assignedFoodSlot.parentFood.mFoodLevelSlider.value == 0 || mChickenStats.hambre < 15)
                         {
                             //Desactivamos el Flag de Comiendo
                             bIsEating = false;
@@ -540,10 +540,10 @@ public class ChickenController : MonoBehaviour
 
     // --------------------------------------------
 
-    public void Try_AssignFood(Food targetFood, Transform slot)
+    public void Try_AssignFoodSlot(Slot targetSlot)
     {
         // Si no se esta asignado a ningun comedero...
-        if (assignedFood == null)
+        if (assignedFoodSlot == null)
         {
             // Reiniciamos el stat de Saciedad a 0
             mChickenStats.RestartSaciedad();
@@ -553,35 +553,39 @@ public class ChickenController : MonoBehaviour
             bIsEating = true;
 
             //Nos asignamos al comedero recibido como parametro
-            assignedFood = targetFood;
+            assignedFoodSlot = targetSlot;
 
             //Modificamos la posicion del Pollito para que este en el Slot
             transform.position = new Vector3(
-                slot.position.x,
+                targetSlot.transform.position.x,
                 transform.position.y,
-                slot.position.z
+                targetSlot.transform.position.z
                 );
         }
     }
 
-    public void Try_AbandonFood()
-    {
-        // Si se esta consuimendo comida de un comedero...
-        if (assignedFood != null)
-        {
-            //Hacemos que el comedero del que estamos consumiendo nos libere
-            assignedFood.ReleaseChicken(this);
-        }
+    // Abandonar comedero
 
+    public void Try_AbandonFoodSlot()
+    {
+        // Si se esta asignado a un slot de comedero...
+        if (assignedFoodSlot != null)
+        {
+            //Definimos un Waypoint en direccion contraria al comedero
+            mSelfMovementToTarget.SetNewRandomWaypointInOpositeDirection(assignedFoodSlot.transform.position);
+
+            // Hacemos que el comedero nos libere
+            assignedFoodSlot.ReleaseChicken();
+
+            // Asignamos referencia null al comedero asignado
+            assignedFoodSlot = null;
+        }
     }
 
     // ----------------------------------------------------------------
 
     public void Sell()
     {
-        //Primero nos aseguramos que no este vinculado a ningun comedero
-        Try_AbandonFood();
-
         //Luego Destruimos le objeto
         Destroy(this.gameObject);
     }

@@ -54,7 +54,7 @@ public class TemperatureSwitch : Interactable
 
     // ---------------------------------------------------
 
-    public override void Interact(Transform holdingZone = null)
+    public override void Interact(Transform holdingZone = null, InteractionController interactionController = null)
     {
         //Reproducimos sonido de Switch
         PlaySwitchSound();

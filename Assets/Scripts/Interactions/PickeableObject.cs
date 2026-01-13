@@ -80,7 +80,7 @@ public class PickeableObject : Interactable
 
     // -----------------------------------------------------
 
-    public override void Interact(Transform holdingZone)
+    public override void Interact(Transform holdingZone, InteractionController interactionController = null)
     {
         //Llamamos a la funcion para Recoger
         Pick(holdingZone);

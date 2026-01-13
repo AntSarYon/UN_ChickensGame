@@ -79,11 +79,8 @@ public class Food : Interactable
                 // Liberamos a todos los pollitos que hayan estado comiendo
                 foreach (ChickenController chicken in eatingChickensList)
                 {
-                    //Lo removemos de la lista de pollitos consumiedo
-                    RemoveEatingChicken(chicken);
-
-                    // Liberamos al Pollito del Slot
-                    chicken.Try_AbandonFood();
+                    // Liberamos al Pollito del Slot - True para decirle que debe alejarse
+                    chicken.Try_AbandonFoodSlot();
                 }
 
             }
@@ -115,7 +112,7 @@ public class Food : Interactable
 
     // ------------------------------------------------------------
 
-    public override void Interact(Transform holdingZone)
+    public override void Interact(Transform holdingZone, InteractionController interactionController = null)
     {
         if (holdingZone.childCount > 0)
         {
@@ -159,24 +156,21 @@ public class Food : Interactable
         return !slotsManager.bFullSlots;
     }
 
-    // --------------------------------------------------------------------------------------
-
-    public void ReleaseChicken(ChickenController chicken)
-    {
-        //Llamamos a la funcion de Liberacion del Gestor de Sots
-        slotsManager.ReleaseChicken(chicken);
-    }
 
     // --------------------------------------------------------------------------------------
 
     public void RegisterEatingChicken(ChickenController chicken)
     {
         eatingChickensList.Add(chicken);
+
+        UpdateSlotsUICounter();
     }
 
     public void RemoveEatingChicken(ChickenController chicken)
     {
         eatingChickensList.Remove(chicken);
+
+        UpdateSlotsUICounter();
     }
 
 }

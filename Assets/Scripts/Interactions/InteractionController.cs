@@ -39,8 +39,8 @@ public class InteractionController : MonoBehaviour
                 //Si pulsamos la tecla E...
                 if (Input.GetKeyDown(KeyCode.E))
                 {
-                    //Activamos la interaccion del Objeto Target, enviando info sobre la zona de holding
-                    targetObject.GetComponent<Interactable>().Interact(holdingZone);
+                    //Activamos la interaccion del Objeto Target, enviando info sobre la zona de holding, y los datos de la zona de interaccion
+                    targetObject.GetComponent<Interactable>().Interact(holdingZone, this);
 
                     //Si el Objeto ademas es Pickeable...
                     if (targetObject.GetComponent<PickeableObject>())
@@ -123,6 +123,8 @@ public class InteractionController : MonoBehaviour
             }
         }
 
+        UpdateDroppedObjectTye();
+
     }
 
     // --------------------------------------------------------------
@@ -162,6 +164,23 @@ public class InteractionController : MonoBehaviour
         else if (holdedObject.CompareTag("Chicken"))
         {
             // Activamos el flag de "Cargando pollo"
+            pController.bisCarryingChicken = true;
+        }
+    }
+
+    // --------------------------------------------------------
+    // FUNCION: Hacer que se cargue un Objeto directamente (Sin necesidad de recogerlo)
+    public void SetHoldedObject(GameObject newHoldedObject)
+    {
+        holdedObject = newHoldedObject;
+
+        // Activamos el flag correpsondiente de "Cargando X"
+        if (newHoldedObject.CompareTag("FoodBag"))
+        {
+            pController.bisCarryingFood = true;
+        }
+        else if (newHoldedObject.CompareTag("Chicken"))
+        {
             pController.bisCarryingChicken = true;
         }
     }

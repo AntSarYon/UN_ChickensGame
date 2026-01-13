@@ -204,7 +204,7 @@ public class SelfMovementToTarget : MonoBehaviour
     public void SetNewRandomWaypointInOpositeDirection(Vector3 blockingPosition)
     {
         // Si el obstaculo esta hacia la derecha...
-        if (blockingPosition.x > transform.position.x)
+        if (blockingPosition.x >= transform.position.x)
         {
             SetNewRandomWaypointToLeft(blockingPosition.x);
         }

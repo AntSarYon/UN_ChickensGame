@@ -2,40 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FoodPool : MonoBehaviour
+public class FoodPool : Interactable
 {
     [Header("Prefab")]
     [SerializeField] private GameObject foodBagPrefab;
 
-    [Header("Transform de Spawn")]
-    [SerializeField] private Transform spawnTransform;
+    // -----------------------------------------------------------
 
-    // ---------------------------------------------
+    void Awake()
+    {
+        interactionMessage = "Coger Bolsa de Alimento";
+    }
 
-    public void SpawnNewFoodBag()
+    public override void Interact(Transform holdingZone = null, InteractionController interactionController = null)
     {
         //Instanciamos la bolsa de Comida
-        GameObject newFoodBag = Instantiate(
-            foodBagPrefab,
-            spawnTransform.position,
-            spawnTransform.rotation
-        );
+        GameObject newFoodBag = Instantiate(foodBagPrefab, holdingZone.position, holdingZone.rotation);
+
+        // Usamos la funcion Pick para hacer que este sujetado por el Jugador
+        newFoodBag.GetComponent<FoodBag>().Pick(holdingZone);
+
+        //Asignamos directamente el objeto
+        interactionController.SetHoldedObject(newFoodBag);
     }
 
-    // -------------------------------------------------
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            SpawnNewFoodBag();
-        }
-    }
 }

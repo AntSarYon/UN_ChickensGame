@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1774201481751430528}
+  - component: {fileID: 9011275458918039674}
   m_Layer: 0
   m_Name: Slot2
   m_TagString: Untagged
@@ -31,6 +32,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3798902862113916382}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9011275458918039674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171966201023152088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 473ed1f014ee10b4480342883c6b3196, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chickenInSlot: {fileID: 0}
 --- !u!1 &490675950014414267
 GameObject:
   m_ObjectHideFlags: 0
@@ -120,6 +134,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 333706707808494848}
+  - component: {fileID: 749343706338148383}
   m_Layer: 0
   m_Name: Slot3
   m_TagString: Untagged
@@ -142,6 +157,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3798902862113916382}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &749343706338148383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2328076138183101647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 473ed1f014ee10b4480342883c6b3196, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chickenInSlot: {fileID: 0}
 --- !u!1 &2623352777026705499
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,6 +583,7 @@ MonoBehaviour:
   mFoodLevelSlider: {fileID: 9169006341645884049}
   yard: {fileID: 0}
   foodDecreaseSpeed: 3
+  hasFood: 0
 --- !u!95 &6265908166651541797
 Animator:
   serializedVersion: 5
@@ -976,6 +1005,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3969498315670124849}
+  - component: {fileID: 8660186492869129300}
   m_Layer: 0
   m_Name: Slot4
   m_TagString: Untagged
@@ -998,6 +1028,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3798902862113916382}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8660186492869129300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7851411732844151111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 473ed1f014ee10b4480342883c6b3196, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chickenInSlot: {fileID: 0}
 --- !u!1 &8028390571809798275
 GameObject:
   m_ObjectHideFlags: 0
@@ -1007,6 +1050,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2400066782085602503}
+  - component: {fileID: 2815444912902261496}
   m_Layer: 0
   m_Name: Slot1
   m_TagString: Untagged
@@ -1029,6 +1073,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3798902862113916382}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2815444912902261496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8028390571809798275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 473ed1f014ee10b4480342883c6b3196, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chickenInSlot: {fileID: 0}
 --- !u!1 &8211414542884400803
 GameObject:
   m_ObjectHideFlags: 0
@@ -1038,6 +1095,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 745574851293073839}
+  - component: {fileID: 8603360497351824641}
   m_Layer: 0
   m_Name: Slot5
   m_TagString: Untagged
@@ -1060,3 +1118,16 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3798902862113916382}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8603360497351824641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8211414542884400803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 473ed1f014ee10b4480342883c6b3196, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chickenInSlot: {fileID: 0}

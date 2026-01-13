@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class Interactable : MonoBehaviour
@@ -77,5 +78,5 @@ public abstract class Interactable : MonoBehaviour
     // -------------------------------------------------
     // Metodo de Interaccion (Abstracto para sobreescritura)
 
-    public abstract void Interact(Transform holdingZone = null);
+    public abstract void Interact(Transform holdingZone = null, InteractionController interactionController = null);
 }

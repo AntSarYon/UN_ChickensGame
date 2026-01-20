@@ -27,11 +27,6 @@ public class ChickenStats : MonoBehaviour
     private float multiplicadorIncrementoPesoSegunfelicidad = 1;
     [Range(0.00f, 10.00f)] [SerializeField] private float velocidadReduccionPeso = 0.10f;
 
-    //Saciedad del Pollito (CUANDO COME)
-    [HideInInspector] public float saciedad = 0;
-    [Header("Velocidad Cambio de Stats: Saciedad")]
-    [Range(0.00f, 10.00f)][SerializeField] private float velocidadIncrementoSaciedad = 7f;
-
     private ChickenController chickController;
 
     //-----------------------------------------------------------------------
@@ -57,27 +52,30 @@ public class ChickenStats : MonoBehaviour
         velocidadReduccionPeso = GameRulesManager.instance.velocidadReduccionPeso;
         multiplicadorIncrementoPesoSegunfelicidad = 1;
 
-        velocidadIncrementoSaciedad = GameRulesManager.instance.velocidadIncrementoSaciedad;
-
         //Seteamos los stats iniciales del pollo
         hp = 100;
-        hambre = Random.Range(35.00f, 80.00f);
+        hambre = Random.Range(35.00f, 50.00f);
+        //Actualizamos el valor del Slider en la UI
+        chkUI.SetHugryBarValue(hambre);
+
         peso = 1; // El Peso empieza en 1 siempre // Random.Range(1.00f, 7.00f);
-        saciedad = 0;
 
     }
 
     //-----------------------------------------------------------------------
     // FUNCION: Manejo de Stats segun estados...
 
-    public void ManageStats_HambreYPeso(bool eatingFlag, bool isbeingDragged)
+    public void ManageStats_HambreYPeso(bool eatingFlag)
     {
         if (eatingFlag)
         {
             //Reducimos el Stat de Hambre progresivamente
             hambre -= velocidadReduccionHambre * Time.deltaTime;
             hambre = Mathf.Clamp(hambre, 0.00f, 100.00f);
-            
+
+            //Actualizamos el valor del Slider en la UI
+            chkUI.SetHugryBarValue(hambre);
+
             peso += velocidadIncrementoPeso * Time.deltaTime * multiplicadorIncrementoPesoSegunfelicidad;
             peso = Mathf.Clamp(peso, 1.00f, 7.00f);
         }
@@ -85,18 +83,16 @@ public class ChickenStats : MonoBehaviour
         //Si el Flag de "Comiendo"; esta desactivado
         else
         {
+            /*
             //Si esta siendo sujetado...
             if (isbeingDragged)
             {
                 //Aumentamos el Stat de Hambre progresivamente (más rapido)
                 hambre += velocidadIncrementoHambre * 1.75f * Time.deltaTime;
-            }
-            else
-            {
-                //Aumentamos el Stat de Hambre progresivamente
-                hambre += velocidadIncrementoHambre * Time.deltaTime;
-            }
+            }*/
             
+            //Aumentamos el Stat de Hambre progresivamente
+            hambre += velocidadIncrementoHambre * Time.deltaTime;
 
             hambre = Mathf.Clamp(hambre, 0.00f, 100.00f);
 
@@ -118,25 +114,6 @@ public class ChickenStats : MonoBehaviour
         }
     }
 
-    public void ManageStats_Saciedad(bool eatingFlag)
-    {
-        //Si el flag de "Comiendo" esta activo
-        if (eatingFlag)
-        {
-            //Incrementamos la saciedad Progresivamente
-            saciedad += velocidadIncrementoSaciedad * Time.deltaTime;
-            saciedad = Mathf.Clamp(saciedad, 0.00f, 100.00f);
-
-            //Actualizamos el valor del Slider en la UI
-            chkUI.SetHugryBarValue(saciedad);
-        }
-    }
-
     // ------------------------------------------------------------------
-
-    public void RestartSaciedad()
-    {
-        saciedad = 0;
-    }
 
 }

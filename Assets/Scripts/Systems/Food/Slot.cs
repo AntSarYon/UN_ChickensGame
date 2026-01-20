@@ -19,6 +19,8 @@ public class Slot : MonoBehaviour
         chickenInSlot = null;
     }
 
+    // -----------------------------------------------
+
     public void CatchChicken(ChickenController newChicken)
     {
         // Asignamos la referecia del Pollito
@@ -46,8 +48,10 @@ public class Slot : MonoBehaviour
            // Si el pollito se quedo dormido, o ya no esta comiendo
            if (chickenInSlot.bIsSleeping || !chickenInSlot.bIsEating)
            {
-                // Lo liberamos del Slot
-                ReleaseChicken();
+                // Hacemos que el Pollito abandone el slot de comida
+                chickenInSlot.Try_AbandonFoodSlot();
+
+                // Esto llamara automatixamente a RELEASE_CHICKEN
            }
 
           // Esperamos 0.25 segundos para volver a commprobar...
@@ -64,6 +68,9 @@ public class Slot : MonoBehaviour
 
         // Quitamos al Pollito de la lista de los que comen
         parentFood.RemoveEatingChicken(chickenInSlot);
+        
+        //Tambien indicamos al gestor de slots que se ha liberado un slot
+        slotManager.ReleaseSlot();
 
         // Liberamos la referencia de Pollito
         chickenInSlot = null;

@@ -22,6 +22,7 @@ public class FoodsManager : MonoBehaviour
         //Por defecto es el primero
         Food closestFood = arrFoods[0];
         float closestDistance = Vector3.Distance(chickenPosition.position, closestFood.transform.position);
+        bool finalHasFood = false;
 
         //Por cada comedero existente...
         for (int i = 0; i < arrFoods.Length; i++)
@@ -33,16 +34,24 @@ public class FoodsManager : MonoBehaviour
                 Vector3 auxFoodPosition = arrFoods[i].transform.position;
                 float auxDistance = Vector3.Distance(chickenPosition.position, auxFoodPosition);
 
-                //Si la distancia de este comedero es menor a la ya seteada, y no tiene sus slots llenos
-                if ((auxDistance < closestDistance))
+                //Si la distancia de este comedero es menor o igual a la ya seteada
+                if ((auxDistance <= closestDistance))
                 {
                     //Asignamos ese comedero
                     closestFood = arrFoods[i];
                     closestDistance = auxDistance;
+                    finalHasFood = true;
                 }
             }
 
-            //Si el comedero no tiene slots libre, ni siquiera entra en consideracion
+            //Si el comedero no tiene slots libres, o comida... ni siquiera entra en consideracion
+        }
+
+        //Si el flag de "Ultimo no tiene comida" No esta activo"
+        if (!finalHasFood)
+        {
+            //Retornamos null, para indicar que no hay Comedero libre...
+            return null;
         }
 
         //Retorna el Transform del Comedero mas cercano

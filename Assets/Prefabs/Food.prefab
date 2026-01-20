@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chickenInSlot: {fileID: 0}
+  slotManager: {fileID: 0}
+  parentFood: {fileID: 0}
 --- !u!1 &490675950014414267
 GameObject:
   m_ObjectHideFlags: 0
@@ -117,11 +119,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slotsList:
-  - {fileID: 2400066782085602503}
-  - {fileID: 1774201481751430528}
-  - {fileID: 333706707808494848}
-  - {fileID: 3969498315670124849}
-  - {fileID: 745574851293073839}
+  - {fileID: 2815444912902261496}
+  - {fileID: 9011275458918039674}
+  - {fileID: 749343706338148383}
+  - {fileID: 8660186492869129300}
+  - {fileID: 8603360497351824641}
   closeChickkensList: []
   takenSlots: 0
   bFullSlots: 0
@@ -170,6 +172,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chickenInSlot: {fileID: 0}
+  slotManager: {fileID: 0}
+  parentFood: {fileID: 0}
 --- !u!1 &2623352777026705499
 GameObject:
   m_ObjectHideFlags: 0
@@ -1041,6 +1045,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chickenInSlot: {fileID: 0}
+  slotManager: {fileID: 0}
+  parentFood: {fileID: 0}
 --- !u!1 &8028390571809798275
 GameObject:
   m_ObjectHideFlags: 0
@@ -1086,6 +1092,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chickenInSlot: {fileID: 0}
+  slotManager: {fileID: 0}
+  parentFood: {fileID: 0}
 --- !u!1 &8211414542884400803
 GameObject:
   m_ObjectHideFlags: 0
@@ -1131,3 +1139,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chickenInSlot: {fileID: 0}
+  slotManager: {fileID: 0}
+  parentFood: {fileID: 0}

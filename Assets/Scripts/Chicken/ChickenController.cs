@@ -182,7 +182,7 @@ public class ChickenController : MonoBehaviour
         while (true)
         {
             //Si el Stat de Hambre esta muy elevado...
-            if (mChickenStats.hambre >= 90)
+            if (mChickenStats.hambre >= 65)
             {
                 //Activamos el flag de "Starving" 
                 bIsStarving = true;
@@ -205,10 +205,7 @@ public class ChickenController : MonoBehaviour
     public void ManageStats()
     {
 
-        //Manejamos los Stats segun loos flags
-        mChickenStats.ManageStats_Saciedad(bIsEating);
-
-        mChickenStats.ManageStats_HambreYPeso(bIsEating, !mPickeable.isPickeable);
+        mChickenStats.ManageStats_HambreYPeso(bIsEating);
 
         mChickenStats.ManageStats_HP(bIsStarving);
 
@@ -269,6 +266,9 @@ public class ChickenController : MonoBehaviour
                         // Si el pollito no tiene hambre
                         if (!bIsStarving)
                         {
+                            // Eliminamos cualquier referencia a un Target para movimiento
+                            mSelfMovementToTarget.target = null;
+
                             //Debug.log("Estooy caminando arbitrariamente");
                             //Reducimos el Timer para su siesta espontanea
                             sleepCheckTimer -= Time.deltaTime;
@@ -297,6 +297,8 @@ public class ChickenController : MonoBehaviour
 
                             // Asignamos el comedero mas cercano como Target de movimiento
                             mSelfMovementToTarget.target = FoodsManager.Instance.GetClosestFood(transform);
+
+                            // Puede retornar Nulo, en cuyo caso se seguira usando un random waypoint
                         }
                     }
 
@@ -329,7 +331,7 @@ public class ChickenController : MonoBehaviour
 
 
             //Si el HP del pollito llega  0
-            if (mChickenStats.hp == 0)
+            if (mChickenStats.hambre >= 100)
             {
                 // Desactivamos Flag de "esta vivo"
                 bIsAlive = false;
@@ -545,8 +547,6 @@ public class ChickenController : MonoBehaviour
         // Si no se esta asignado a ningun comedero...
         if (assignedFoodSlot == null)
         {
-            // Reiniciamos el stat de Saciedad a 0
-            mChickenStats.RestartSaciedad();
 
             // Modificamos los flags de estado de pollito
             bIsWalking = false;
@@ -565,20 +565,39 @@ public class ChickenController : MonoBehaviour
     }
 
     // Abandonar comedero
-
     public void Try_AbandonFoodSlot()
     {
         // Si se esta asignado a un slot de comedero...
         if (assignedFoodSlot != null)
         {
-            //Definimos un Waypoint en direccion contraria al comedero
-            mSelfMovementToTarget.SetNewRandomWaypointInOpositeDirection(assignedFoodSlot.transform.position);
-
             // Hacemos que el comedero nos libere
             assignedFoodSlot.ReleaseChicken();
 
+            //Almacenamos la posicion del comedero
+            Vector3 foodosition = assignedFoodSlot.parentFood.transform.position;
+
             // Asignamos referencia null al comedero asignado
             assignedFoodSlot = null;
+
+            //Desactivamos flag de "comiendo"
+            bIsEating = false;
+
+            // Si NO ESTA DORMIDO
+            if (!bIsSleeping)
+            {
+                // Eliminamos referencia a cuaquier Target de movimiento
+                mSelfMovementToTarget.target = null;
+
+                //Definimos un Waypoint en direccion contraria al comedero
+                mSelfMovementToTarget.SetNewRandomWaypointInOpositeDirection(foodosition);
+
+                // Si e pollito es pickeablle (esta en el suelo)
+                if (mPickeable.isPickeable || bOnFloor)
+                {
+                    //Activamos Flag de caminando
+                    bIsWalking = true;
+                }
+            }
         }
     }
 

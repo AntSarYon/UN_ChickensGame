@@ -184,7 +184,7 @@ public class FoodSlots : MonoBehaviour
 
     // ---------------------------------------------------------
     // Funcionn: Liberar Pollito
-    public void ReleaseChicken()
+    public void ReleaseSlot()
     {
         // Reducimos el contador de Slots ocupados
         takenSlots--;

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +18,15 @@ public class ChickenUI : MonoBehaviour
     [SerializeField] private Sprite spHungry;
     [SerializeField] private Sprite spAngry;
     [SerializeField] private Sprite spFighting;
+
+    [Header("Textos debug de flags")]
+    [SerializeField] private TextMeshProUGUI txtAsignado;
+    [SerializeField] private TextMeshProUGUI txtDurmiendo;
+    [SerializeField] private TextMeshProUGUI txtComiendo;
+    [SerializeField] private TextMeshProUGUI txtHambre;
+    [SerializeField] private TextMeshProUGUI txtPeleando;
+    [SerializeField] private TextMeshProUGUI txtEnojado;
+    [SerializeField] private TextMeshProUGUI txtCaminando;
 
     [Header("Icono de estimulacion")]
     [SerializeField] private GameObject imgEstimulated;
@@ -49,6 +59,27 @@ public class ChickenUI : MonoBehaviour
 
     void Update()
     {
+        if (chkController.assignedFoodSlot) txtAsignado.gameObject.SetActive(true);
+        else txtAsignado.gameObject.SetActive(false);
+
+        if (chkController.bIsSleeping) txtDurmiendo.gameObject.SetActive(true);
+        else txtDurmiendo.gameObject.SetActive(false);
+
+        if (chkController.bIsEating) txtComiendo.gameObject.SetActive(true);
+        else txtComiendo.gameObject.SetActive(false);
+
+        if (chkController.bIsStarving) txtHambre.gameObject.SetActive(true);
+        else txtHambre.gameObject.SetActive(false);
+
+        if (chkController.bIsFighting) txtPeleando.gameObject.SetActive(true);
+        else txtPeleando.gameObject.SetActive(false);
+
+        if (chkController.bIsAngry) txtEnojado.gameObject.SetActive(true);
+        else txtEnojado.gameObject.SetActive(false);
+
+        if (chkController.bIsWalking) txtCaminando.gameObject.SetActive(true);
+        else txtCaminando.gameObject.SetActive(false);
+
         // Si el pollito esta durmiendo
         if (chkController.bIsSleeping)
         {
@@ -70,19 +101,23 @@ public class ChickenUI : MonoBehaviour
         if (chkController.bIsFighting)
         {
             ShowFighting();
+            HideHungryBar();
         }
         else if (chkController.bIsAngry)
         {
             ShowAngry();
+            HideHungryBar();
         }
         else if (chkController.bIsStarving)
         {
             ShowHungry();
+            ShowHungryBar();
         }
         //En cualquier otro caso, ocultamos el globo de reaccion
         else
         {
             HideReaction();
+            HideHungryBar();
         }
 
     }

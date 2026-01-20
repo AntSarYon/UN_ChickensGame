@@ -17,7 +17,7 @@ public class SelfMovementToTarget : MonoBehaviour
     [HideInInspector] public Transform target;
 
     // Desino aleatorio (Para cuando no haya Target)
-    private Vector3 randomWaypoint;
+    private Vector3 randomWaypoint = Vector3.zero;
 
     //Rango y distancia para destino aleatorio
     [SerializeField] private float minRange;
@@ -54,6 +54,7 @@ public class SelfMovementToTarget : MonoBehaviour
 
         //Inicializamos el multiplicador de velocidad en 1
         speedMultiplier = 1;
+
     }
 
     // -----------------------------------------------------------------------------------
@@ -72,6 +73,9 @@ public class SelfMovementToTarget : MonoBehaviour
             maxZDistanceToBottom = currentYard.BottomLimit;
             maxZDistanceToTop = currentYard.TopLimit;
         }
+
+        //Inicia sin ningun target
+        target = null;
 
         //Definimos un nuevo destino aleatorio para el pollito
         SetNewRandomWaypoint();
@@ -155,12 +159,20 @@ public class SelfMovementToTarget : MonoBehaviour
         //Si no hay un Target (movimiento aleatorio)
         if (!target)
         {
-            //Si la distancia entre el Pollito y el Waypoint esta dentro del rango minimo definido;
-            if (Vector3.Distance(transform.position, randomWaypoint) < minRange)
+            if (randomWaypoint != Vector3.zero)
             {
-                //cambiamos de Waypoint para que el pollito siga moviendose
+                //Si la distancia entre el Pollito y el Waypoint esta dentro del rango minimo definido;
+                if (Vector3.Distance(transform.position, randomWaypoint) < minRange)
+                {
+                    //cambiamos de Waypoint para que el pollito siga moviendose
+                    SetNewRandomWaypoint();
+                }
+            }
+            else
+            {
                 SetNewRandomWaypoint();
             }
+            
         }
     }
 
@@ -211,7 +223,6 @@ public class SelfMovementToTarget : MonoBehaviour
         // Si el obstaculo esta hacia la Izquierda...
         else if (blockingPosition.x < transform.position.x)
         {
-
             SetNewRandomWaypointToRight(blockingPosition.x);
         }
     }

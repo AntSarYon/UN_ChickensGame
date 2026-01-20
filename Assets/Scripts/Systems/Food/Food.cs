@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,7 +26,6 @@ public class Food : Interactable
     private List<ChickenController> eatingChickensList = new List<ChickenController>();
 
     public bool hasFood;
-    
 
     //Referencia a Componentes
     private Animator mAnimator;
@@ -68,6 +68,7 @@ public class Food : Interactable
         //Si hay al menos 1 pollito comiendo, y aun hay comida
         if (eatingChickensList.Count > 0 && hasFood)
         {
+
             //Reducimos el valor del Slider, en base a cuantos slots estan siendo usados por pollitos, y la velocidad definida
             mFoodLevelSlider.value -= eatingChickensList.Count * Time.deltaTime * foodDecreaseSpeed;
 
@@ -76,12 +77,26 @@ public class Food : Interactable
                 //Desactivamos flag de "tiene comida"
                 hasFood = false;
 
+                //Copiamos en una variable auxiliar la lista de Pollitos comiendo
+                List<ChickenController> updatedList = new List<ChickenController>();
+
                 // Liberamos a todos los pollitos que hayan estado comiendo
                 foreach (ChickenController chicken in eatingChickensList)
                 {
-                    // Liberamos al Pollito del Slot - True para decirle que debe alejarse
-                    chicken.Try_AbandonFoodSlot();
+                    if (chicken) updatedList.Add(chicken);
                 }
+
+                // Liberamos a todos los pollitos que hayan estado comiendo
+                foreach (ChickenController chicken in updatedList)
+                {
+                    if (chicken)
+                    {
+                        // Liberamos al Pollito del Slot - True para decirle que debe alejarse
+                        chicken.Try_AbandonFoodSlot();
+                    }
+                }
+
+                // Iterando la lista auxiliar en lugar de la original se evitan errores
 
             }
         }
@@ -144,8 +159,8 @@ public class Food : Interactable
     public void UpdateSlotsUICounter()
     {
         //Actualizamos el contador de Slots
-        txtSlotsCounter1.text = $"{slotsManager.takenSlots}/{5}";
-        txtSlotsCounter2.text = $"{slotsManager.takenSlots}/{5}";
+        txtSlotsCounter1.text = $"{eatingChickensList.Count}/{5}";
+        txtSlotsCounter2.text = $"{eatingChickensList.Count}/{5}";
     }
 
     // -------------------------------------------------------------------
@@ -153,7 +168,7 @@ public class Food : Interactable
     public bool HasFreeSlots()
     {
         // Nos basamos en si los Slots estan Full (retorna negacion)
-        return !slotsManager.bFullSlots;
+        return (eatingChickensList.Count < 5);
     }
 
 

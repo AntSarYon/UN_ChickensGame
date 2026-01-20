@@ -44,10 +44,18 @@ public class ChickenSpawner : MonoBehaviour
 
         //En base al corral, definimos su limite de movimiento
         SelfMovementToTarget newChickenMovementComp = newChicken.GetComponent<SelfMovementToTarget>();
+
+        // Hacemos que empiece sin target de movimiento
+        newChickenMovementComp.target = null;
+
+        // Definimos sus limmites de movimiento
         newChickenMovementComp.maxXDistanceToLeft = Yard.Instance.LeftLimit;
         newChickenMovementComp.maxXDistanceToRight = Yard.Instance.RightLimit;
         newChickenMovementComp.maxZDistanceToBottom = Yard.Instance.BottomLimit;
         newChickenMovementComp.maxZDistanceToTop = Yard.Instance.TopLimit;
+
+        // Seteamos un unevo Punto random para su movimiento
+        newChickenMovementComp.SetNewRandomWaypoint();
     }
 
     // --------------------------------------------------------

@@ -121,11 +121,14 @@ public class GameClockController : MonoBehaviour
             }
 
             // Si ya son pasadas las 5pm...
-            else if (elapsedTime >= 17 * 3600f)
+            else if (elapsedTime >= 16.5 * 3600f)
             {
                 //Si el camion aun no esta llegando
                 if (!TruckController.Instance.bIsArriving)
                 {
+                    //Mostramos mensaje de Alerta
+                    UIController.Instance.ShowAlertMessage();
+
                     //Dispara animacion de Camion llegando
                     TruckController.Instance.PlayArrive();
                 }
@@ -133,7 +136,6 @@ public class GameClockController : MonoBehaviour
             // Si ya son pasadas las 3pm...
             else if (elapsedTime >= 16 * 3600f)
             {
-
                 //Seteamos la luz inicial como la de la manana
                 initialDayLight = morningDayLight;
 

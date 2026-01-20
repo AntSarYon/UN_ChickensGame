@@ -17,18 +17,16 @@ public class UIController : MonoBehaviour
     [SerializeField] private Button btnAddNewChickenRoss;
     [SerializeField] private Button btnAddNewChickenCobb;
 
-    [Header("Paneles de Fade In/ Out")]
+    [Header("Controlador de Fade in / out")]
     [SerializeField] private UI_FadeOut UI_fadeOut;
-    [SerializeField] private GameObject FadeOutPanel;
 
     // Barra de comida (unico, adaptable para cada corral)
-    [Header("Medidores globales")]
+    [Header("Medidor de comida")]
     [SerializeField] private Slider FoodSlider;
-    [SerializeField] private Slider TemperatureSlider;
 
     [Header("Referencia a Corral")]
     public Yard currentTargetYard;
-    [SerializeField] private TextMeshProUGUI txtYardTitle;
+    [SerializeField] private TextMeshProUGUI txtFoodBar;
 
     [Header("Barra de Stamina")]
     [SerializeField] private Slider staminaSlider;
@@ -39,6 +37,9 @@ public class UIController : MonoBehaviour
 
     [Header("Indicador de Temperatura")]
     [SerializeField] private GameObject temperatureUI;
+
+    [Header("Controlador de Delivery Message")]
+    [SerializeField] private UI_DeliverMessage UI_AlertMessage;
 
     #endregion
 
@@ -57,7 +58,7 @@ public class UIController : MonoBehaviour
     {
         //Obtenemos referencia al Corral actual
         currentTargetYard = Yard.Instance;
-        txtYardTitle.text = $"Comida en Corral: {currentTargetYard.yardName}";
+        txtFoodBar.text = $"Comida en Corral:";
 
         // Agregamos Listener de Agregar nuevo pollito
         btnAddNewChickenRoss.onClick.AddListener(AskForChickenRoss);
@@ -182,6 +183,13 @@ public class UIController : MonoBehaviour
     {
         //Activamos el mensaje de Iteraccion
         interactionMessage.SetActive(false);
+    }
+
+    // ----------------------------------------------------------
+
+    public void ShowAlertMessage()
+    {
+        UI_AlertMessage.ShowMessage();
     }
 
 

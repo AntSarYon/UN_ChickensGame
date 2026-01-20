@@ -15,7 +15,6 @@ public class StatsResumeUI : MonoBehaviour
     private float poblacion;
     private float pollitosMuertos;
     private float tasaMortalidad;
-    private float pesoPromedio;
 
     private List<ChickenStats> listChickensStats = new List<ChickenStats>();
 
@@ -125,7 +124,6 @@ public class StatsResumeUI : MonoBehaviour
     public void UpdateStats()
     {
         //Actualizamos los Textos resumen de Stats
-        txtPesoPrmedio.text = "Peso Promedio: " + pesoPromedio.ToString("F2");
         txtPoblacion.text = "Población: " + poblacion.ToString();
         txtMortalidad.text = "Tasa de Mortalidad: " + tasaMortalidad.ToString("F2") + "%";
 
@@ -145,9 +143,6 @@ public class StatsResumeUI : MonoBehaviour
             //Incrementamos el Peso
             pesoTotal += ch.peso;
         }
-
-        //Obtenemos el peso promedio dividiendo
-        pesoPromedio = (pesoTotal / poblacion);
     }
 
     //----------------------------------------------------------------------------

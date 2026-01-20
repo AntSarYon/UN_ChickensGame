@@ -85,8 +85,13 @@ public class ChickenUI : MonoBehaviour
         {
             // Ocultamos cualquier globo de reaccion, asi como la barra de comida
             HideReaction();
+            if (chkController.bIsStarving)
+            {
+                ShowHungryBar();
+                return;
+            }
             HideHungryBar();
-            return;
+            
         }
 
         // Si esta despierto...
@@ -202,7 +207,7 @@ public class ChickenUI : MonoBehaviour
 
     public void SetHugryBarValue(float val)
     {
-        hungrySlider.value = (int) val;
+        hungrySlider.value = val;
     }
 
     public void HideHungryBar()

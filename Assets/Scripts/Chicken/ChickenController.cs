@@ -181,17 +181,21 @@ public class ChickenController : MonoBehaviour
         //Repetiremos indefinidamente...
         while (true)
         {
-            //Si el Stat de Hambre esta muy elevado...
-            if (mChickenStats.hambre >= 65)
+            //Si no esta peleando
+            if (!bIsFighting)
             {
-                //Activamos el flag de "Starving" 
-                bIsStarving = true;
-            }
-            // En caso NO TENGA TANTA HAMBRE
-            else
-            {
-                //Desactivamos el flag de "Starving" 
-                bIsStarving = false;
+                //Si el Stat de Hambre esta muy elevado...
+                if (mChickenStats.hambre >= 65)
+                {
+                    //Activamos el flag de "Starving" 
+                    bIsStarving = true;
+                }
+                // En caso NO TENGA TANTA HAMBRE
+                else
+                {
+                    //Desactivamos el flag de "Starving" 
+                    bIsStarving = false;
+                }
             }
 
             // Cada intervalo
@@ -206,10 +210,6 @@ public class ChickenController : MonoBehaviour
     {
 
         mChickenStats.ManageStats_HambreYPeso(bIsEating);
-
-        mChickenStats.ManageStats_HP(bIsStarving);
-
-
     }
 
     //------------------------------------------------------------------------------------------
@@ -333,11 +333,11 @@ public class ChickenController : MonoBehaviour
             //Si el HP del pollito llega  0
             if (mChickenStats.hambre >= 100)
             {
-                // Desactivamos Flag de "esta vivo"
-                bIsAlive = false;
-
                 //Reproducimos las Acciones de Muerte.
                 Die();
+
+                // Desactivamos Flag de "esta vivo"
+                bIsAlive = false;
 
                 //Debug.log("Me mori");
             }
@@ -369,20 +369,37 @@ public class ChickenController : MonoBehaviour
             //Si estams colisionando con otro Pollito...
             if (collision.gameObject.CompareTag("Chicken"))
             {
-                //Obtenemos los Stats del pollo con el que hemos chocado
-                //ChickenStats otherChickenStats = collision.gameObject.GetComponent<ChickenStats>();
+                // Si el pollito no esta comiendo ni durmiendo
+                if (!bIsEating || !bIsSleeping)
+                {
+                    //Obtenemos una probabilidad para empezar una pelea...
+                    float fightProb = Random.Range(0.00f, 1.00f);
 
-                // Condicion de PELEA
-                if (false)
-                {
-                    //Controlamos la Animacion de Pelea
-                    //mSpritesController.EnterFightAnim();
+                    //Si la probabilidad es menor al 25%
+                    if (fightProb <= 0.25f)
+                    {
+                        //Si el otro ollito tampoco esta comiendo ni durmiendo...
+                        if (!collision.gameObject.GetComponent<ChickenController>().bIsEating && !collision.gameObject.GetComponent<ChickenController>().bIsSleeping)
+                        {
+                            //Activamos flag de Pelea, tanto en este, como en el otro Pollo...
+                            bIsFighting = true;
+                            bIsWalking = false;
+                            collision.gameObject.GetComponent<ChickenController>().bIsFighting = true;
+                            collision.gameObject.GetComponent<ChickenController>().bIsWalking = false;
+
+                            //Controlamos la Animacion de Pelea
+                            //mSpritesController.EnterFightAnim();
+                        }
+                    }
+
+                    // En caso la Probabilidad sea otra...
+                    else
+                    {
+                        //Hacemos que el pollito se mueva en direccion contraria del otro pollito 
+                        GetComponent<SelfMovementToTarget>().SetNewRandomWaypointInOpositeDirection(collision.transform.position);
+                    }
                 }
-                else
-                {
-                    //Hacemos que el pollito se mueva en direccion contraria del otro pollito 
-                    GetComponent<SelfMovementToTarget>().SetNewRandomWaypointInOpositeDirection(collision.transform.position);
-                }
+                
             }
 
             //En caso tampoco este felicidadado...
@@ -458,6 +475,17 @@ public class ChickenController : MonoBehaviour
         //Hacemos que se reproduzca el Sonido de Pollito muerto
         GameSoundsController.Instance.PlayChickenDeathSound();
 
+        bIsWalking = false;
+        bIsAngry = false;
+        bIsEating = false;
+        bIsFighting = false;
+        bIsSleeping = false;
+        bInColdSleepState = false;
+        bInTempSleeping = false;
+        bIsStarving = false;
+
+        mPickeable.isPickeable = true;
+
         //Reproducimos la Animacion de Muerte
         mSpritesController.PlayDeath();
 
@@ -470,10 +498,23 @@ public class ChickenController : MonoBehaviour
 
     public void RunAwayFromApplause(Vector3 applauseCircleCenter)
     {
+        // Si esta peleando, hacer que se detenga
+        if (bIsFighting)
+        {
+            bIsFighting = false;
+            bIsWalking = true;
+        }
+
         // Si está durmiendo despertarlo primero
         if (bIsSleeping)
         {
             WakeUp();
+        }
+
+        // Si esta comiendo, abandona el Slot...
+        if (bIsEating)
+        {
+            Try_AbandonFoodSlot();
         }
 
         //Calculamos la dirección de escape (opuesta al centro del círculo de aplauso)

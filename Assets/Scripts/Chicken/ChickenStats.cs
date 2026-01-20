@@ -9,10 +9,6 @@ public class ChickenStats : MonoBehaviour
     [SerializeField] private ChickenUI chkUI;
 
     //Salud del Pollito
-    [HideInInspector] public float hp = 100;
-    [Header("Velocidad Cambio de Stats: HP")]
-    [Range(0.00f, 10.00f)][SerializeField] private float velocidadIncrementoHP = 0;
-    [Range(0.00f, 10.00f)][SerializeField] private float velocidadReduccionHP = 10;
 
     //Hambre del Pollito
     [HideInInspector] public float hambre = 100;
@@ -52,8 +48,7 @@ public class ChickenStats : MonoBehaviour
         velocidadReduccionPeso = GameRulesManager.instance.velocidadReduccionPeso;
         multiplicadorIncrementoPesoSegunfelicidad = 1;
 
-        //Seteamos los stats iniciales del pollo
-        hp = 100;
+
         hambre = Random.Range(35.00f, 50.00f);
         //Actualizamos el valor del Slider en la UI
         chkUI.SetHugryBarValue(hambre);
@@ -102,18 +97,5 @@ public class ChickenStats : MonoBehaviour
     }
 
     //-----------------------------------------------------------------------
-
-    public void ManageStats_HP(bool starvingFlag)
-    {
-        //Si el flag de "peleando" esta activo
-        if (starvingFlag)
-        {
-            //Incrementamos la salud Progresivamente
-            hp -= velocidadReduccionHP * Time.deltaTime;
-            hp = Mathf.Clamp(hp, 0.00f, 100.00f);
-        }
-    }
-
-    // ------------------------------------------------------------------
 
 }

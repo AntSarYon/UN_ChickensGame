@@ -9,6 +9,7 @@ public class PickeableObject : Interactable
     private Transform defaultParent;
 
     private Rigidbody mRb;
+    private Collider mCollider;
 
     // ---------------------------------------
 
@@ -21,6 +22,7 @@ public class PickeableObject : Interactable
         defaultParent = transform.parent;
 
         mRb = GetComponent<Rigidbody>();
+        mCollider = GetComponent<Collider>();
     }
 
     // ----------------------------------------------------
@@ -29,6 +31,9 @@ public class PickeableObject : Interactable
     {
         //Desactivamos flag de "Se puede agarrar"
         isPickeable = false;
+
+        //Desactivamos su Coision
+        mCollider.enabled = false;
 
         //Le desactivamos la gravedad
         mRb.useGravity = false;
@@ -50,6 +55,9 @@ public class PickeableObject : Interactable
     {
         //Desactivamos flag de "Se puede agarrar"
         isPickeable = true;
+
+        //Desactivamos su Coision
+        mCollider.enabled = true;
 
         //Le desactivamos la gravedad
         mRb.useGravity = true;

@@ -141,7 +141,10 @@ public class Food : Interactable
                 Refill();
 
                 //Dropeamos la bolsa
-                foodBag.Drop();
+                interactionController.DropHoldedObject();
+
+                // Actualizamos los flagsa de tipo de objeto sujetado
+                interactionController.UpdateDroppedObjectTye();
 
                 // La desactivamos para que vuelva al Pool
                 foodBag.gameObject.SetActive(false);

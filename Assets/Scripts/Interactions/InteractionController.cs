@@ -94,7 +94,7 @@ public class InteractionController : MonoBehaviour
 
     // ------------------------------------------------------------------------------------------
 
-    private void ManageObjectRelease()
+    public void ManageObjectRelease()
     {
         // Si el payer esta quieto
         if (pController.movementInput == Vector3.zero)
@@ -107,6 +107,7 @@ public class InteractionController : MonoBehaviour
             {
                 DropHoldedObject();
 
+                UpdateDroppedObjectTye();
             }
         }
         //Si el player se esta moviendo
@@ -117,16 +118,18 @@ public class InteractionController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.E))
             {
-                ThrowHoldedObject();   
+                ThrowHoldedObject();
+
+                UpdateDroppedObjectTye();
             }
         }
 
-        UpdateDroppedObjectTye();
+        
 
     }
 
     // --------------------------------------------------------------
-    private void DropHoldedObject()
+    public void DropHoldedObject()
     {
         //Soltamos el Objeto mediante la funcioon de Drop
         holdedObject.GetComponent<PickeableObject>().Drop();
@@ -152,6 +155,8 @@ public class InteractionController : MonoBehaviour
     // Funcion: Revisar QUE ES el objeto que estamos cargando
     private void CheckForHoldedObjectTye()
     {
+        pController.bIsGrabbing = true;
+
         // Si el objeto Holded  es una Bolsa de Comida...
         if (holdedObject.CompareTag("FoodBag"))
         {
@@ -171,6 +176,7 @@ public class InteractionController : MonoBehaviour
     public void SetHoldedObject(GameObject newHoldedObject)
     {
         holdedObject = newHoldedObject;
+        pController.bIsGrabbing = true;
 
         // Activamos el flag correpsondiente de "Cargando X"
         if (newHoldedObject.CompareTag("FoodBag"))
@@ -185,11 +191,13 @@ public class InteractionController : MonoBehaviour
 
     // -------------------------------------------------------
     // Funcion: Desactivamos Flags de "cargando objeto"
-    private void UpdateDroppedObjectTye()
+    public void UpdateDroppedObjectTye()
     {
         // Desactivams todos los flags de "Cargando X"
         pController.bisCarryingFood = false;
         pController.bisCarryingChicken = false;
+
+        pController.bIsGrabbing = false;
 
     }
 }

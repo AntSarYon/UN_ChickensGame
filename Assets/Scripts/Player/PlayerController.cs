@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
 
     //Flags
     private bool bClapped;
+    [HideInInspector] public bool bIsGrabbing;
     [HideInInspector] public bool bisCarryingFood;
     [HideInInspector] public bool bisCarryingChicken;
 
@@ -73,6 +74,7 @@ public class PlayerController : MonoBehaviour
 
         //Flag de "Aplaude" y "Cargando comida" empieza en false
         bClapped = false;
+        bIsGrabbing = false;
         bisCarryingFood = false;
         bisCarryingChicken = false;
 
@@ -229,10 +231,12 @@ public class PlayerController : MonoBehaviour
         mAnimator.SetFloat("X", movementInput.x);
         mAnimator.SetFloat("Y", movementInput.z);
 
+        mAnimator.SetBool("Grabbing", bIsGrabbing);
+
         // Activamos Flag de Anim en base a movimiento del Player
         if (movementInput != Vector3.zero)
             mAnimator.SetBool("Moving", true);
-        else 
+        else
             mAnimator.SetBool("Moving", false);
 
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow))

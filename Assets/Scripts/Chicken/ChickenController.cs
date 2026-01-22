@@ -319,9 +319,10 @@ public class ChickenController : MonoBehaviour
                 bIsEating = false;
                 bIsStarving = false;
 
-                bIsSleeping = false;
-                bInColdSleepState = false;
-                bInTempSleeping = false;
+                // Seguira durmiendo
+                //bIsSleeping = false;
+                //bInColdSleepState = false;
+                //bInTempSleeping = false;
 
                 // Desactivamos animaciones de Dormir
                 mSpritesController.SetSleeping(false);

@@ -13,7 +13,7 @@ public class InteractionController : MonoBehaviour
     public Transform holdingZone;
 
     //Referencia al Player Controller (Padre)
-    private PlayerController pController;
+    [HideInInspector] public PlayerController pController;
 
     // -----------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ public class InteractionController : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.E))
                     {
                         //Lanzamos la interaccion (recibe nuestra zona de Agarre, y lo que haya en ella)
-                        targetObject.GetComponent<Interactable>().Interact(holdingZone);
+                        targetObject.GetComponent<Interactable>().Interact(holdingZone, this);
 
                         //Si despues de hacer esto la zona de Agarre queda sin hijos...
                         if (holdingZone.childCount == 0)

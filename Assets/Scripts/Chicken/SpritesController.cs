@@ -96,6 +96,19 @@ public class SpritesController : MonoBehaviour
         }
     }
 
+    public void SetFighting(bool fight)
+    {
+        //Dependiendo del parametro ingresado, activamos / desactivamos la animacion de Sleep
+        if (fight)
+        {
+            mAnimator.SetBool("IsFighting", true);
+        }
+        else
+        {
+            mAnimator.SetBool("IsFighting", false);
+        }
+    }
+
     //-----------------------------------------------------------------------------------
 
     public void ManageWalkingAnim()

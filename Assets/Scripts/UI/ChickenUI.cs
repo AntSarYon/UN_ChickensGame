@@ -102,7 +102,7 @@ public class ChickenUI : MonoBehaviour
             //Dependiendo del Flag activo, mostraremos un globo de reaccion
             if (chkController.bIsFighting)
             {
-                ShowFighting();
+                HideReaction();
                 HideHungryBar();
             }
             else if (chkController.bIsStarving)

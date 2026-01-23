@@ -65,6 +65,9 @@ public class ChickenController : MonoBehaviour
     // Corutinas
     private Coroutine cor_CheckIfStarving;
 
+    // Referencia al Pollito con quien esta peleando
+    private ChickenController rivalChicken;
+
     //-----------------------------------------------------------------------------
 
     void Awake()
@@ -245,11 +248,25 @@ public class ChickenController : MonoBehaviour
 
                     // No despertar por timer mientras esté en sueño por temperatura fría
                 }
-                //Si no esta dormido
+                //Si no esta dormido, ni peleando...
                 else
                 {
+                    //Si esta peleando...
+                    if (bIsFighting)
+                    {
+                        if (rivalChicken)
+                        {
+                            // Si el pollito rival dejo de pelear
+                            if (!rivalChicken.bIsFighting)
+                            {
+                                // Nosotros tambien dejamos de pelear
+                                StopFighting();
+                            }
+                        }
+                    }
+
                     //Si esta comiedo...
-                    if (bIsEating)
+                    else if (bIsEating)
                     {
                         //Debug.log("Estoy comiendo");
 
@@ -314,7 +331,10 @@ public class ChickenController : MonoBehaviour
                 bOnFloor = false;
 
                 bIsAngry = false;
+
+                // En el caso de la pelea, tambien quitamos la referencia del rival
                 bIsFighting = false;
+                rivalChicken = null;
 
                 bIsEating = false;
                 bIsStarving = false;
@@ -325,6 +345,7 @@ public class ChickenController : MonoBehaviour
                 //bInTempSleeping = false;
 
                 // Desactivamos animaciones de Dormir
+                mSpritesController.SetFighting(false);
                 mSpritesController.SetSleeping(false);
             }
 
@@ -379,17 +400,15 @@ public class ChickenController : MonoBehaviour
                     //Si la probabilidad es menor al 25%
                     if (fightProb <= 0.25f)
                     {
-                        //Si el otro ollito tampoco esta comiendo ni durmiendo...
-                        if (!collision.gameObject.GetComponent<ChickenController>().bIsEating && !collision.gameObject.GetComponent<ChickenController>().bIsSleeping)
-                        {
-                            //Activamos flag de Pelea, tanto en este, como en el otro Pollo...
-                            bIsFighting = true;
-                            bIsWalking = false;
-                            collision.gameObject.GetComponent<ChickenController>().bIsFighting = true;
-                            collision.gameObject.GetComponent<ChickenController>().bIsWalking = false;
+                        //Almacenamos a referencia del Pollito rival
+                        rivalChicken = collision.gameObject.GetComponent<ChickenController>();
 
-                            //Controlamos la Animacion de Pelea
-                            //mSpritesController.EnterFightAnim();
+                        //Si el otro pollito esta vivo, y tampoco esta comiendo ni durmiendo...
+                        if (rivalChicken.bIsAlive && !rivalChicken.bIsEating && !rivalChicken.bIsSleeping)
+                        {
+
+                            //Llamamos a la funcion de iniciar pelea
+                            StartFight();
                         }
                     }
 
@@ -436,6 +455,15 @@ public class ChickenController : MonoBehaviour
             if (collision.gameObject.CompareTag("Chicken"))
             {
                 //Salimos de la Animacion de Pelea
+                bIsFighting = false;
+
+                // Si no esta comiendo ni durmiendo
+                if (!bIsSleeping && !bIsEating)
+                {
+                    bIsWalking = true;
+                }
+
+                mSpritesController.SetFighting(bIsFighting);
 
             }
         }
@@ -465,11 +493,58 @@ public class ChickenController : MonoBehaviour
         }
     }
 
+    // ----------------------------------------------------------------------------------
+
+    public void StartFight()
+    {
+        //Activamos flag de Pelea, y desactivamos el de Caminata
+        bIsFighting = true;
+        bIsWalking = false;
+
+        //Hacemos que el pollito mire en direccion a asu rivall
+        mSpritesController.LookAtTarget(rivalChicken.transform.position);
+        mSpritesController.SetFighting(bIsFighting);
+
+        // Si el otro polito aun no ha entrado en modo pelea, lo forzamos...
+        if (!rivalChicken.bIsFighting)
+        {
+            // Le decimos que nosotros somos su rival
+            rivalChicken.rivalChicken = this;
+
+            rivalChicken.bIsFighting = true;
+            rivalChicken.bIsWalking = false;
+
+            // Hacemos que nos mire y disparamos su animacion de pelea...
+            rivalChicken.GetComponent<SpritesController>().LookAtTarget(transform.position);
+            rivalChicken.GetComponent<SpritesController>().SetFighting(true);
+        }
+    }
+
+    // -----------------------------------------------------------------------------
+
+    public void StopFighting()
+    {
+        // Desactivamos la animacion de Pelear...
+        mSpritesController.SetFighting(false);
+
+        // Quitamos la referencia de ollito rival
+        rivalChicken = null;
+
+        //Desactivamos flag de Pelea y empezamos a caminar
+        bIsFighting = false;
+        bIsWalking = true;
+    }
+
 
     //-----------------------------------------------------------------------------------
 
     public void Die()
     {
+        
+        // Hacemos que dejen de pelear (si lo estaba)
+        StopFighting();
+
+
         //Llamamos al Evento de Pollito muerto
         DayStatusManager.Instance.TriggerEvent_OnChickenDeath();
 
@@ -502,8 +577,7 @@ public class ChickenController : MonoBehaviour
         // Si esta peleando, hacer que se detenga
         if (bIsFighting)
         {
-            bIsFighting = false;
-            bIsWalking = true;
+            StopFighting();
         }
 
         // Si está durmiendo despertarlo primero

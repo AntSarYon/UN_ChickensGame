@@ -603,6 +603,12 @@ public class ChickenController : MonoBehaviour
                 transform.position.y,
                 targetSlot.transform.position.z
                 );
+
+            // Hacemos que mmire hacia el comedero
+            mSpritesController.LookAtTarget(assignedFoodSlot.parentFood.transform.position);
+
+            // Controlamos la annimacion de Comer...
+            mSpritesController.SetEating(bIsEating);
         }
     }
 
@@ -623,6 +629,9 @@ public class ChickenController : MonoBehaviour
 
             //Desactivamos flag de "comiendo"
             bIsEating = false;
+
+            // Controlamos la annimacion de Comer...
+            mSpritesController.SetEating(bIsEating);
 
             // Si NO ESTA DORMIDO
             if (!bIsSleeping)

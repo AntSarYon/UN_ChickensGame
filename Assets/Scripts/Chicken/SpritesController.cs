@@ -82,6 +82,20 @@ public class SpritesController : MonoBehaviour
             mAnimator.SetBool("Sleeping", false);
         }
     }
+
+    public void SetEating(bool eat)
+    {
+        //Dependiendo del parametro ingresado, activamos / desactivamos la animacion de Sleep
+        if (eat)
+        {
+            mAnimator.SetBool("IsEating", true);
+        }
+        else
+        {
+            mAnimator.SetBool("IsEating", false);
+        }
+    }
+
     //-----------------------------------------------------------------------------------
 
     public void ManageWalkingAnim()

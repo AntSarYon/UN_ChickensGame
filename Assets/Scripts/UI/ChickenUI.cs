@@ -88,41 +88,40 @@ public class ChickenUI : MonoBehaviour
             if (chkController.bIsStarving)
             {
                 ShowHungryBar();
-                return;
             }
-            HideHungryBar();
-            
-        }
+            else
+            {
+                HideHungryBar();
+            }
 
+        }
         // Si esta despierto...
-        //Dependiendo del Flag activo, mostraremos un globo de reaccion
-        if (chkController.bIsEating)
-        {
-            HideReaction();
-            ShowHungryBar();
-            return;
-        }
-
-        if (chkController.bIsFighting)
-        {
-            ShowFighting();
-            HideHungryBar();
-        }
-        else if (chkController.bIsAngry)
-        {
-            ShowAngry();
-            HideHungryBar();
-        }
-        else if (chkController.bIsStarving)
-        {
-            ShowHungry();
-            ShowHungryBar();
-        }
-        //En cualquier otro caso, ocultamos el globo de reaccion
         else
         {
-            HideReaction();
-            HideHungryBar();
+            
+            //Dependiendo del Flag activo, mostraremos un globo de reaccion
+            if (chkController.bIsFighting)
+            {
+                ShowFighting();
+                HideHungryBar();
+            }
+            else if (chkController.bIsStarving)
+            {
+                ShowHungry();
+                ShowHungryBar();
+            }
+            else if (chkController.bIsEating)
+            {
+                HideReaction();
+                ShowHungryBar();
+                return;
+            }
+            //En cualquier otro caso, ocultamos el globo de reaccion
+            else
+            {
+                HideReaction();
+                HideHungryBar();
+            }
         }
 
     }

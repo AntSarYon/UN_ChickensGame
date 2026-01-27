@@ -209,7 +209,7 @@ public class PlayerController : MonoBehaviour
             }
 
             //Lamamos a la UI para actualizar el valor de Stamina
-            UIController.Instance.UpdateStamina(normalized);
+            //UIController.Instance.UpdateStamina(normalized);
         }
     }
 
@@ -315,7 +315,7 @@ public class PlayerController : MonoBehaviour
 
     public void Move(Vector3 direction)
     {
-        mRb.MovePosition(mRb.position + direction.normalized * speed * Time.fixedDeltaTime);
+        mRb.MovePosition(transform.position + transform.TransformDirection(direction) * speed * Time.fixedDeltaTime);
     }
 
     // ----------------------------------------------------

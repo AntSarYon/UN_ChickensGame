@@ -203,10 +203,7 @@ public class PlayerController : MonoBehaviour
         if (pUI != null)
         {
             float normalized = currentStamina / Mathf.Max(0.0001f, maxStamina);
-            if (debugStamina)
-            {
-                Debug.Log($"[PlayerController] Stamina: {currentStamina:F2} / {maxStamina:F2} -> normalized {normalized:F2} | isSprinting={isSprinting}");
-            }
+            
 
             //Lamamos a la UI para actualizar el valor de Stamina
             //UIController.Instance.UpdateStamina(normalized);
